@@ -1,0 +1,2311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Absolute Values on a Field - Part 3</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax for rendering LaTeX -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            startup: {
+                typeset: false // We will trigger typesetting manually to avoid race conditions
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Custom animations and scrollbar */
+        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #c7c7cc; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a1a1aa; }
+        
+        /* Active problem tab style */
+        .problem-tab.active {
+            background-color: #4f46e5; /* indigo-600 */
+            color: white;
+            border-color: #4f46e5;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+        }
+
+        /* Seamless Page Transition Styles */
+        body {
+            opacity: 0;
+            animation: pageFadeIn 0.4s ease-in-out forwards;
+            transition: opacity 0.4s ease-in-out;
+        }
+        @keyframes pageFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Custom Connector for the Pipeline */
+        .pipeline-connector::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -24px;
+            width: 24px;
+            height: 2px;
+            background-color: #cbd5e1;
+            z-index: 0;
+            display: none;
+        }
+        @media (min-width: 768px) {
+            .pipeline-connector::after { display: block; }
+        }
+
+        .highlight-term {
+            background-color: #fef08a; /* amber-200 */
+            color: #b45309; /* amber-700 */
+            border-color: #fde047; /* amber-300 */
+            transform: scale(1.1);
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-indigo-200 selection:text-indigo-900">
+
+    <!-- Header Section -->
+    <header class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white py-12 px-6 shadow-lg border-b-4 border-indigo-500">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex items-center gap-3 mb-2 text-indigo-300 font-bold tracking-widest text-sm uppercase">
+                <i data-lucide="book-open" class="w-4 h-4"></i> Chapter 2, Section 1 (Continued)
+            </div>
+            <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-4">Value Groups & Polynomial Valuations</h1>
+            <p class="text-lg text-indigo-100 max-w-2xl leading-relaxed">
+                Problems 37 through 47. We explore value groups, topological equivalence, the macro-micro paradox, and fully map out valuations for rational functions and Gaussian integers.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto py-10 px-6">
+        <!-- INTERACTIVE TUTORIAL HUB WITH DEEP DIVE STACKED -->
+        <section id="tutorials" class="w-full">
+            <!-- 2 Column Layout: Sidebar + Stacked Main Content -->
+            <div class="grid lg:grid-cols-12 gap-6 items-start">
+                
+                <!-- COLUMN 1: Problem Selection Sidebar -->
+                <div class="lg:col-span-4 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col max-h-[850px] sticky top-8">
+                    <div class="bg-slate-100 px-4 py-3 border-b border-slate-200 font-bold text-slate-700 flex items-center justify-between shrink-0">
+                        <div class="flex items-center gap-2"><i data-lucide="list-todo" class="w-5 h-5 text-indigo-600"></i> Problems 37-47</div>
+                    </div>
+                    
+                    <div class="p-3 space-y-2 overflow-y-auto flex-1" id="problem-selector">
+                        <!-- Buttons injected via JS -->
+                    </div>
+                    
+                    <!-- Navigation Back to Part 2 & Next to 2.2 -->
+                    <div class="p-4 border-t border-slate-200 bg-slate-50 flex flex-col gap-3">
+                        <a href="part2.html" class="flex items-center justify-center gap-2 w-full bg-white border-2 border-slate-300 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer">
+                            <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Probs 34-36
+                        </a>
+                        <a href="section2_1_quiz.html" class="flex items-center justify-center gap-2 w-full bg-violet-600 border-2 border-violet-700 hover:bg-violet-500 text-white px-4 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer">
+                            Section 2.1 Quiz <i data-lucide="help-circle" class="w-4 h-4"></i>
+                        </a>
+                        <a href="section2_2.html" class="flex items-center justify-center gap-2 w-full bg-indigo-600 border-2 border-indigo-700 hover:bg-indigo-500 text-white px-4 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm cursor-pointer">
+                            Section 2.2 <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- COLUMN 2: Stacked Main Content (Deep Dive Top, Proof Bottom) -->
+                <div class="lg:col-span-8 flex flex-col space-y-6">
+                    
+                    <!-- TOP STACK: Deep Dive & Visual Concepts Area -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
+                        <div class="bg-indigo-50 px-5 py-3 border-b border-indigo-100 font-bold text-indigo-900 flex items-center gap-2 shrink-0" id="deep-dive-header">
+                            <i data-lucide="lightbulb" class="w-5 h-5 text-indigo-600"></i> Concept & Analogies
+                        </div>
+                        <div class="p-6 max-h-[850px] overflow-y-auto scroll-smooth" id="deep-dive-container">
+                            <!-- Rich Deep Dive HTML injected via JS -->
+                        </div>
+                    </div>
+
+                    <!-- BOTTOM STACK: Interactive Proof Area -->
+                    <div class="bg-slate-900 rounded-2xl shadow-xl overflow-hidden text-slate-300 font-mono text-sm md:text-base flex flex-col h-[400px] shrink-0">
+                        <div class="bg-slate-800 px-5 py-3 border-b border-slate-700 flex justify-between items-center shrink-0">
+                            <span class="text-slate-400 flex items-center gap-2"><i data-lucide="terminal" class="w-4 h-4"></i> <span id="proof-filename" class="text-xs">proof.tex</span></span>
+                            <button id="btn-next-step" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-1.5 rounded text-sm font-sans font-bold transition-colors flex items-center gap-2 shadow-sm">
+                                Next Step <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <div class="p-5 overflow-y-auto flex-1 space-y-5 scroll-smooth" id="proof-container">
+                            <!-- Proof steps injected via JS -->
+                        </div>
+                    </div>
+                    
+                    <!-- Bottom Nav -->
+                    <div class="flex flex-col sm:flex-row justify-end gap-4 pt-4 pb-10">
+                        <a href="section2_1_quiz.html" class="flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 text-white px-6 py-3 rounded-xl text-base font-bold transition-colors shadow-lg cursor-pointer">
+                            Section 2.1 Quiz <i data-lucide="help-circle" class="w-5 h-5"></i>
+                        </a>
+                        <a href="section2_2.html" class="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-3 rounded-xl text-base font-bold transition-colors shadow-lg cursor-pointer">
+                            Continue to Section 2.2 <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-8 text-center mt-12 border-t border-slate-800">
+        <p>Interactive companion for <em>p-adic Numbers: An Introduction</em> (Part 3)</p>
+    </footer>
+
+    <!-- Interactive Logic -->
+    <script>
+        // Safely queue MathJax rendering to prevent race conditions that break DOM references
+        let mathJaxQueue = Promise.resolve();
+        function typesetMath(element) {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                mathJaxQueue = mathJaxQueue.then(() => window.MathJax.typesetPromise([element]))
+                                           .catch((err) => console.log('MathJax error: ', err));
+            }
+        }
+
+        // ==========================================
+        // PART 3 DATA HUB
+        // ==========================================
+        const problemsData = [
+            // --- PROBLEM 37 ---
+            {
+                id: 'prob-37',
+                title: 'Problem 37',
+                shortDesc: 'Value Groups of Valuations',
+                filename: 'value_group.tex',
+                headerColor: "bg-fuchsia-50 text-fuchsia-900 border-fuchsia-100",
+                deepDive: {
+                    title: "The Value Group",
+                    icon: "bar-chart-horizontal",
+                    color: "bg-fuchsia-100 text-fuchsia-700",
+                    customHtml: `
+                        <div class="space-y-6 fade-in pb-2">
+                            <div class="bg-fuchsia-600 text-white p-5 rounded-xl shadow-md">
+                                <h4 class="font-extrabold text-sm uppercase tracking-widest mb-3 flex items-center gap-2 text-fuchsia-100"><i data-lucide="key" class="w-5 h-5"></i> Problem 37 Statement</h4>
+                                <p class="text-sm leading-relaxed text-fuchsia-50 mb-3">Let <strong>v</strong> : k<sup>&times;</sup> &rarr; &#x211D; be a valuation. Show that the image of v is an additive subgroup of &#x211D;. This is sometimes called the <strong>value group</strong> of the valuation v.</p>
+                                <p class="text-sm leading-relaxed text-fuchsia-50">What is the value group of the <i>p</i>-adic valuation?</p>
+                            </div>
+                            
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-fuchsia-50 border border-fuchsia-200 rounded-xl p-5 shadow-sm text-slate-700">
+                                    <h5 class="font-bold text-fuchsia-800 mb-2 flex items-center gap-2"><i data-lucide="message-square" class="w-4 h-4"></i> The Problem in Plain English</h5>
+                                    <p class="text-sm mb-3">The problem asks us to look at all the possible answers a valuation function can spit out. This complete collection of all possible outputs is mathematically called the <strong>"Image"</strong> (or the value group).</p>
+                                    <p class="text-sm mb-3">We need to prove that this collection forms an <strong>"additive subgroup"</strong>. In plain English, that just means proving the collection of outputs obeys three specific rules:</p>
+                                    <ul class="text-sm space-y-1.5 list-disc list-inside ml-2">
+                                        <li><strong>Rule 1 (Zero):</strong> The number 0 must be one of the possible outputs.</li>
+                                        <li><strong>Rule 2 (Negation):</strong> If a number is an output, its negative must also be a possible output.</li>
+                                        <li><strong>Rule 3 (Addition):</strong> If you take any two outputs and add them together, the result must also be a valid output.</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-fuchsia-50 border border-fuchsia-200 rounded-xl p-5 shadow-sm text-slate-700">
+                                    <h5 class="font-bold text-fuchsia-800 mb-2 flex items-center gap-2"><i data-lucide="book" class="w-4 h-4"></i> What is a Value Group?</h5>
+                                    <p class="text-sm mb-3">A valuation v(x) takes numbers from a field (like fractions) and outputs real numbers (like exponents). The "Image" of the valuation is simply the collection of all possible outputs it can produce.</p>
+                                    <p class="text-sm">To prove this collection is an "additive subgroup", we just have to prove three simple things about these outputs: they contain 0, you can negate them, and you can add them together to get another valid output.</p>
+                                </div>
+                            </div>
+
+                            <!-- Value Group Visualizer -->
+                            <div class="bg-slate-50 p-1.5 rounded-2xl border border-slate-200 shadow-inner mt-6">
+                                <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-100">
+                                    <div class="text-[10px] font-bold text-fuchsia-600 uppercase tracking-widest mb-4 flex items-center gap-2 justify-center border-b border-slate-100 pb-3">
+                                        <i data-lucide="bar-chart-horizontal" class="w-4 h-4"></i> <i>p</i>-adic Value Group Visualizer
+                                    </div>
+                                    <p class="text-xs text-center text-slate-500 mb-6 max-w-md mx-auto">No matter what rational number you enter, watch how its <i>p</i>-adic valuation always lands perfectly on a whole integer (&#x2124;).</p>
+                                    
+                                    <div class="flex flex-col md:flex-row items-center justify-center gap-4 mb-8">
+                                        <div class="flex flex-col gap-1 w-24">
+                                            <input type="number" id="p37-n" value="7" class="text-center border-2 border-slate-300 rounded outline-none focus:border-fuchsia-400 font-mono font-bold text-base py-1 shadow-sm transition-colors">
+                                            <div class="h-0.5 bg-slate-400 rounded-full"></div>
+                                            <input type="number" id="p37-d" value="25" class="text-center border-2 border-slate-300 rounded outline-none focus:border-fuchsia-400 font-mono font-bold text-base py-1 shadow-sm transition-colors">
+                                        </div>
+                                        <div class="flex flex-col bg-fuchsia-50 p-2 rounded-lg border border-fuchsia-200 md:ml-4">
+                                            <label class="text-[10px] font-bold text-fuchsia-500 uppercase mb-1 text-center">Prime (p)</label>
+                                            <select id="p37-p" class="border-2 border-fuchsia-300 rounded-lg px-3 py-1 outline-none focus:border-fuchsia-500 bg-white text-fuchsia-800 font-bold font-mono text-sm shadow-sm cursor-pointer transition-colors w-20 text-center">
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="5" selected>5</option>
+                                                <option value="7">7</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- The Discrete Number Line -->
+                                    <div class="relative w-full max-w-lg mx-auto py-8">
+                                        <!-- Line -->
+                                        <div class="absolute top-1/2 left-0 w-full h-1 bg-slate-200 -translate-y-1/2 rounded-full"></div>
+                                        <div class="absolute top-1/2 left-1/2 w-1 h-4 bg-slate-400 -translate-y-1/2 -translate-x-1/2"></div>
+                                        
+                                        <!-- Dynamic Plot Point -->
+                                        <div id="p37-plot" class="absolute top-1/2 left-1/2 w-5 h-5 bg-fuchsia-500 rounded-full -translate-y-1/2 -translate-x-1/2 shadow-md border-2 border-white transition-all duration-500 ease-out z-10 flex items-center justify-center">
+                                            <div class="absolute -top-7 text-xs font-bold text-fuchsia-600 bg-fuchsia-50 px-2 py-0.5 rounded border border-fuchsia-200 shadow-sm whitespace-nowrap" id="p37-label">v=0</div>
+                                        </div>
+
+                                        <!-- Ticks (from -5 to +5 conceptually, spacing evenly) -->
+                                        <div class="w-full flex justify-between px-2 absolute top-1/2 -translate-y-1/2 text-[10px] font-mono font-bold text-slate-400">
+                                            <div class="flex flex-col items-center"><div class="h-3 w-0.5 bg-slate-300 mb-1"></div>-5</div>
+                                            <div class="flex flex-col items-center"><div class="h-3 w-0.5 bg-slate-300 mb-1"></div>-4</div>
+                                            <div class="flex flex-col items-center"><div class="h-3 w-0.5 bg-slate-300 mb-1"></div>-3</div>
+                                            <div class="flex flex-col items-center"><div class="h-3 w-0.5 bg-slate-300 mb-1"></div>-2</div>
+                                            <div class="flex flex-col items-center"><div class="h-3 w-0.5 bg-slate-300 mb-1"></div>-1</div>
+                                            <div class="flex flex-col items-center"><div class="h-3 w-0.5 bg-slate-400 mb-1"></div>0</div>
+                                            <div class="flex flex-col items-center"><div class="h-3 w-0.5 bg-slate-300 mb-1"></div>1</div>
+                                            <div class="flex flex-col items-center"><div class="h-3 w-0.5 bg-slate-300 mb-1"></div>2</div>
+                                            <div class="flex flex-col items-center"><div class="h-3 w-0.5 bg-slate-300 mb-1"></div>3</div>
+                                            <div class="flex flex-col items-center"><div class="h-3 w-0.5 bg-slate-300 mb-1"></div>4</div>
+                                            <div class="flex flex-col items-center"><div class="h-3 w-0.5 bg-slate-300 mb-1"></div>5</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-8 text-center text-sm text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-200 shadow-sm">
+                                        Because prime factorizations only yield integer counts (you can't have "half a factor" of <i>p</i>), the image of the <i>p</i>-adic valuation is exactly the discrete group of integers: <strong>&#x2124;</strong>.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                setupInteraction: () => {
+                    function getVp(n, p) {
+                        if (n === 0) return Infinity;
+                        let v = 0; let temp = Math.abs(n);
+                        while (temp % p === 0) { v++; temp /= p; }
+                        return v;
+                    }
+
+                    const nIn = document.getElementById('p37-n');
+                    const dIn = document.getElementById('p37-d');
+                    const pSel = document.getElementById('p37-p');
+                    const plot = document.getElementById('p37-plot');
+                    const label = document.getElementById('p37-label');
+
+                    function updatePlot() {
+                        if(!nIn || !dIn || !pSel || !plot) return;
+                        
+                        let n = parseInt(nIn.value);
+                        let d = parseInt(dIn.value);
+                        let p = parseInt(pSel.value);
+                        
+                        if(isNaN(n) || isNaN(d) || d===0) return;
+
+                        let v = (n === 0) ? Infinity : getVp(n, p) - getVp(d, p);
+                        
+                        if(v === Infinity) {
+                            label.innerHTML = `v = &infin;`;
+                            plot.style.left = `98%`; 
+                        } else {
+                            // Map -5 to 0%, 0 to 50%, +5 to 100%
+                            let clampedV = Math.max(-5, Math.min(5, v));
+                            let leftPct = ((clampedV + 5) / 10) * 100;
+                            
+                            // Adjust slightly for padding
+                            if(leftPct <= 0) leftPct = 2;
+                            if(leftPct >= 100) leftPct = 98;
+                            
+                            plot.style.left = `${leftPct}%`;
+                            
+                            if (v > 5 || v < -5) {
+                                label.innerText = `v = ${v} (Off scale)`;
+                            } else {
+                                label.innerText = `v = ${v}`;
+                            }
+                        }
+                    }
+
+                    if(nIn && dIn && pSel) {
+                        nIn.addEventListener('input', updatePlot);
+                        dIn.addEventListener('input', updatePlot);
+                        pSel.addEventListener('change', updatePlot);
+                        updatePlot();
+                    }
+                },
+                steps: [
+                    { comment: "// Proof that Im(v) is an additive subgroup of R", text: "Let \\( I = \\left\\{ v(x) \\mid x \\in k^{\\times} \\right\\} \\). To be an additive subgroup, it must contain 0, be closed under negation, and be closed under addition.", math: "\\[ \\mathrm{Im}(v) = I \\subseteq \\mathbb{R} \\]" },
+                    { text: "1. Show it contains 0. We know \\( v(1) = v(1 \\cdot 1) = v(1) + v(1) \\). Subtracting \\( v(1) \\) from both sides gives:", math: "\\[ v(1) = 0 \\implies 0 \\in I \\]" },
+                    { text: "2. Show closure under negation. Let \\( a \\in I \\), so \\( a = v(x) \\) for some \\( x \\in k^{\\times} \\). We know \\( v(x \\cdot x^{-1}) = v(1) = 0 \\). By the Product Rule:", math: "\\[ v(x) + v(x^{-1}) = 0 \\implies v(x^{-1}) = -v(x) = -a \\implies -a \\in I \\]" },
+                    { text: "3. Show closure under addition. Let \\( a, b \\in I \\), so \\( a = v(x) \\) and \\( b = v(y) \\). By the Product Rule, \\( v(x \\cdot y) = v(x) + v(y) \\):", math: "\\[ v(x \\cdot y) = a + b \\implies a + b \\in I \\]" },
+                    { comment: "// What is the value group of the p-adic valuation?", text: "For the \\( p \\)-adic valuation on \\( \\mathbb{Q} \\), every non-zero rational \\( x = p^n(a/b) \\) maps to its integer exponent \\( n \\). Thus, the value group is exactly the integers.", math: "\\[ \\mathrm{Im}(v_p) = \\mathbb{Z} \\quad \\blacksquare \\]", final: true }
+                ]
+            },
+
+            // --- PROBLEM 38 ---
+            {
+                id: 'prob-38',
+                title: 'Problem 38',
+                shortDesc: 'The Macro-Micro Paradox',
+                filename: 'powers_are_small.tex',
+                headerColor: "bg-rose-50 text-rose-900 border-rose-100",
+                deepDive: {
+                    title: "The Macro-Micro Paradox",
+                    icon: "microscope",
+                    color: "bg-rose-100 text-rose-700",
+                    customHtml: `
+                        <div class="space-y-6 fade-in pb-2">
+                            <div class="bg-rose-600 text-white p-5 rounded-xl shadow-md">
+                                <h4 class="font-extrabold text-sm uppercase tracking-widest mb-3 flex items-center gap-2 text-rose-100"><i data-lucide="key" class="w-5 h-5"></i> Problem 38 Statement</h4>
+                                <p class="text-sm leading-relaxed text-rose-50 mb-3">Show that <strong>|p<sup>n</sup>|<sub>p</sub> &rarr; 0</strong> when <strong>n &rarr; &infin;</strong>, so that high powers of <i>p</i> are small with respect to the <i>p</i>-adic absolute value.</p>
+                            </div>
+                            
+                            <div class="bg-rose-50 border border-rose-200 rounded-xl p-5 shadow-sm text-slate-700">
+                                <h5 class="font-bold text-rose-800 mb-2 flex items-center gap-2"><i data-lucide="eye" class="w-4 h-4"></i> Intuition Check</h5>
+                                <p class="text-sm">In our standard real-world geometry, multiplying a number by itself makes it explode in size. But in <i>p</i>-adic geometry, multiplying a number by <i>p</i> increases its <i>divisibility</i>, which pushes it closer and closer to zero. It is an inverted universe!</p>
+                            </div>
+
+                            <!-- Macro Micro Interactive -->
+                            <div class="bg-slate-900 rounded-2xl border border-slate-700 shadow-xl overflow-hidden mt-6 p-6">
+                                <div class="text-[10px] font-bold text-rose-400 uppercase tracking-widest mb-6 flex items-center gap-2 justify-center pb-3 border-b border-slate-700">
+                                    <i data-lucide="sliders-horizontal" class="w-4 h-4"></i> The Magnifying Glass (Base p=2)
+                                </div>
+                                
+                                <div class="flex flex-col items-center justify-center gap-4 mb-8">
+                                    <label class="text-xs text-slate-400 font-bold uppercase tracking-widest">Adjust Power (n)</label>
+                                    <input type="range" id="p38-slider" min="0" max="10" step="1" value="0" class="w-full max-w-sm accent-rose-500 cursor-pointer">
+                                    <div class="font-mono text-2xl text-white font-bold bg-slate-800 px-4 py-1 rounded-lg border border-slate-700">n = <span id="p38-n-val">0</span></div>
+                                </div>
+
+                                <div class="grid md:grid-cols-2 gap-6">
+                                    <!-- Standard Size -->
+                                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                                        <div class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-2 flex justify-between">
+                                            <span>Standard World</span>
+                                            <span>Size: |2<sup>n</sup>|<sub>&infin;</sub></span>
+                                        </div>
+                                        <div class="font-mono text-xl text-rose-300 font-bold mb-3" id="p38-real-text">1</div>
+                                        <div class="w-full bg-slate-900 h-4 rounded-full overflow-hidden">
+                                            <div id="p38-real-bar" class="h-full bg-gradient-to-r from-rose-500 to-rose-400 transition-all duration-300" style="width: 0%;"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- P-adic Size -->
+                                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                                        <div class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-2 flex justify-between">
+                                            <span><i>p</i>-adic World</span>
+                                            <span>Size: |2<sup>n</sup>|<sub>2</sub></span>
+                                        </div>
+                                        <div class="font-mono text-xl text-emerald-300 font-bold mb-3" id="p38-padic-text">1</div>
+                                        <div class="w-full bg-slate-900 h-4 rounded-full overflow-hidden">
+                                            <div id="p38-padic-bar" class="h-full bg-gradient-to-l from-emerald-500 to-emerald-400 transition-all duration-300 ml-auto" style="width: 100%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                setupInteraction: () => {
+                    const slider = document.getElementById('p38-slider');
+                    const nVal = document.getElementById('p38-n-val');
+                    const realText = document.getElementById('p38-real-text');
+                    const realBar = document.getElementById('p38-real-bar');
+                    const padicText = document.getElementById('p38-padic-text');
+                    const padicBar = document.getElementById('p38-padic-bar');
+
+                    function updateBars() {
+                        if(!slider) return;
+                        let n = parseInt(slider.value);
+                        nVal.innerText = n;
+
+                        let realSize = Math.pow(2, n);
+                        let padicSize = Math.pow(2, -n);
+
+                        realText.innerText = realSize;
+                        
+                        if (n === 0) {
+                            padicText.innerText = "1";
+                        } else {
+                            padicText.innerText = `1/${realSize}`;
+                        }
+
+                        // Bar calculations (Max n=10, max real = 1024, max padic = 1)
+                        let realPct = (realSize / 1024) * 100;
+                        realBar.style.width = `${Math.max(realPct, 1)}%`;
+
+                        let padicPct = (padicSize / 1) * 100;
+                        padicBar.style.width = `${padicPct}%`;
+                    }
+
+                    if (slider) {
+                        slider.addEventListener('input', updateBars);
+                        updateBars();
+                    }
+                },
+                steps: [
+                    { comment: "// Evaluating the limit of |p^n|_p as n goes to infinity", text: "We want to evaluate the limit of the <i>p</i>-adic distance of high powers of <i>p</i>.", math: "\\[ \\lim_{n \\to \\infty} |p^n|_p \\]" },
+                    { text: "By definition, the valuation (the exponent) of \\( p^n \\) is exactly \\( n \\).", math: "\\[ v_p(p^n) = n \\]" },
+                    { text: "Applying the definition of the <i>p</i>-adic absolute value (Def 2.1.4):", math: "\\[ |p^n|_p = p^{-v_p(p^n)} = p^{-n} = \\frac{1}{p^n} \\]" },
+                    { text: "Since \\( p > 1 \\), the sequence \\( 1/p^n \\) converges to 0 in the standard real numbers as \\( n \\to \\infty \\). Thus, high powers of \\( p \\) are infinitely small.", math: "\\[ \\lim_{n \\to \\infty} \\frac{1}{p^n} = 0 \\quad \\blacksquare \\]", final: true }
+                ]
+            },
+
+            // --- PROBLEM 39 ---
+            {
+                id: 'prob-39',
+                title: 'Problem 39',
+                shortDesc: 'Choosing the Base c',
+                filename: 'choosing_base_c.tex',
+                headerColor: "bg-teal-50 text-teal-900 border-teal-100",
+                deepDive: {
+                    title: "Choosing the Base <i>c</i>",
+                    icon: "scaling",
+                    color: "bg-teal-100 text-teal-700",
+                    customHtml: `
+                        <div class="space-y-6 fade-in pb-2">
+                            <div class="bg-teal-600 text-white p-5 rounded-xl shadow-md">
+                                <h4 class="font-extrabold text-sm uppercase tracking-widest mb-3 flex items-center gap-2 text-teal-100"><i data-lucide="key" class="w-5 h-5"></i> Problem 39 Statement</h4>
+                                <p class="text-sm leading-relaxed text-teal-50 mb-3">Show that for any real number c > 1, the equation <strong>|x|<sub>c</sub> = c<sup>-v<sub>p</sub>(x)</sup></strong> defines a non-archimedean absolute value on &#x211A;. Make a conjecture about the relation between this absolute value and the standard |x|<sub>p</sub>.</p>
+                                <p class="text-sm leading-relaxed text-teal-50">Make a conjecture about why we specifically chose <strong>c = p</strong> for the standard <i>p</i>-adic absolute value.</p>
+                            </div>
+                            
+                            <!-- INFOGRAPHIC SECTION -->
+                            <div class="bg-white border border-teal-200 rounded-xl shadow-sm overflow-hidden mt-6">
+                                <div class="bg-teal-50 px-4 py-3 border-b border-teal-100 font-bold text-teal-800 flex items-center gap-2">
+                                    <i data-lucide="help-circle" class="w-5 h-5 text-teal-600"></i> Making Sense of Base c
+                                </div>
+                                <div class="p-5 space-y-6">
+                                    <!-- Step 1: The Setup -->
+                                    <div>
+                                        <h6 class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">1. The Setup (What are we doing?)</h6>
+                                        <div class="grid md:grid-cols-2 gap-4">
+                                            <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-sm">
+                                                <div class="font-bold text-slate-700 mb-1">Standard Distance</div>
+                                                Normally, we use the prime <code class="text-teal-600 font-bold">p</code> as the base:
+                                                <div class="mt-2 font-mono text-center bg-white border border-slate-200 py-2 rounded shadow-sm text-slate-600">|x|<sub>p</sub> = p<sup>-v<sub>p</sub>(x)</sup></div>
+                                            </div>
+                                            <div class="bg-teal-50 p-3 rounded-lg border border-teal-200 text-sm">
+                                                <div class="font-bold text-teal-800 mb-1">Custom Distance</div>
+                                                What if we use a different base <code class="text-teal-600 font-bold">c</code>?
+                                                <div class="mt-2 font-mono text-center bg-white border border-teal-200 py-2 rounded shadow-sm text-teal-700 font-bold">|x|<sub>c</sub> = c<sup>-v<sub>p</sub>(x)</sup></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Step 2: The Link -->
+                                    <div>
+                                        <h6 class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">2. The Link (The Scaling Exponent)</h6>
+                                        <p class="text-sm text-slate-600 mb-3">Because of algebra, we can write any custom base <code class="font-bold text-slate-800">c</code> as our prime <code class="font-bold text-slate-800">p</code> raised to some power <code class="font-bold text-slate-800">s</code> (e.g., if p=2 and c=8, then s=3 since 8=2³). Substituting this into our formula links the two distances:</p>
+                                        <div class="bg-slate-800 text-white p-4 rounded-xl flex flex-wrap items-center justify-center gap-4 text-sm font-mono shadow-inner">
+                                            <div class="text-center flex flex-col items-center"><span class="text-slate-400 text-[10px] block uppercase mb-1 whitespace-nowrap">Custom</span><div class="bg-slate-700 px-2 py-1 rounded">|x|<sub>c</sub></div></div>
+                                            <div class="text-slate-500">=</div>
+                                            <div class="text-center flex flex-col items-center"><span class="text-slate-400 text-[10px] block uppercase mb-1 whitespace-nowrap">Substitute base</span><div class="bg-slate-700 px-2 py-1 rounded">(p<sup>s</sup>)<sup>-v</sup></div></div>
+                                            <div class="text-slate-500">=</div>
+                                            <div class="text-center flex flex-col items-center"><span class="text-slate-400 text-[10px] block uppercase mb-1 whitespace-nowrap">Rearrange</span><div class="bg-slate-700 px-2 py-1 rounded">(p<sup>-v</sup>)<sup>s</sup></div></div>
+                                            <div class="text-teal-400 font-bold">=</div>
+                                            <div class="text-center text-teal-300 font-bold text-lg border border-teal-500/50 bg-teal-900/50 px-3 py-1.5 rounded"><span class="text-teal-500 text-[10px] block uppercase mb-1 font-sans tracking-wide">Final Link</span>(|x|<sub>p</sub>)<sup>s</sup></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Step 3: The Purpose -->
+                                    <div class="flex gap-4 items-start bg-amber-50 p-4 rounded-xl border border-amber-200">
+                                        <div class="bg-amber-100 p-2 rounded-lg shrink-0 mt-1 text-amber-600"><i data-lucide="map" class="w-6 h-6"></i></div>
+                                        <div>
+                                            <h6 class="text-sm font-bold text-amber-800 mb-1">3. The Purpose (Topological Equivalence)</h6>
+                                            <p class="text-sm text-amber-900/80 leading-relaxed">Imagine a map of a city. Whether you measure distances in <strong>miles</strong> or <strong>kilometers</strong>, the <em>shape</em> of the city doesn't change. The coffee shop is still next to the bank. Because the custom distance is just the standard distance raised to a power, they group numbers exactly the same way. Mathematicians call them "topologically equivalent."</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Step 4: Why p? -->
+                                    <div class="flex gap-4 items-start bg-indigo-50 p-4 rounded-xl border border-indigo-200">
+                                        <div class="bg-indigo-100 p-2 rounded-lg shrink-0 mt-1 text-indigo-600"><i data-lucide="scale" class="w-6 h-6"></i></div>
+                                        <div>
+                                            <h6 class="text-sm font-bold text-indigo-800 mb-1">4. Why choose c = p? (The Product Formula)</h6>
+                                            <p class="text-sm text-indigo-900/80 leading-relaxed">If any base <i>c</i> works, why force <i>c = p</i>? It is purely for <strong>normalization</strong> later in number theory. There is a beautiful rule: if you multiply a fraction's standard real distance by <em>all</em> of its p-adic distances, they perfectly cancel out to exactly <strong>1</strong>. But this magic cancellation only works if every p-adic distance uses exactly its own prime <i>p</i> as the base.</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Step 5: Why Logarithms? -->
+                                    <div class="flex gap-4 items-start bg-emerald-50 p-4 rounded-xl border border-emerald-200">
+                                        <div class="bg-emerald-100 p-2 rounded-lg shrink-0 mt-1 text-emerald-600"><i data-lucide="calculator" class="w-6 h-6"></i></div>
+                                        <div>
+                                            <h6 class="text-sm font-bold text-emerald-800 mb-1">5. Why Logarithms? (The Math Behind 's')</h6>
+                                            <p class="text-sm text-emerald-900/80 leading-relaxed">In the Equivalence Engine below, you will see formulas like <strong>s = log<sub>p</sub>(c)</strong>. Why do we need logarithms? Recall our goal from Step 2: we need to find the magic scaling exponent <i>s</i> that links our prime base to our custom base (<strong class="font-mono text-emerald-700 bg-emerald-200/50 px-1 rounded border border-emerald-300">p<sup>s</sup> = c</strong>). A logarithm is simply the mathematical tool designed to isolate that exact missing exponent. It literally asks: <em>"To what power must I raise <strong>p</strong> to yield <strong>c</strong>?"</em></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Enhanced Base C Explorer -->
+                            <div class="bg-slate-50 p-1.5 rounded-2xl border border-slate-200 shadow-inner mt-6">
+                                <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-100">
+                                    <div class="text-[10px] font-bold text-teal-600 uppercase tracking-widest mb-4 flex items-center gap-2 justify-center border-b border-slate-100 pb-3">
+                                        <i data-lucide="cpu" class="w-4 h-4"></i> The Equivalence Engine
+                                    </div>
+                                    <p class="text-xs text-center text-slate-500 mb-6 max-w-md mx-auto">Input a number and watch how the Scaling Exponent (<code class="font-bold text-teal-600">s</code>) acts as a bi-directional mathematical bridge between the two distance formulas.</p>
+                                    
+                                    <div class="flex flex-wrap justify-center gap-6 mb-6">
+                                        <div class="flex flex-col gap-1 w-24">
+                                            <label class="text-[9px] font-bold text-slate-500 uppercase text-center">Number (x)</label>
+                                            <input type="number" id="p39-x" value="25" class="text-center border-2 border-slate-300 rounded outline-none focus:border-teal-400 font-mono font-bold py-1 shadow-sm transition-colors">
+                                        </div>
+                                        <div class="flex flex-col gap-1 w-24">
+                                            <label class="text-[9px] font-bold text-slate-500 uppercase text-center">Prime (p)</label>
+                                            <select id="p39-p" class="text-center border-2 border-slate-300 rounded outline-none focus:border-teal-400 font-mono font-bold py-1 shadow-sm cursor-pointer text-slate-700">
+                                                <option value="2">2</option>
+                                                <option value="5" selected>5</option>
+                                                <option value="7">7</option>
+                                            </select>
+                                        </div>
+                                        <div class="flex flex-col gap-1 w-24">
+                                            <label class="text-[9px] font-bold text-teal-600 uppercase text-center">Custom Base (c)</label>
+                                            <input type="number" id="p39-c" value="10" step="0.1" min="1.1" class="text-center border-2 border-teal-300 rounded outline-none focus:border-teal-500 font-mono font-bold py-1 shadow-sm transition-colors text-teal-700 bg-teal-50/30">
+                                        </div>
+                                    </div>
+
+                                    <!-- The Bi-directional Pipeline -->
+                                    <div class="flex flex-col gap-4 mt-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                        <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest text-center mb-2">Bi-Directional Conversion</div>
+                                        
+                                        <!-- Direction 1: Standard to Custom -->
+                                        <div class="flex flex-col md:flex-row items-stretch justify-center gap-2 relative">
+                                            <!-- Standard -->
+                                            <div class="flex-1 bg-white p-3 rounded-lg border border-slate-200 flex flex-col items-center justify-center shadow-sm">
+                                                <div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Standard |x|<sub>p</sub></div>
+                                                <div class="font-mono text-xl text-slate-700 font-bold" id="p39-out-p-1">-</div>
+                                            </div>
+                                            <!-- Bridge -->
+                                            <div class="flex flex-col items-center justify-center shrink-0 px-2 py-1">
+                                                <div class="bg-teal-100 border border-teal-300 text-teal-800 px-3 py-1.5 rounded-lg font-mono text-xs shadow-sm flex flex-col items-center w-36">
+                                                    <span class="text-[8px] uppercase tracking-wide opacity-80">Power s</span>
+                                                    <span class="font-bold text-lg leading-none mt-1">^<span id="p39-out-s1">-</span></span>
+                                                    <div class="text-[9px] mt-2 pt-1.5 border-t border-teal-200/80 w-full text-center text-teal-700/90 font-sans leading-tight">
+                                                        <strong>Derived via:</strong><br>
+                                                        s = log<sub>p</sub>(c)<br>
+                                                        <span id="p39-math-s1" class="font-mono text-[10px] font-semibold"></span>
+                                                    </div>
+                                                    <i data-lucide="arrow-right" class="w-4 h-4 mt-1.5 hidden md:block text-teal-500"></i>
+                                                    <i data-lucide="arrow-down" class="w-4 h-4 mt-1.5 md:hidden text-teal-500"></i>
+                                                </div>
+                                            </div>
+                                            <!-- Custom -->
+                                            <div class="flex-1 bg-teal-50 p-3 rounded-lg border border-teal-200 flex flex-col items-center justify-center shadow-sm">
+                                                <div class="text-[9px] font-bold text-teal-600 uppercase tracking-widest mb-1">Custom |x|<sub>c</sub></div>
+                                                <div class="font-mono text-xl text-teal-800 font-bold" id="p39-out-c-1">-</div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Direction 2: Custom to Standard -->
+                                        <div class="flex flex-col md:flex-row-reverse items-stretch justify-center gap-2 relative">
+                                            <!-- Custom -->
+                                            <div class="flex-1 bg-teal-50 p-3 rounded-lg border border-teal-200 flex flex-col items-center justify-center shadow-sm">
+                                                <div class="text-[9px] font-bold text-teal-600 uppercase tracking-widest mb-1">Custom |x|<sub>c</sub></div>
+                                                <div class="font-mono text-xl text-teal-800 font-bold" id="p39-out-c-2">-</div>
+                                            </div>
+                                            <!-- Bridge -->
+                                            <div class="flex flex-col items-center justify-center shrink-0 px-2 py-1">
+                                                <div class="bg-indigo-100 border border-indigo-300 text-indigo-800 px-3 py-1.5 rounded-lg font-mono text-xs shadow-sm flex flex-col items-center w-36">
+                                                    <span class="text-[8px] uppercase tracking-wide opacity-80">Power 1/s</span>
+                                                    <span class="font-bold text-lg leading-none mt-1">^<span id="p39-out-s2">-</span></span>
+                                                    <div class="text-[9px] mt-2 pt-1.5 border-t border-indigo-200/80 w-full text-center text-indigo-700/90 font-sans leading-tight">
+                                                        <strong>Derived via:</strong><br>
+                                                        1/s = log<sub>c</sub>(p)<br>
+                                                        <span id="p39-math-s2" class="font-mono text-[10px] font-semibold"></span>
+                                                    </div>
+                                                    <i data-lucide="arrow-left" class="w-4 h-4 mt-1.5 hidden md:block text-indigo-500"></i>
+                                                    <i data-lucide="arrow-down" class="w-4 h-4 mt-1.5 md:hidden text-indigo-500"></i>
+                                                </div>
+                                            </div>
+                                            <!-- Standard -->
+                                            <div class="flex-1 bg-white p-3 rounded-lg border border-slate-200 flex flex-col items-center justify-center shadow-sm">
+                                                <div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Standard |x|<sub>p</sub></div>
+                                                <div class="font-mono text-xl text-slate-700 font-bold" id="p39-out-p-2">-</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Live Verification -->
+                                    <div class="mt-6 bg-slate-800 text-white p-4 rounded-xl border border-slate-700 shadow-inner overflow-hidden">
+                                        <div class="text-[10px] font-bold text-teal-400 uppercase tracking-widest mb-3 flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4"></i> Live Verification</div>
+                                        <div class="grid md:grid-cols-2 gap-4">
+                                            <div class="font-mono text-sm text-slate-300 flex items-center justify-center flex-wrap bg-slate-900 p-2.5 rounded-lg border border-slate-700/50">
+                                                <span class="text-[9px] uppercase tracking-wider text-slate-500 mr-2 hidden lg:inline">Std&rarr;Cust:</span>
+                                                (<span id="p39-verify-p1" class="text-white font-bold"></span>)<sup id="p39-verify-s1" class="text-teal-300 font-bold -ml-0.5"></sup> <span class="text-slate-500 mx-1">=</span> <span id="p39-verify-c1" class="text-white font-bold"></span>
+                                            </div>
+                                            <div class="font-mono text-sm text-slate-300 flex items-center justify-center flex-wrap bg-slate-900 p-2.5 rounded-lg border border-slate-700/50">
+                                                <span class="text-[9px] uppercase tracking-wider text-slate-500 mr-2 hidden lg:inline">Cust&rarr;Std:</span>
+                                                (<span id="p39-verify-c2" class="text-white font-bold"></span>)<sup id="p39-verify-s2" class="text-indigo-300 font-bold -ml-0.5"></sup> <span class="text-slate-500 mx-1">=</span> <span id="p39-verify-p2" class="text-white font-bold"></span>
+                                            </div>
+                                        </div>
+                                        <p class="text-xs text-slate-400 mt-4 leading-relaxed border-t border-slate-700 pt-3">Because we can seamlessly convert back and forth using just an exponent, the custom distance and standard distance preserve the exact same fundamental geometry. They are fully equivalent.</p>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                setupInteraction: () => {
+                    function getVp(n, p) {
+                        if (n === 0) return Infinity;
+                        let v = 0; let temp = Math.abs(n);
+                        while (temp % p === 0) { v++; temp /= p; }
+                        return v;
+                    }
+
+                    const xIn = document.getElementById('p39-x');
+                    const pSel = document.getElementById('p39-p');
+                    const cIn = document.getElementById('p39-c');
+                    
+                    // Row 1
+                    const outP1 = document.getElementById('p39-out-p-1');
+                    const outC1 = document.getElementById('p39-out-c-1');
+                    const outS1 = document.getElementById('p39-out-s1');
+                    const mathS1 = document.getElementById('p39-math-s1');
+                    
+                    // Row 2
+                    const outP2 = document.getElementById('p39-out-p-2');
+                    const outC2 = document.getElementById('p39-out-c-2');
+                    const outS2 = document.getElementById('p39-out-s2');
+                    const mathS2 = document.getElementById('p39-math-s2');
+                    
+                    // Verifications
+                    const verP1 = document.getElementById('p39-verify-p1');
+                    const verS1 = document.getElementById('p39-verify-s1');
+                    const verC1 = document.getElementById('p39-verify-c1');
+                    
+                    const verP2 = document.getElementById('p39-verify-p2');
+                    const verS2 = document.getElementById('p39-verify-s2');
+                    const verC2 = document.getElementById('p39-verify-c2');
+
+                    function calcBases() {
+                        if (!xIn || !pSel || !cIn) return;
+                        
+                        let x = parseInt(xIn.value);
+                        let p = parseInt(pSel.value);
+                        let c = parseFloat(cIn.value);
+                        
+                        if(isNaN(x) || isNaN(c) || c <= 1) return;
+
+                        if (x === 0) {
+                            let outs = [outP1, outC1, outP2, outC2, verP1, verC1, verP2, verC2];
+                            outs.forEach(el => el && (el.innerText = "0"));
+                            if(outS1) outS1.innerText = "s";
+                            if(outS2) outS2.innerText = "1/s";
+                            if(verS1) verS1.innerText = "s";
+                            if(verS2) verS2.innerText = "1/s";
+                            if(mathS1) mathS1.innerHTML = `log<sub>${p}</sub>(${c})`;
+                            if(mathS2) mathS2.innerHTML = `log<sub>${c}</sub>(${p})`;
+                            return;
+                        }
+
+                        let v = getVp(x, p);
+                        let valP = Math.pow(p, -v);
+                        let valC = Math.pow(c, -v);
+                        let s = Math.log(c) / Math.log(p);
+                        let invS = 1 / s;
+
+                        // Formatting
+                        let formattedP = v === 0 ? "1" : (v > 0 ? `1/${Math.pow(p, v)}` : `${valP}`);
+                        let formattedC = Number.isInteger(valC) ? valC : valC.toFixed(4);
+                        let formattedS = s.toFixed(3);
+                        let formattedInvS = invS.toFixed(3);
+
+                        // Populate rows
+                        if(outP1) outP1.innerText = formattedP;
+                        if(outC1) outC1.innerText = formattedC;
+                        if(outS1) outS1.innerText = formattedS;
+                        
+                        if(outP2) outP2.innerText = formattedP;
+                        if(outC2) outC2.innerText = formattedC;
+                        if(outS2) outS2.innerText = formattedInvS;
+                        
+                        // Math formulas
+                        if(mathS1) mathS1.innerHTML = `log<sub>${p}</sub>(${c})`;
+                        if(mathS2) mathS2.innerHTML = `log<sub>${c}</sub>(${p})`;
+                        
+                        // Verification Logic
+                        let decP = valP === 1 ? "1" : valP.toFixed(4);
+                        let finalVerP = Number.isInteger(valP) ? valP : decP;
+                        
+                        if(verP1) verP1.innerText = finalVerP;
+                        if(verS1) verS1.innerText = formattedS;
+                        if(verC1) verC1.innerText = formattedC;
+                        
+                        if(verC2) verC2.innerText = formattedC;
+                        if(verS2) verS2.innerText = formattedInvS;
+                        if(verP2) verP2.innerText = finalVerP;
+                    }
+
+                    if (xIn && pSel && cIn) {
+                        xIn.addEventListener('input', calcBases);
+                        pSel.addEventListener('change', calcBases);
+                        cIn.addEventListener('input', calcBases);
+                        calcBases();
+                    }
+                },
+                steps: [
+                    { comment: "// Prove |x|_c is an absolute value", text: "Let \\( c > 1 \\). The proof that \\( |x|_c = c^{-v_p(x)} \\) is an absolute value is structurally identical to Def 2.1.4. The requirement \\( c > 1 \\) ensures that \\( c^{-v} \\) remains a strictly decreasing function, which is required to flip the \\( \\ge \\) in the Sum Rule to a \\( \\le \\) for the Triangle Inequality.", math: "\\[ c^{-(v_p(x+y))} \\le c^{-\\min(v_p(x), v_p(y))} = \\max(c^{-v_p(x)}, c^{-v_p(y)}) \\]" },
+                    { comment: "// Conjecture 1: Relation between |x|_c and |x|_p", text: "To find the relation, we rewrite base \\( c \\) as a power of base \\( p \\). Since \\( c > 1 \\), there exists a real number \\( s > 0 \\) such that \\( c = p^s \\). Specifically, \\( s = \\log_p c \\).", math: "\\[ |x|_c = (p^s)^{-v_p(x)} = (p^{-v_p(x)})^s = (|x|_p)^s \\]" },
+                    { text: "Because they are related by a simple positive exponent, they define the exact same notion of 'closeness' and the exact same Cauchy sequences. They are topologically equivalent.", math: "\\[ |x|_c \\sim |x|_p \\]" },
+                    { comment: "// Conjecture 2: Why pick c = p?", text: "Normalizing the distance by setting \\( c=p \\) ensures that \\( |p|_p = 1/p \\). Later in number theory, this precise normalization perfectly balances out standard absolute values in the global 'Product Formula' over all primes.", math: "\\[ \\prod_v |x|_v = 1 \\quad \\blacksquare \\]", final: true }
+                ]
+            },
+
+            // --- PROBLEM 40 ---
+            {
+                id: 'prob-40',
+                title: 'Problem 40',
+                shortDesc: 'The Infinity Valuation on Polynomials',
+                filename: 'infinity_valuation.tex',
+                headerColor: "bg-cyan-50 text-cyan-900 border-cyan-100",
+                deepDive: {
+                    title: "The Infinity Valuation v<sub>&infin;</sub>",
+                    icon: "function-square",
+                    color: "bg-cyan-100 text-cyan-700",
+                    customHtml: `
+                        <div class="space-y-6 fade-in pb-2">
+                            <div class="bg-cyan-600 text-white p-5 rounded-xl shadow-md">
+                                <h4 class="font-extrabold text-sm uppercase tracking-widest mb-3 flex items-center gap-2 text-cyan-100"><i data-lucide="key" class="w-5 h-5"></i> Problem 40 Statement</h4>
+                                <p class="text-sm leading-relaxed text-cyan-50 mb-3">For any polynomial <strong>f(t)</strong> &isin; F[t], we set <strong>v<sub>&infin;</sub>(f) = &minus;deg(f)</strong>.</p>
+                                <p class="text-sm leading-relaxed text-cyan-50">Check that for any f, g &isin; F[t], we have <strong>v<sub>&infin;</sub>(f&middot;g) = v<sub>&infin;</sub>(f) + v<sub>&infin;</sub>(g)</strong> and also <strong>v<sub>&infin;</sub>(f + g) &ge; min{v<sub>&infin;</sub>(f), v<sub>&infin;</sub>(g)}</strong>.</p>
+                                <p class="text-sm leading-relaxed text-cyan-200 mt-2 italic">(Is it enough to check for polynomials? Why?)</p>
+                            </div>
+                            
+                            <div class="bg-cyan-50 border border-cyan-200 rounded-xl p-5 shadow-sm text-slate-700">
+                                <h5 class="font-bold text-cyan-800 mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> The Big Picture: Leaving Rational Numbers</h5>
+                                <p class="text-sm mb-3">So far, we have only looked at normal numbers (like integers and fractions) and checked their divisibility by prime numbers. Problem 40 shows us that this entire geometric theory works on <strong>functions</strong> too!</p>
+                                <p class="text-sm">Instead of checking how divisible a number is by a prime <i>p</i>, we are looking at the "size" of a polynomial as <i>t &rarr; &infin;</i>. A polynomial's growth is dictated entirely by its highest degree. So, we define the valuation as the <strong>negative</strong> of the degree.</p>
+                            </div>
+
+                            <!-- Concrete Example -->
+                            <div class="bg-cyan-50 border border-cyan-200 rounded-xl p-5 shadow-sm text-slate-700 mt-6">
+                                <h5 class="font-bold text-cyan-800 mb-2 flex items-center gap-2"><i data-lucide="function-square" class="w-4 h-4"></i> Concrete Example</h5>
+                                <p class="text-sm mb-3">Let's calculate this for actual polynomials. Suppose we have:</p>
+                                <div class="bg-white p-3 rounded-lg border border-cyan-100 font-mono text-sm text-center mb-3 shadow-sm">
+                                    f(t) = 3t<sup>4</sup> - 2t + 1<br>
+                                    g(t) = t<sup>2</sup> + 5
+                                </div>
+                                <p class="text-sm mb-3">The highest power of <strong>f(t)</strong> is 4, meaning its degree is 4, so its valuation is <strong>v<sub>&infin;</sub>(f) = -4</strong>. The degree of <strong>g(t)</strong> is 2, so <strong>v<sub>&infin;</sub>(g) = -2</strong>.</p>
+                                <p class="text-sm">If we multiply them, <strong>f(t) &middot; g(t) = 3t<sup>6</sup> + ...</strong> The new highest degree is 6, making the valuation <strong>-6</strong>. Notice how <strong>-4 + (-2) = -6</strong>, perfectly matching the Product Rule!</p>
+                            </div>
+
+                            <!-- The Degree Engine -->
+                            <div class="bg-slate-50 p-1.5 rounded-2xl border border-slate-200 shadow-inner mt-6">
+                                <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-100">
+                                    <div class="text-[10px] font-bold text-cyan-600 uppercase tracking-widest mb-4 flex items-center gap-2 justify-center border-b border-slate-100 pb-3">
+                                        <i data-lucide="calculator" class="w-4 h-4"></i> The Degree Valuation Engine
+                                    </div>
+                                    <p class="text-xs text-center text-slate-500 mb-6 max-w-md mx-auto">Adjust the degrees of polynomials f(t) and g(t) to see how their <strong>&infin;-adic valuation</strong> reacts under multiplication and addition.</p>
+                                    
+                                    <div class="flex flex-col md:flex-row items-center justify-center gap-8 mb-8">
+                                        <!-- f(t) Controls -->
+                                        <div class="flex flex-col items-center">
+                                            <label class="text-[10px] font-bold text-slate-500 uppercase mb-2">deg( f )</label>
+                                            <input type="range" id="p40-deg-f" min="0" max="10" value="3" class="w-32 accent-cyan-500 cursor-pointer">
+                                            <div class="font-mono text-xl font-bold text-cyan-700 mt-2" id="p40-val-f">3</div>
+                                            <div class="text-xs text-slate-400 mt-1">v<sub>&infin;</sub>(f) = <span id="p40-vf" class="font-bold text-cyan-600">-3</span></div>
+                                        </div>
+                                        
+                                        <!-- g(t) Controls -->
+                                        <div class="flex flex-col items-center">
+                                            <label class="text-[10px] font-bold text-slate-500 uppercase mb-2">deg( g )</label>
+                                            <input type="range" id="p40-deg-g" min="0" max="10" value="5" class="w-32 accent-cyan-500 cursor-pointer">
+                                            <div class="font-mono text-xl font-bold text-cyan-700 mt-2" id="p40-val-g">5</div>
+                                            <div class="text-xs text-slate-400 mt-1">v<sub>&infin;</sub>(g) = <span id="p40-vg" class="font-bold text-cyan-600">-5</span></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Output Calculations -->
+                                    <div class="grid md:grid-cols-2 gap-4">
+                                        <!-- Product Rule -->
+                                        <div class="bg-slate-800 p-4 rounded-xl text-center border border-slate-700 shadow-inner">
+                                            <div class="text-[10px] font-bold text-cyan-400 uppercase tracking-widest mb-3">Product Rule</div>
+                                            <div class="font-mono text-sm text-slate-300 mb-2">v<sub>&infin;</sub>(f &middot; g)</div>
+                                            <div class="font-mono text-3xl text-white font-bold" id="p40-out-prod">-8</div>
+                                        </div>
+                                        
+                                        <!-- Sum Rule -->
+                                        <div class="bg-slate-800 p-4 rounded-xl text-center border border-slate-700 shadow-inner relative">
+                                            <div class="text-[10px] font-bold text-cyan-400 uppercase tracking-widest mb-3">Sum Rule</div>
+                                            <div class="font-mono text-sm text-slate-300 mb-2">v<sub>&infin;</sub>(f + g)</div>
+                                            <div class="font-mono text-3xl text-white font-bold" id="p40-out-sum">-3</div>
+                                            <div id="p40-sum-alert" class="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-amber-500 text-amber-950 text-[9px] font-bold uppercase px-2 py-0.5 rounded shadow-sm whitespace-nowrap hidden">
+                                                Equality Triggered
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Cancellation Toggle -->
+                                    <div id="p40-cancel-container" class="mt-6 text-center text-sm bg-amber-50 p-3 rounded-lg border border-amber-200 shadow-sm hidden flex-col items-center justify-center">
+                                        <div class="text-amber-800 font-bold mb-2 text-xs uppercase tracking-wide"><i data-lucide="alert-triangle" class="w-4 h-4 inline mb-0.5 mr-1"></i> Degrees Match!</div>
+                                        <p class="text-xs text-amber-900/80 mb-3 max-w-sm">When polynomials have the exact same degree, their leading terms might cancel out when added, dropping the total degree (and raising the valuation!).</p>
+                                        <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-1.5 rounded-md border border-amber-300 shadow-sm hover:bg-amber-100 transition-colors">
+                                            <input type="checkbox" id="p40-cancel-toggle" class="accent-amber-600 w-4 h-4">
+                                            <span class="text-xs font-bold text-amber-900">Simulate Leading Term Cancellation</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                setupInteraction: () => {
+                    const sliderF = document.getElementById('p40-deg-f');
+                    const sliderG = document.getElementById('p40-deg-g');
+                    const valF = document.getElementById('p40-val-f');
+                    const valG = document.getElementById('p40-val-g');
+                    const vfText = document.getElementById('p40-vf');
+                    const vgText = document.getElementById('p40-vg');
+                    
+                    const outProd = document.getElementById('p40-out-prod');
+                    const outSum = document.getElementById('p40-out-sum');
+                    const sumAlert = document.getElementById('p40-sum-alert');
+                    
+                    const cancelContainer = document.getElementById('p40-cancel-container');
+                    const cancelToggle = document.getElementById('p40-cancel-toggle');
+
+                    function updateEngine() {
+                        if(!sliderF || !sliderG) return;
+                        
+                        let degF = parseInt(sliderF.value);
+                        let degG = parseInt(sliderG.value);
+                        
+                        valF.innerText = degF;
+                        valG.innerText = degG;
+                        
+                        let vf = -degF;
+                        let vg = -degG;
+                        
+                        vfText.innerText = vf;
+                        vgText.innerText = vg;
+                        
+                        // Product Rule
+                        let vProd = vf + vg;
+                        outProd.innerText = vProd;
+                        
+                        // Sum Rule & Cancellation Logic
+                        if (degF === degG) {
+                            cancelContainer.classList.remove('hidden');
+                            cancelContainer.classList.add('flex');
+                            
+                            let actualDegSum = cancelToggle.checked ? Math.max(0, degF - 1) : degF;
+                            let actualVSum = -actualDegSum;
+                            outSum.innerText = actualVSum;
+                            
+                            if (cancelToggle.checked) {
+                                sumAlert.innerText = `Strict Inequality ( > ${vf} )`;
+                                sumAlert.className = "absolute -bottom-3 left-1/2 -translate-x-1/2 bg-emerald-500 text-emerald-950 text-[9px] font-bold uppercase px-2 py-0.5 rounded shadow-sm whitespace-nowrap block";
+                            } else {
+                                sumAlert.innerText = `Equality ( = ${vf} )`;
+                                sumAlert.className = "absolute -bottom-3 left-1/2 -translate-x-1/2 bg-amber-500 text-amber-950 text-[9px] font-bold uppercase px-2 py-0.5 rounded shadow-sm whitespace-nowrap block";
+                            }
+                        } else {
+                            cancelContainer.classList.add('hidden');
+                            cancelContainer.classList.remove('flex');
+                            cancelToggle.checked = false; // reset
+                            
+                            let vMin = Math.min(vf, vg);
+                            outSum.innerText = vMin;
+                            
+                            sumAlert.innerText = `Equality ( = ${vMin} )`;
+                            sumAlert.className = "absolute -bottom-3 left-1/2 -translate-x-1/2 bg-amber-500 text-amber-950 text-[9px] font-bold uppercase px-2 py-0.5 rounded shadow-sm whitespace-nowrap block";
+                        }
+                    }
+
+                    if (sliderF && sliderG && cancelToggle) {
+                        sliderF.addEventListener('input', updateEngine);
+                        sliderG.addEventListener('input', updateEngine);
+                        cancelToggle.addEventListener('change', updateEngine);
+                        updateEngine();
+                    }
+                },
+                steps: [
+                    { comment: "// Part 1: Is it enough to check for polynomials?", text: "Yes. By Problem 36, if a function \\( v \\) satisfies the valuation axioms on an integral domain (like polynomials \\( F[t] \\)), extending it via \\( v(a/b) = v(a) - v(b) \\) automatically guarantees it is a valid valuation on the field of fractions (rational functions \\( F(t) \\)).", math: "\\[ \\text{We only need to verify the axioms for } f, g \\in F[t]. \\]" },
+                    { comment: "// Part 2: Verify the Product Rule", text: "For polynomials over a field, the degree of a product is exactly the sum of the degrees.", math: "\\[ \\deg(fg) = \\deg(f) + \\deg(g) \\]" },
+                    { text: "Multiplying the entire equation by -1 perfectly matches our definition of \\( v_\\infty \\).", math: "\\[ -\\deg(fg) = -\\deg(f) + (-\\deg(g)) \\implies v_\\infty(fg) = v_\\infty(f) + v_\\infty(g) \\]" },
+                    { comment: "// Part 3: Verify the Sum Rule", text: "When adding two polynomials, the degree of the sum is at most the maximum of their individual degrees. (It could be strictly less if the leading terms cancel out!)", math: "\\[ \\deg(f+g) \\le \\max(\\deg(f), \\deg(g)) \\]" },
+                    { text: "Multiplying an inequality by -1 flips the direction. Furthermore, the negative maximum of two numbers is exactly the minimum of their negatives.", math: "\\[ -\\deg(f+g) \\ge -\\max(\\deg(f), \\deg(g)) = \\min(-\\deg(f), -\\deg(g)) \\]" },
+                    { text: "Substituting our definition of \\( v_\\infty \\) yields the exact Strong Triangle Inequality required.", math: "\\[ v_\\infty(f+g) \\ge \\min(v_\\infty(f), v_\\infty(g)) \\quad \\blacksquare \\]", final: true }
+                ]
+            },
+
+            // --- PROBLEM 41 ---
+            {
+                id: 'prob-41',
+                title: 'Problem 41',
+                shortDesc: 'Smallness in the Infinity Valuation',
+                filename: 'infinity_smallness.tex',
+                headerColor: "bg-violet-50 text-violet-900 border-violet-100",
+                deepDive: {
+                    title: "What makes a function 'Small'?",
+                    icon: "minimize",
+                    color: "bg-violet-100 text-violet-700",
+                    customHtml: `
+                        <div class="space-y-6 fade-in pb-2">
+                            <div class="bg-violet-600 text-white p-5 rounded-xl shadow-md">
+                                <h4 class="font-extrabold text-sm uppercase tracking-widest mb-3 flex items-center gap-2 text-violet-100"><i data-lucide="key" class="w-5 h-5"></i> Problem 41 Statement</h4>
+                                <p class="text-sm leading-relaxed text-violet-50 mb-3">When is a rational function <strong>"small"</strong> with respect to <strong>| |<sub>&infin;</sub></strong>?</p>
+                                <p class="text-sm leading-relaxed text-violet-50">Is a polynomial ever small?</p>
+                            </div>
+                            
+                            <div class="bg-violet-50 border border-violet-200 rounded-xl p-5 shadow-sm text-slate-700">
+                                <h5 class="font-bold text-violet-800 mb-2 flex items-center gap-2"><i data-lucide="message-square" class="w-4 h-4"></i> The Problem in Plain English</h5>
+                                <p class="text-sm mb-3">What does it mean for a number to be mathematically <strong>"small"</strong>? It simply means its absolute value (its distance from zero) is strictly less than 1. Think of normal fractions like 0.1 or 1/100.</p>
+                                <p class="text-sm mb-3">The problem asks two connected questions:</p>
+                                <ul class="text-sm space-y-1.5 list-disc list-inside ml-2">
+                                    <li>When does a full <strong>rational function</strong> (a fraction made of two polynomials) become small?</li>
+                                    <li>Is a standard <strong>polynomial</strong> ever small? (Remember, a polynomial is just a special type of rational function where the denominator is exactly 1!)</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-violet-50 border border-violet-200 rounded-xl p-5 shadow-sm text-slate-700 mt-6">
+                                <h5 class="font-bold text-violet-800 mb-2 flex items-center gap-2"><i data-lucide="line-chart" class="w-4 h-4"></i> The Calculus Connection</h5>
+                                <p class="text-sm">This perfectly mirrors the concept of limits at infinity in Calculus! A rational function is "small" under this metric under the exact same conditions that its limit approaches 0 as <i>t &rarr; &infin;</i> (i.e., the denominator outgrows the numerator).</p>
+                            </div>
+
+                            <!-- The Size Engine -->
+                            <div class="bg-slate-50 p-1.5 rounded-2xl border border-slate-200 shadow-inner mt-6">
+                                <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-100">
+                                    <div class="text-[10px] font-bold text-violet-600 uppercase tracking-widest mb-4 flex items-center gap-2 justify-center border-b border-slate-100 pb-3">
+                                        <i data-lucide="scaling" class="w-4 h-4"></i> Rational Function Size Engine
+                                    </div>
+                                    <p class="text-xs text-center text-slate-500 mb-6 max-w-md mx-auto">Adjust the degrees of the numerator and denominator to see how they fight to determine the final size of the fraction.</p>
+                                    
+                                    <div class="flex flex-col items-center justify-center gap-6 mb-8">
+                                        
+                                        <!-- Fraction Representation -->
+                                        <div class="flex items-center gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 shadow-sm w-full max-w-sm justify-center">
+                                            <div class="font-mono text-3xl text-slate-300">|</div>
+                                            <div class="flex flex-col items-center gap-2">
+                                                <div class="flex items-center gap-3">
+                                                    <span class="text-xs font-bold text-slate-500 uppercase">deg(f)</span>
+                                                    <input type="range" id="p41-deg-num" min="0" max="10" value="2" class="w-24 accent-violet-500 cursor-pointer">
+                                                    <span class="font-mono font-bold text-violet-700 w-4 text-center" id="p41-val-num">2</span>
+                                                </div>
+                                                <div class="h-0.5 bg-slate-300 w-full rounded-full"></div>
+                                                <div id="p41-den-wrapper" class="flex items-center gap-3 transition-opacity duration-300">
+                                                    <span class="text-xs font-bold text-slate-500 uppercase">deg(g)</span>
+                                                    <input type="range" id="p41-deg-den" min="0" max="10" value="4" class="w-24 accent-violet-500 cursor-pointer">
+                                                    <span class="font-mono font-bold text-violet-700 w-4 text-center" id="p41-val-den">4</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-end">
+                                                <div class="font-mono text-3xl text-slate-300">|</div>
+                                                <div class="text-xs font-bold text-slate-400 mb-1 ml-1">&infin;</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Polynomial Toggle -->
+                                        <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-1.5 rounded-md border border-violet-200 shadow-sm hover:bg-violet-50 transition-colors">
+                                            <input type="checkbox" id="p41-poly-toggle" class="accent-violet-600 w-4 h-4">
+                                            <span class="text-xs font-bold text-violet-900">Force Polynomial Mode (deg(g) = 0)</span>
+                                        </label>
+                                    </div>
+
+                                    <!-- The Expanded Engine Display -->
+                                    <div class="grid md:grid-cols-2 gap-4">
+                                        <!-- Math Side -->
+                                        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-inner flex flex-col justify-between">
+                                            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 text-center border-b border-slate-700 pb-2">1. The Valuation Math</div>
+                                            <div class="text-white font-mono text-sm space-y-2">
+                                                <div class="flex justify-between"><span>v<sub>&infin;</sub>(f) = -deg(f)</span><span id="p41-vf-val" class="font-bold text-violet-300"></span></div>
+                                                <div class="flex justify-between"><span>v<sub>&infin;</sub>(g) = -deg(g)</span><span id="p41-vg-val" class="font-bold text-violet-300"></span></div>
+                                                <div class="h-px bg-slate-700 my-1"></div>
+                                                <div class="flex justify-between text-violet-400"><span>v<sub>&infin;</sub>(f/g) = v<sub>&infin;</sub>(f) - v<sub>&infin;</sub>(g)</span><span id="p41-vtotal-val" class="font-bold"></span></div>
+                                            </div>
+                                            <div class="mt-4 bg-slate-900 p-3 rounded-lg border border-slate-700 text-center">
+                                                <div class="text-[9px] text-slate-500 uppercase tracking-wider mb-1">Absolute Value Formula</div>
+                                                <div class="text-xl font-mono text-white">|R|<sub>&infin;</sub> = e<sup id="p41-exp-final" class="text-violet-400 font-bold"></sup></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Calculus Side -->
+                                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 shadow-inner flex flex-col justify-between relative overflow-hidden">
+                                            <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 text-center border-b border-slate-200 pb-2">2. The Calculus Connection</div>
+                                            <div class="text-center font-mono text-sm text-slate-700 my-auto relative z-10">
+                                                <div class="mb-3 text-xs">Dominant Leading Terms:</div>
+                                                <div class="mb-4"><span class="bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm inline-block">t<sup id="p41-calc-num" class="font-bold"></sup> / t<sup id="p41-calc-den" class="font-bold"></sup> &nbsp;=&nbsp; t<sup id="p41-calc-pow" class="font-bold text-violet-700"></sup></span></div>
+                                                <div class="text-lg mt-4 font-bold leading-relaxed bg-white border border-slate-200 rounded-lg py-2 shadow-sm inline-block px-4">
+                                                    &lim;<sub><span class="text-[10px]">t &rarr; &infin;</span></sub> <span class="mx-1">t<sup id="p41-calc-pow-2" class="text-violet-700"></sup></span> = <span id="p41-limit-res" class="text-violet-600 text-xl ml-1 border-b-2 border-violet-200 pb-0.5"></span>
+                                                </div>
+                                            </div>
+                                            <i data-lucide="line-chart" class="w-24 h-24 absolute -bottom-4 -right-4 text-slate-200/60 z-0"></i>
+                                        </div>
+                                    </div>
+                                    
+                                    <div id="p41-status-box" class="mt-4 py-3 px-4 rounded-lg font-bold text-sm text-center uppercase tracking-wider border transition-colors duration-300">
+                                        <!-- Injected dynamically -->
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                setupInteraction: () => {
+                    const sliderNum = document.getElementById('p41-deg-num');
+                    const sliderDen = document.getElementById('p41-deg-den');
+                    const valNum = document.getElementById('p41-val-num');
+                    const valDen = document.getElementById('p41-val-den');
+                    const polyToggle = document.getElementById('p41-poly-toggle');
+                    
+                    const vfVal = document.getElementById('p41-vf-val');
+                    const vgVal = document.getElementById('p41-vg-val');
+                    const vTotalVal = document.getElementById('p41-vtotal-val');
+                    const expFinal = document.getElementById('p41-exp-final');
+                    
+                    const calcNum = document.getElementById('p41-calc-num');
+                    const calcDen = document.getElementById('p41-calc-den');
+                    const calcPow = document.getElementById('p41-calc-pow');
+                    const calcPow2 = document.getElementById('p41-calc-pow-2');
+                    const limitRes = document.getElementById('p41-limit-res');
+                    
+                    const statusBox = document.getElementById('p41-status-box');
+
+                    function updateEngine() {
+                        if(!sliderNum || !sliderDen) return;
+                        
+                        let denWrapper = document.getElementById('p41-den-wrapper');
+
+                        if (polyToggle.checked) {
+                            sliderDen.value = 0;
+                            sliderDen.disabled = true;
+                            if(denWrapper) denWrapper.classList.add('opacity-50');
+                        } else {
+                            sliderDen.disabled = false;
+                            if(denWrapper) denWrapper.classList.remove('opacity-50');
+                        }
+                        
+                        let num = parseInt(sliderNum.value);
+                        let den = parseInt(sliderDen.value);
+                        
+                        valNum.innerText = num;
+                        valDen.innerText = den;
+                        
+                        let vf = -num;
+                        let vg = -den;
+                        let vTotal = vf - vg; // == den - num
+                        let finalExp = num - den; // == -vTotal
+                        
+                        vfVal.innerText = vf;
+                        vgVal.innerText = vg;
+                        vTotalVal.innerText = vTotal > 0 ? `+${vTotal}` : vTotal;
+                        expFinal.innerText = finalExp;
+                        
+                        calcNum.innerText = num;
+                        calcDen.innerText = den;
+                        calcPow.innerText = finalExp;
+                        calcPow2.innerText = finalExp;
+                        
+                        if (finalExp < 0) {
+                            limitRes.innerText = "0";
+                            statusBox.innerHTML = `<i data-lucide="minimize-2" class="inline w-5 h-5 mb-0.5 mr-2"></i> Fraction is "Small" (|R|<sub>&infin;</sub> < 1)`;
+                            statusBox.className = "mt-6 py-3 px-4 rounded-lg font-bold text-base text-center uppercase tracking-wider border transition-colors duration-300 bg-emerald-500/20 text-emerald-700 border-emerald-500/50";
+                        } else if (finalExp === 0) {
+                            limitRes.innerText = "1";
+                            statusBox.innerHTML = `<i data-lucide="equal" class="inline w-5 h-5 mb-0.5 mr-2"></i> Fraction is "Unit" (|R|<sub>&infin;</sub> = 1)`;
+                            statusBox.className = "mt-6 py-3 px-4 rounded-lg font-bold text-base text-center uppercase tracking-wider border transition-colors duration-300 bg-slate-500/20 text-slate-700 border-slate-500/50";
+                        } else {
+                            limitRes.innerHTML = "&infin;";
+                            statusBox.innerHTML = `<i data-lucide="maximize-2" class="inline w-5 h-5 mb-0.5 mr-2"></i> Fraction is "Large" (|R|<sub>&infin;</sub> > 1)`;
+                            statusBox.className = "mt-6 py-3 px-4 rounded-lg font-bold text-base text-center uppercase tracking-wider border transition-colors duration-300 bg-rose-500/20 text-rose-700 border-rose-500/50";
+                        }
+                        
+                        if(window.lucide) lucide.createIcons({ root: statusBox });
+                    }
+
+                    if (sliderNum && sliderDen && polyToggle) {
+                        sliderNum.addEventListener('input', updateEngine);
+                        sliderDen.addEventListener('input', updateEngine);
+                        polyToggle.addEventListener('change', updateEngine);
+                        updateEngine();
+                    }
+                },
+                steps: [
+                    { comment: "// Part 1: When is a rational function 'small'?", text: "Let \\( R(t) = f(t)/g(t) \\) be a rational function. By the definition of the infinity valuation (Problem 40), we have:", math: "\\[ v_\\infty(R) = v_\\infty(f) - v_\\infty(g) = -\\deg(f) - (-\\deg(g)) = \\deg(g) - \\deg(f) \\]" },
+                    { text: "We apply the definition of the absolute value \\( |R|_\\infty = e^{-v_\\infty(R)} \\):", math: "\\[ |R|_\\infty = e^{\\deg(f) - \\deg(g)} \\]" },
+                    { text: "For \\( R(t) \\) to be 'small', its absolute value must be strictly less than 1. Since \\( e^x < 1 \\) requires \\( x < 0 \\), we must have:", math: "\\[ \\deg(f) - \\deg(g) < 0 \\implies \\deg(f) < \\deg(g) \\]" },
+                    { text: "Thus, a rational function is small if and only if the degree of the denominator is strictly greater than the degree of the numerator.", math: "\\[ \\text{Small} \\iff \\deg(g) > \\deg(f) \\]" },
+                    { comment: "// Part 2: Is a polynomial ever small?", text: "A polynomial \\( f(t) \\) can be viewed as a rational function where the denominator is exactly \\( g(t) = 1 \\).", math: "\\[ \\deg(g) = \\deg(1) = 0 \\]" },
+                    { text: "Substituting this into our absolute value formula yields:", math: "\\[ |f(t)|_\\infty = e^{\\deg(f) - 0} = e^{\\deg(f)} \\]" },
+                    { text: "For any non-zero polynomial, its degree is \\( \\ge 0 \\). Therefore, \\( e^{\\deg(f)} \\ge e^0 = 1 \\). Thus, no non-zero polynomial is ever strictly small. (Only the zero polynomial itself is small, as \\( |0|_\\infty = 0 \\)).", math: "\\[ |f(t)|_\\infty \\ge 1 \\text{ for all } f(t) \\neq 0 \\quad \\blacksquare \\]", final: true }
+                ]
+            },
+
+            // --- PROBLEM 42 ---
+            {
+                id: 'prob-42',
+                title: 'Problem 42',
+                shortDesc: 'The p(t)-adic Valuation on F(t)',
+                filename: 'p_t_adic_valuation.tex',
+                headerColor: "bg-blue-50 text-blue-900 border-blue-100",
+                deepDive: {
+                    title: "The Polynomial Analogue of Primes",
+                    icon: "scan-line",
+                    color: "bg-blue-100 text-blue-700",
+                    customHtml: `
+                        <div class="space-y-6 fade-in pb-2">
+                            <div class="bg-blue-600 text-white p-5 rounded-xl shadow-md">
+                                <h4 class="font-extrabold text-sm uppercase tracking-widest mb-3 flex items-center gap-2 text-blue-100"><i data-lucide="key" class="w-5 h-5"></i> Problem 42 Statement</h4>
+                                <p class="text-sm leading-relaxed text-blue-50 mb-3">One can get other valuations on F(t) by imitating the definition of the p-adic valuation, since F[t] is a unique factorization domain. Just choose an irreducible polynomial p(t) and proceed as before: define a valuation by counting the multiplicity of p(t) as a factor.</p>
+                                <p class="text-sm leading-relaxed text-blue-50 font-bold">Do it! For an irreducible polynomial p(t) &isin; F[t], define the p(t)-adic valuation and absolute value on F(t).</p>
+                            </div>
+                            
+                            <div class="bg-blue-50 border border-blue-200 rounded-xl p-5 shadow-sm text-slate-700">
+                                <h5 class="font-bold text-blue-800 mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> The Big Picture: Irreducible = Prime</h5>
+                                <p class="text-sm mb-3">Just like every integer can be broken down into prime numbers (e.g. 12 = 2&sup2; &times; 3), every polynomial can be broken down into "irreducible" polynomials (polynomials that can't be factored any further). Because the algebraic rules are identical, we can treat irreducible polynomials exactly like prime numbers!</p>
+                            </div>
+
+                            <!-- Factorization Scanner -->
+                            <div class="bg-slate-50 p-1.5 rounded-2xl border border-slate-200 shadow-inner mt-6">
+                                <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-100">
+                                    <div class="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-4 flex items-center gap-2 justify-center border-b border-slate-100 pb-3">
+                                        <i data-lucide="scan-line" class="w-4 h-4"></i> The p(t) Factorization Scanner
+                                    </div>
+                                    <p class="text-xs text-center text-slate-500 mb-6 max-w-md mx-auto">Select a "prime" polynomial <strong>p(t)</strong>. The scanner will highlight and extract its specific valuation from the complex rational function <strong>R(t)</strong> below.</p>
+                                    
+                                    <!-- Function Display -->
+                                    <div class="flex items-center justify-center mb-8">
+                                        <div class="font-mono text-xl text-slate-700 mr-4 font-bold flex items-center">
+                                            R(t) <span class="text-slate-400 mx-2">=</span>
+                                        </div>
+                                        <div class="flex flex-col items-center">
+                                            <div class="flex gap-1 pb-1">
+                                                <div id="p42-term-num-1" class="px-2 py-1 rounded transition-all duration-300 font-mono text-sm">(t-1)<sup class="font-bold">4</sup></div>
+                                                <div id="p42-term-num-2" class="px-2 py-1 rounded transition-all duration-300 font-mono text-sm">(t+3)<sup class="font-bold">2</sup></div>
+                                            </div>
+                                            <div class="h-0.5 bg-slate-300 w-full rounded-full my-1"></div>
+                                            <div class="flex gap-1 pt-1">
+                                                <div id="p42-term-den-1" class="px-2 py-1 rounded transition-all duration-300 font-mono text-sm">(t-1)<sup class="font-bold">1</sup></div>
+                                                <div id="p42-term-den-2" class="px-2 py-1 rounded transition-all duration-300 font-mono text-sm">(t&sup2;+1)<sup class="font-bold">3</sup></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Scanner Controls -->
+                                    <div class="flex flex-col items-center bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-inner">
+                                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Select p(t) to scan for:</label>
+                                        <div class="flex flex-wrap gap-3 justify-center mb-6" id="p42-btn-group">
+                                            <button class="p42-btn px-4 py-2 rounded-lg font-mono font-bold text-sm bg-slate-700 text-slate-300 border border-slate-600 hover:bg-slate-600 transition-colors focus:ring-2 focus:ring-blue-500" data-pt="(t-1)">t-1</button>
+                                            <button class="p42-btn px-4 py-2 rounded-lg font-mono font-bold text-sm bg-slate-700 text-slate-300 border border-slate-600 hover:bg-slate-600 transition-colors focus:ring-2 focus:ring-blue-500" data-pt="(t+3)">t+3</button>
+                                            <button class="p42-btn px-4 py-2 rounded-lg font-mono font-bold text-sm bg-slate-700 text-slate-300 border border-slate-600 hover:bg-slate-600 transition-colors focus:ring-2 focus:ring-blue-500" data-pt="(t&sup2;+1)">t&sup2;+1</button>
+                                            <button class="p42-btn px-4 py-2 rounded-lg font-mono font-bold text-sm bg-slate-700 text-slate-300 border border-slate-600 hover:bg-slate-600 transition-colors focus:ring-2 focus:ring-blue-500" data-pt="(t-5)">t-5</button>
+                                        </div>
+                                        
+                                        <!-- Output Grid -->
+                                        <div class="w-full grid grid-cols-2 gap-4">
+                                            <div class="bg-slate-900/50 p-3 rounded-lg border border-slate-700 flex flex-col items-center justify-center">
+                                                <div class="text-[9px] text-slate-500 uppercase tracking-widest mb-1">Valuation v<sub>p(t)</sub>(R)</div>
+                                                <div class="font-mono text-2xl text-blue-400 font-bold" id="p42-out-v">-</div>
+                                            </div>
+                                            <div class="bg-slate-900/50 p-3 rounded-lg border border-slate-700 flex flex-col items-center justify-center relative">
+                                                <div class="text-[9px] text-slate-500 uppercase tracking-widest mb-1">Absolute Value |R|<sub>p(t)</sub></div>
+                                                <div class="font-mono text-2xl text-white font-bold" id="p42-out-abs">-</div>
+                                                <div class="absolute top-2 right-2 text-[8px] text-slate-600">c > 1</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                setupInteraction: () => {
+                    const btns = document.querySelectorAll('.p42-btn');
+                    
+                    const termNum1 = document.getElementById('p42-term-num-1');
+                    const termNum2 = document.getElementById('p42-term-num-2');
+                    const termDen1 = document.getElementById('p42-term-den-1');
+                    const termDen2 = document.getElementById('p42-term-den-2');
+                    
+                    const outV = document.getElementById('p42-out-v');
+                    const outAbs = document.getElementById('p42-out-abs');
+
+                    // Data structure for the pre-built rational function
+                    const terms = [
+                        { el: termNum1, base: '(t-1)', pos: 'num', exp: 4 },
+                        { el: termNum2, base: '(t+3)', pos: 'num', exp: 2 },
+                        { el: termDen1, base: '(t-1)', pos: 'den', exp: 1 },
+                        { el: termDen2, base: '(t\xB2+1)', pos: 'den', exp: 3 } // \xB2 is superscript 2
+                    ];
+
+                    function updateScanner(selectedPt, btnClicked) {
+                        // Update button styles
+                        btns.forEach(b => {
+                            b.classList.remove('bg-blue-600', 'text-white', 'border-blue-500');
+                            b.classList.add('bg-slate-700', 'text-slate-300', 'border-slate-600');
+                        });
+                        btnClicked.classList.add('bg-blue-600', 'text-white', 'border-blue-500');
+                        btnClicked.classList.remove('bg-slate-700', 'text-slate-300', 'border-slate-600');
+
+                        let v = 0;
+
+                        // Scan and highlight
+                        terms.forEach(term => {
+                            if (term.base === selectedPt) {
+                                term.el.classList.add('highlight-term');
+                                term.el.classList.remove('text-slate-700');
+                                if (term.pos === 'num') v += term.exp;
+                                if (term.pos === 'den') v -= term.exp;
+                            } else {
+                                term.el.classList.remove('highlight-term');
+                                term.el.classList.add('text-slate-700');
+                            }
+                        });
+
+                        // Update outputs
+                        outV.innerText = v;
+                        
+                        if (v === 0) {
+                            outAbs.innerText = "1";
+                        } else if (v > 0) {
+                            outAbs.innerHTML = `c<sup class="text-sm font-bold text-slate-400">-${v}</sup>`;
+                        } else {
+                            outAbs.innerHTML = `c<sup class="text-sm font-bold text-slate-400">${-v}</sup>`;
+                        }
+                    }
+
+                    btns.forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            updateScanner(e.target.getAttribute('data-pt'), e.target);
+                        });
+                    });
+                    
+                    // Initialize with first button
+                    if(btns.length > 0) updateScanner('(t-1)', btns[0]);
+                },
+                steps: [
+                    { comment: "// Defining the p(t)-adic valuation on F(t)", text: "Let \\( p(t) \\in F[t] \\) be an irreducible polynomial. Every non-zero rational function \\( R(t) \\in F(t) \\) can be written uniquely (up to units) in the form:", math: "\\[ R(t) = p(t)^n \\frac{a(t)}{b(t)} \\]" },
+                    { text: "Where \\( n \\in \\mathbb{Z} \\), and \\( a(t), b(t) \\) are polynomials not divisible by \\( p(t) \\). We define the \\( p(t) \\)-adic valuation exactly as we did for primes in \\( \\mathbb{Q} \\):", math: "\\[ v_{p(t)}(R) = n \\]" },
+                    { text: "Because \\( F[t] \\) is a Unique Factorization Domain, the properties of exponents guarantee that \\( v_{p(t)}(f \\cdot g) = v_{p(t)}(f) + v_{p(t)}(g) \\), and pulling out the lowest common power guarantees \\( v_{p(t)}(f+g) \\ge \\min(v_{p(t)}(f), v_{p(t)}(g)) \\).", math: "\\[ \\text{The valuation axioms are satisfied.} \\]" },
+                    { comment: "// Defining the absolute value", text: "To convert this valuation into an absolute value, we select a real constant \\( c > 1 \\) (often chosen as \\( e^{\\deg(p)} \\) for normalization) and apply the standard exponential formula:", math: "\\[ |R|_{p(t)} = c^{-v_{p(t)}(R)} \\quad \\blacksquare \\]", final: true }
+                ]
+            },
+
+            // --- PROBLEM 43 ---
+            {
+                id: 'prob-43',
+                title: 'Problem 43',
+                shortDesc: 'Restricting to the Base Field F',
+                filename: 'restricting_to_f.tex',
+                headerColor: "bg-indigo-50 text-indigo-900 border-indigo-100",
+                deepDive: {
+                    title: "Zooming in on the Constants",
+                    icon: "shrink",
+                    color: "bg-indigo-100 text-indigo-700",
+                    customHtml: `
+                        <div class="space-y-6 fade-in pb-2">
+                            <div class="bg-indigo-600 text-white p-5 rounded-xl shadow-md">
+                                <h4 class="font-extrabold text-sm uppercase tracking-widest mb-3 flex items-center gap-2 text-indigo-100"><i data-lucide="key" class="w-5 h-5"></i> Problem 43 Statement</h4>
+                                <p class="text-sm leading-relaxed text-indigo-50 mb-3">Since F is a subfield of F(t), any absolute value on F(t) also gives an absolute value on F.</p>
+                                <p class="text-sm leading-relaxed text-indigo-50 font-bold">For the examples we have just constructed, describe the absolute value on F obtained in this way.</p>
+                            </div>
+                            
+                            <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-5 shadow-sm text-slate-700">
+                                <h5 class="font-bold text-indigo-800 mb-2 flex items-center gap-2"><i data-lucide="message-square" class="w-4 h-4"></i> The Problem in Plain English</h5>
+                                <p class="text-sm mb-3">We just created two new ways to measure distance for polynomials: the <strong>Infinity Valuation</strong> (measuring degree) and the <strong>p(t)-adic Valuation</strong> (measuring polynomial divisibility).</p>
+                                <p class="text-sm">The base field <strong>F</strong> is just the set of regular constants (like 5, -2, or &pi;). Constants are technically polynomials... just incredibly boring ones with no 't' variables. The problem asks: if we feed these boring constants into our complex new distance engines, what answers do we get?</p>
+                            </div>
+
+                            <!-- The Subfield Filter Explorer -->
+                            <div class="bg-slate-50 p-1.5 rounded-2xl border border-slate-200 shadow-inner mt-6">
+                                <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-100">
+                                    <div class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest mb-4 flex items-center gap-2 justify-center border-b border-slate-100 pb-3">
+                                        <i data-lucide="filter" class="w-4 h-4"></i> The Subfield Filter
+                                    </div>
+                                    <p class="text-xs text-center text-slate-500 mb-6 max-w-md mx-auto">Input any non-zero constant <code class="font-bold text-indigo-600">k &isin; F</code> and see how both polynomial absolute values process it.</p>
+                                    
+                                    <div class="flex flex-col items-center justify-center mb-8">
+                                        <label class="text-[10px] font-bold text-slate-500 uppercase text-center mb-2">Constant Input (k)</label>
+                                        <input type="text" id="p43-k" value="42" class="text-center border-2 border-indigo-300 rounded outline-none focus:border-indigo-500 font-mono font-bold text-xl py-2 w-32 shadow-sm transition-colors text-indigo-900 bg-indigo-50">
+                                        <div class="text-[10px] text-slate-400 mt-2 font-mono">deg(k) = 0</div>
+                                    </div>
+
+                                    <div class="grid md:grid-cols-2 gap-4 relative">
+                                        <!-- Connection Lines -->
+                                        <div class="absolute top-0 left-1/2 w-0.5 h-full bg-slate-200 -translate-x-1/2 hidden md:block"></div>
+                                        
+                                        <!-- Infinity Path -->
+                                        <div class="bg-cyan-50 p-4 rounded-xl border border-cyan-200 flex flex-col items-center text-center shadow-sm relative z-10">
+                                            <div class="text-[10px] font-bold text-cyan-700 uppercase tracking-widest mb-4 pb-2 border-b border-cyan-200 w-full"><i data-lucide="line-chart" class="w-3 h-3 inline mb-0.5 mr-1"></i> Infinity Absolute Value</div>
+                                            
+                                            <div class="text-xs text-slate-600 font-mono mb-2">v<sub>&infin;</sub>(k) = -deg(k)</div>
+                                            <div class="bg-white px-3 py-1.5 rounded border border-cyan-100 shadow-sm font-mono text-cyan-800 font-bold mb-4">v = 0</div>
+                                            
+                                            <div class="text-[10px] text-slate-500 uppercase tracking-wider mb-1 mt-auto">Distance Result</div>
+                                            <div class="font-mono text-3xl text-cyan-600 font-bold">|k|<sub>&infin;</sub> = 1</div>
+                                        </div>
+
+                                        <!-- p(t)-adic Path -->
+                                        <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 flex flex-col items-center text-center shadow-sm relative z-10">
+                                            <div class="text-[10px] font-bold text-blue-700 uppercase tracking-widest mb-4 pb-2 border-b border-blue-200 w-full"><i data-lucide="scan-line" class="w-3 h-3 inline mb-0.5 mr-1"></i> p(t)-adic Absolute Value</div>
+                                            
+                                            <div class="text-xs text-slate-600 font-mono mb-2">Does p(t) divide k?</div>
+                                            <div class="bg-white px-3 py-1.5 rounded border border-blue-100 shadow-sm font-mono text-blue-800 font-bold mb-4 text-xs">No (deg(p) &ge; 1) &rarr; v = 0</div>
+                                            
+                                            <div class="text-[10px] text-slate-500 uppercase tracking-wider mb-1 mt-auto">Distance Result</div>
+                                            <div class="font-mono text-3xl text-blue-600 font-bold">|k|<sub>p(t)</sub> = 1</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Grand Conclusion -->
+                                    <div class="mt-6 bg-slate-900 text-white p-5 rounded-xl border border-slate-700 shadow-xl overflow-hidden flex flex-col items-center text-center">
+                                        <div class="bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest mb-3 border border-indigo-500/50">Conclusion for Base Field F</div>
+                                        <div class="text-lg md:text-xl font-bold leading-relaxed">
+                                            Regardless of the metric used, every non-zero constant evaluates to exactly 1.
+                                        </div>
+                                        <div class="mt-3 text-sm text-slate-400 max-w-md leading-relaxed">
+                                            This means restricting these complex polynomial absolute values to the base field <strong class="text-slate-200">F</strong> yields the boring, flat <strong>Trivial Absolute Value</strong>.
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                setupInteraction: () => {
+                    // Minimal interaction needed, just a visual tie-in for the input
+                    const kInput = document.getElementById('p43-k');
+                    if (kInput) {
+                        kInput.addEventListener('input', () => {
+                            if(kInput.value.trim() === '0') {
+                                // Handled in text/proof, but visually prevent 0
+                                kInput.style.color = '#ef4444'; // red
+                            } else {
+                                kInput.style.color = '';
+                            }
+                        });
+                    }
+                },
+                steps: [
+                    { comment: "// Evaluating the restriction of | |_\u221E to F", text: "Let \\( k \\in F \\) be a non-zero constant. By definition, the degree of any non-zero constant is 0.", math: "\\[ \\deg(k) = 0 \\]" },
+                    { text: "Applying the definition of the infinity valuation (Problem 40):", math: "\\[ v_\\infty(k) = -\\deg(k) = 0 \\implies |k|_\\infty = e^{-0} = 1 \\]" },
+                    { comment: "// Evaluating the restriction of | |_{p(t)} to F", text: "Now consider the \\( p(t) \\)-adic absolute value from Problem 42. By definition, \\( p(t) \\) is an irreducible polynomial, so its degree must be \\( \\ge 1 \\).", math: "\\[ \\deg(p(t)) \\ge 1 \\]" },
+                    { text: "A polynomial of degree \\( \\ge 1 \\) can never divide a non-zero constant of degree 0. Therefore, \\( k \\) contains exactly zero factors of \\( p(t) \\).", math: "\\[ v_{p(t)}(k) = 0 \\implies |k|_{p(t)} = c^{-0} = 1 \\]" },
+                    { comment: "// Final Conclusion", text: "For both constructed absolute values, we have \\( |k| = 1 \\) for all \\( k \\neq 0 \\), and \\( |0| = 0 \\) by definition. This is the exact definition of the trivial absolute value.", math: "\\[ \\text{Restriction to } F \\text{ yields the Trivial Absolute Value.} \\quad \\blacksquare \\]", final: true }
+                ]
+            },
+
+            // --- PROBLEM 44 ---
+            {
+                id: 'prob-44',
+                title: 'Problem 44',
+                shortDesc: 'Irreducible Polynomials in C[t]',
+                filename: 'hensels_analogy.tex',
+                headerColor: "bg-purple-50 text-purple-900 border-purple-100",
+                deepDive: {
+                    title: "Primes as Geometric Points",
+                    icon: "map-pin",
+                    color: "bg-purple-100 text-purple-700",
+                    customHtml: `
+                        <div class="space-y-6 fade-in pb-2">
+                            <div class="bg-purple-600 text-white p-5 rounded-xl shadow-md">
+                                <h4 class="font-extrabold text-sm uppercase tracking-widest mb-3 flex items-center gap-2 text-purple-100"><i data-lucide="key" class="w-5 h-5"></i> Problem 44 Statement</h4>
+                                <p class="text-sm leading-relaxed text-purple-50 mb-3">Suppose <strong>F = &Copf;</strong>. What are the irreducible polynomials in this case?</p>
+                                <p class="text-sm leading-relaxed text-purple-50 font-bold">Are we getting close to realizing Hensel's analogy?</p>
+                            </div>
+                            
+                            <div class="bg-purple-50 border border-purple-200 rounded-xl p-5 shadow-sm text-slate-700">
+                                <h5 class="font-bold text-purple-800 mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> The Fundamental Theorem of Algebra</h5>
+                                <p class="text-sm mb-3">The Fundamental Theorem of Algebra states that over the complex numbers &Copf;, <em>every</em> polynomial can be factored completely into linear pieces of the form <strong>(t - a)</strong>.</p>
+                                <p class="text-sm">Because they can be broken down no further, these linear pieces are the <strong>only</strong> irreducible polynomials in &Copf;[t].</p>
+                            </div>
+
+                            <!-- Hensel's Analogy Visualizer -->
+                            <div class="bg-slate-50 p-1.5 rounded-2xl border border-slate-200 shadow-inner mt-6">
+                                <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-100">
+                                    <div class="text-[10px] font-bold text-purple-600 uppercase tracking-widest mb-4 flex items-center gap-2 justify-center border-b border-slate-100 pb-3">
+                                        <i data-lucide="map-pin" class="w-4 h-4"></i> Hensel's Analogy Visualizer
+                                    </div>
+                                    <p class="text-xs text-center text-slate-500 mb-6 max-w-md mx-auto">Select a polynomial to see how it shatters into irreducible "primes" over the complex plane.</p>
+                                    
+                                    <!-- Controls -->
+                                    <div class="flex flex-wrap gap-3 justify-center mb-8" id="p44-btn-group">
+                                        <button class="p44-btn px-4 py-2 rounded-lg font-mono font-bold text-sm bg-purple-600 text-white border border-purple-500 hover:bg-purple-500 transition-colors shadow-sm" data-poly="t2plus1">t&sup2; + 1</button>
+                                        <button class="p44-btn px-4 py-2 rounded-lg font-mono font-bold text-sm bg-slate-100 text-slate-600 border border-slate-300 hover:bg-slate-200 transition-colors shadow-sm" data-poly="t2minus4tplus4">t&sup2; - 4t + 4</button>
+                                        <button class="p44-btn px-4 py-2 rounded-lg font-mono font-bold text-sm bg-slate-100 text-slate-600 border border-slate-300 hover:bg-slate-200 transition-colors shadow-sm" data-poly="t3minus1">t&sup3; - 1</button>
+                                    </div>
+
+                                    <!-- Factorization Display -->
+                                    <div class="flex flex-col md:flex-row items-center justify-center gap-6 mb-8">
+                                        <div class="bg-slate-800 text-white px-4 py-3 rounded-xl font-mono text-lg shadow-inner" id="p44-poly-base">t&sup2; + 1</div>
+                                        <div class="text-slate-400 font-bold"><i data-lucide="arrow-right" class="w-6 h-6 hidden md:block"></i><i data-lucide="arrow-down" class="w-6 h-6 md:hidden"></i></div>
+                                        <div class="bg-purple-100 text-purple-900 border border-purple-300 px-4 py-3 rounded-xl font-mono text-lg shadow-sm font-bold flex flex-wrap justify-center gap-2" id="p44-poly-factored">
+                                            <span class="bg-white px-2 py-0.5 rounded border border-purple-200">(t - i)</span>
+                                            <span class="bg-white px-2 py-0.5 rounded border border-purple-200">(t + i)</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- The Analogy Revelation -->
+                                    <div class="bg-slate-900 text-white p-5 rounded-xl border border-slate-700 shadow-xl overflow-hidden flex flex-col items-center text-center">
+                                        <div class="bg-purple-500/20 text-purple-300 px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest mb-3 border border-purple-500/50">The Grand Connection</div>
+                                        <div class="text-sm md:text-base leading-relaxed text-slate-300 max-w-xl">
+                                            If every irreducible "prime" polynomial in &Copf;[t] is just a linear factor <strong class="text-purple-300 font-mono bg-purple-900/50 px-1 rounded">(t - a)</strong>, then specifying a prime is exactly the same as specifying a <strong class="text-white">geometric point 'a'</strong> in the complex plane!
+                                        </div>
+                                        <div class="mt-4 grid grid-cols-2 gap-4 w-full max-w-md font-mono text-xs border-t border-slate-700 pt-4">
+                                            <div class="text-right pr-4 border-r border-slate-700">
+                                                <span class="text-slate-500 block mb-1 uppercase tracking-widest text-[9px]">Number Theory</span>
+                                                Primes <strong>p</strong> in &Zopf;
+                                            </div>
+                                            <div class="text-left pl-4">
+                                                <span class="text-purple-400 block mb-1 uppercase tracking-widest text-[9px]">Geometry</span>
+                                                Points <strong>a</strong> in &Copf;
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                setupInteraction: () => {
+                    const btns = document.querySelectorAll('.p44-btn');
+                    const polyBase = document.getElementById('p44-poly-base');
+                    const polyFactored = document.getElementById('p44-poly-factored');
+
+                    const data = {
+                        't2plus1': {
+                            base: 't\xB2 + 1', // t^2 + 1
+                            factors: ['(t - i)', '(t + i)']
+                        },
+                        't2minus4tplus4': {
+                            base: 't\xB2 - 4t + 4',
+                            factors: ['(t - 2)', '(t - 2)']
+                        },
+                        't3minus1': {
+                            base: 't\u00B3 - 1', // fixed syntax error here
+                            factors: ['(t - 1)', '(t - (-1/2 + i\u221A3/2))', '(t - (-1/2 - i\u221A3/2))']
+                        }
+                    };
+
+                    function updateVisualizer(key, btnClicked) {
+                        // Update button styles
+                        btns.forEach(b => {
+                            b.classList.remove('bg-purple-600', 'text-white', 'border-purple-500');
+                            b.classList.add('bg-slate-100', 'text-slate-600', 'border-slate-300');
+                        });
+                        btnClicked.classList.add('bg-purple-600', 'text-white', 'border-purple-500');
+                        btnClicked.classList.remove('bg-slate-100', 'text-slate-600', 'border-slate-300');
+
+                        const d = data[key];
+                        polyBase.innerText = d.base;
+                        
+                        polyFactored.innerHTML = d.factors.map(f => `<span class="bg-white px-2 py-0.5 rounded border border-purple-200">${f}</span>`).join('');
+                    }
+
+                    btns.forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            updateVisualizer(e.target.getAttribute('data-poly'), e.target);
+                        });
+                    });
+                },
+                steps: [
+                    { comment: "// What are the irreducible polynomials in C[t]?", text: "By the Fundamental Theorem of Algebra, the complex field \\( \\mathbb{C} \\) is algebraically closed. This means every non-constant polynomial has a root in \\( \\mathbb{C} \\).", math: "\\[ f(a) = 0 \\text{ for some } a \\in \\mathbb{C} \\]" },
+                    { text: "By the Polynomial Remainder Theorem, if \\( a \\) is a root of \\( f(t) \\), then the linear polynomial \\( (t - a) \\) is a factor of \\( f(t) \\).", math: "\\[ f(t) = (t - a)q(t) \\]" },
+                    { text: "Therefore, the only polynomials that cannot be factored further (the irreducible ones) are the linear polynomials themselves.", math: "\\[ p(t) \\text{ is irreducible } \\iff p(t) = c(t - a) \\]" },
+                    { comment: "// Realizing Hensel's Analogy", text: "Because every irreducible polynomial is essentially just \\( (t-a) \\), choosing a 'prime' to build a valuation on \\( \\mathbb{C}(t) \\) is exactly equivalent to choosing a specific geometric point \\( a \\in \\mathbb{C} \\).", math: "\\[ v_{t-a}(f) = \\text{multiplicity of root } a \\text{ in } f(t) \\]" },
+                    { text: "Hensel's incredible intuition was correct: Prime numbers in \\( \\mathbb{Z} \\) behave exactly like geometric points in \\( \\mathbb{C} \\). Expanding a rational function \\( p \\)-adically is mathematically identical to performing a Taylor Series expansion around a point \\( a \\)!", math: "\\[ \\text{Primes } \\longleftrightarrow \\text{ Points} \\quad \\blacksquare \\]", final: true }
+                ]
+            },
+
+            // --- PROBLEM 45 ---
+            {
+                id: 'prob-45',
+                title: 'Problem 45',
+                shortDesc: 'Constructing an Archimedean Absolute Value',
+                filename: 'archimedean_embedding.tex',
+                headerColor: "bg-amber-50 text-amber-900 border-amber-100",
+                deepDive: {
+                    title: "The Transcendental Sneak Attack",
+                    icon: "square-dashed-bottom",
+                    color: "bg-amber-100 text-amber-700",
+                    customHtml: `
+                        <div class="space-y-6 fade-in pb-2">
+                            <div class="bg-amber-600 text-white p-5 rounded-xl shadow-md">
+                                <h4 class="font-extrabold text-sm uppercase tracking-widest mb-3 flex items-center gap-2 text-amber-100"><i data-lucide="key" class="w-5 h-5"></i> Problem 45 Statement</h4>
+                                <p class="text-sm leading-relaxed text-amber-50 mb-3">All of the absolute values we have constructed on F(t) are non-archimedean. Try to construct an <strong>archimedean absolute value</strong> on some F(t). (If you're very sneaky, it can be done for F = &Qopf;).</p>
+                                <p class="text-sm leading-relaxed text-amber-50 font-bold">Can it be done in such a way that the induced absolute value on F is the trivial one?</p>
+                            </div>
+                            
+                            <!-- The Unbreakable Map Explanation -->
+                            <div class="bg-amber-50 border border-amber-200 rounded-xl p-5 shadow-sm text-slate-700">
+                                <h5 class="font-bold text-amber-800 mb-2 flex items-center gap-2"><i data-lucide="shield-check" class="w-4 h-4"></i> The "Unbreakable" Map (Why Transcendental?)</h5>
+                                <p class="text-sm mb-3">To get an Archimedean absolute value (like standard distance on a ruler), we need to somehow trick our rational functions into behaving exactly like standard real numbers. We do this by <strong>embedding</strong> &Qopf;(t) into &Ropf;. We simply take a real number and plug it in for <i>t</i>. But we must be careful:</p>
+                                <div class="grid md:grid-cols-2 gap-4 mt-4">
+                                    <div class="bg-white p-4 rounded-lg border border-amber-100 shadow-sm">
+                                        <div class="font-bold text-amber-900 mb-1 text-xs uppercase tracking-widest flex items-center gap-1.5"><i data-lucide="lock" class="w-3 h-3"></i> The Danger: Div by Zero</div>
+                                        <p class="text-sm text-slate-600 leading-relaxed">A rational function is a fraction: <strong>f(t) / g(t)</strong>. Think of the denominator <strong>g(t)</strong> as a lock made in the "Rational Numbers Factory." If we plug in an algebraic number (a key from the same factory, like &radic;2), we might accidentally open the lock (g(t) = 0) and break the entire universe by dividing by zero.</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg border border-amber-100 shadow-sm flex flex-col">
+                                        <div class="font-bold text-emerald-700 mb-1 text-xs uppercase tracking-widest flex items-center gap-1.5"><i data-lucide="key" class="w-3 h-3"></i> The Solution: Alien Keys</div>
+                                        <p class="text-sm text-slate-600 leading-relaxed flex-1">A <strong>transcendental number</strong> (like &pi; or <i>e</i>) is an "Alien Key" forged in a completely different mathematical universe. It is <em>never</em> the root of any polynomial with rational coefficients. Therefore, <strong>g(&pi;) will NEVER equal 0</strong>. The map is perfectly safe and unbreakable.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- The Embedding Engine -->
+                            <div class="bg-slate-50 p-1.5 rounded-2xl border border-slate-200 shadow-inner mt-6">
+                                <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-100">
+                                    <div class="text-[10px] font-bold text-amber-600 uppercase tracking-widest mb-4 flex items-center gap-2 justify-center border-b border-slate-100 pb-3">
+                                        <i data-lucide="square-dashed-bottom" class="w-4 h-4"></i> Transcendental Embedding Engine
+                                    </div>
+                                    <p class="text-xs text-center text-slate-500 mb-6 max-w-md mx-auto">Inject a transcendental number into the rational function to permanently map it to a standard Real Number distance.</p>
+                                    
+                                    <div class="flex flex-col md:flex-row items-center justify-center gap-6 mb-8">
+                                        <!-- Rational Function Selector -->
+                                        <div class="flex flex-col items-center">
+                                            <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2">Select R(t)</span>
+                                            <select id="p45-rt-sel" class="border-2 border-slate-300 rounded-lg px-4 py-2 outline-none focus:border-amber-500 bg-white text-slate-700 font-bold font-mono text-base shadow-sm cursor-pointer transition-colors text-center w-48">
+                                                <option value="1">(t&sup2; - 2) / (t + 1)</option>
+                                                <option value="2">3t / (t&sup2; + 4)</option>
+                                                <option value="3">5 (Constant)</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="flex flex-col items-center">
+                                            <span class="text-[9px] font-bold text-amber-500 uppercase tracking-widest mb-2">Evaluate at:</span>
+                                            <select id="p45-t-val" class="border-2 border-amber-300 rounded-lg px-4 py-2 outline-none focus:border-amber-500 bg-white text-amber-800 font-bold font-mono text-base shadow-sm cursor-pointer transition-colors text-center w-32">
+                                                <option value="pi" selected>t = &pi;</option>
+                                                <option value="e">t = e</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- The Pipeline -->
+                                    <div class="flex flex-col md:flex-row items-stretch justify-center gap-2 relative mt-4">
+                                        <!-- Input -->
+                                        <div class="flex-1 bg-white p-3 rounded-lg border border-slate-200 flex flex-col items-center justify-center shadow-sm">
+                                            <div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Input R(t)</div>
+                                            <div class="font-mono text-lg text-slate-700 font-bold" id="p45-out-rt">-</div>
+                                        </div>
+                                        <!-- Bridge 1 -->
+                                        <div class="flex flex-col items-center justify-center shrink-0 px-2 py-1">
+                                            <div class="bg-indigo-100 border border-indigo-300 text-indigo-800 px-3 py-1.5 rounded-lg font-mono text-xs shadow-sm flex flex-col items-center w-32">
+                                                <span class="text-[8px] uppercase tracking-wide opacity-80">Substitute</span>
+                                                <span class="font-bold text-sm leading-none mt-1" id="p45-out-sub">-</span>
+                                                <i data-lucide="arrow-right" class="w-4 h-4 mt-1.5 hidden md:block text-indigo-500"></i>
+                                                <i data-lucide="arrow-down" class="w-4 h-4 mt-1.5 md:hidden text-indigo-500"></i>
+                                            </div>
+                                        </div>
+                                        <!-- Real Number -->
+                                        <div class="flex-1 bg-slate-800 p-3 rounded-lg border border-slate-700 flex flex-col items-center justify-center shadow-sm">
+                                            <div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Evaluate in &Ropf;</div>
+                                            <div class="font-mono text-xl text-white font-bold" id="p45-out-eval">-</div>
+                                        </div>
+                                        <!-- Bridge 2 -->
+                                        <div class="flex flex-col items-center justify-center shrink-0 px-2 py-1">
+                                            <div class="bg-amber-100 border border-amber-300 text-amber-800 px-3 py-1.5 rounded-lg font-mono text-xs shadow-sm flex flex-col items-center w-24">
+                                                <span class="text-[8px] uppercase tracking-wide opacity-80">Apply</span>
+                                                <span class="font-bold text-lg leading-none mt-1">| |<sub>&infin;</sub></span>
+                                                <i data-lucide="arrow-right" class="w-4 h-4 mt-1.5 hidden md:block text-amber-500"></i>
+                                                <i data-lucide="arrow-down" class="w-4 h-4 mt-1.5 md:hidden text-amber-500"></i>
+                                            </div>
+                                        </div>
+                                        <!-- Absolute Value -->
+                                        <div class="flex-1 bg-amber-50 p-3 rounded-lg border border-amber-200 flex flex-col items-center justify-center shadow-sm">
+                                            <div class="text-[9px] font-bold text-amber-700 uppercase tracking-widest mb-1">Final Distance</div>
+                                            <div class="font-mono text-2xl text-amber-800 font-bold" id="p45-out-abs">-</div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            
+                            <!-- The Triviality Checkpoint -->
+                            <div class="mt-6 bg-slate-800 text-white border border-slate-700 rounded-xl p-5 shadow-sm">
+                                <h5 class="font-bold text-amber-400 mb-2 flex items-center gap-2"><i data-lucide="scale" class="w-4 h-4"></i> The Triviality Checkpoint</h5>
+                                <p class="text-sm text-slate-300 mb-4">What does it mean for a metric to be "trivial" on a base field? It means <strong>EVERY</strong> non-zero element in that field must have a distance of exactly 1. Let's run a base field constant through our new engine to test it.</p>
+                                
+                                <div class="flex flex-col md:flex-row gap-4 items-center justify-center bg-slate-900 p-4 rounded-xl border border-slate-700 shadow-inner">
+                                    <!-- Step 1 -->
+                                    <div class="flex flex-col items-center text-center max-w-[120px]">
+                                        <div class="bg-slate-700 p-3 rounded-full mb-2"><i data-lucide="hash" class="w-6 h-6 text-slate-300"></i></div>
+                                        <div class="text-[10px] uppercase text-slate-400 font-bold tracking-widest">1. Take Constant</div>
+                                        <div class="font-mono text-xl font-bold mt-1">k = 5</div>
+                                    </div>
+                                    
+                                    <i data-lucide="arrow-right" class="w-5 h-5 text-slate-500 hidden md:block"></i>
+                                    <i data-lucide="arrow-down" class="w-5 h-5 text-slate-500 md:hidden"></i>
+                                    
+                                    <!-- Step 2 -->
+                                    <div class="flex flex-col items-center text-center max-w-[140px]">
+                                        <div class="bg-indigo-900/50 border border-indigo-500/50 p-3 rounded-full mb-2"><i data-lucide="arrow-right-left" class="w-6 h-6 text-indigo-400"></i></div>
+                                        <div class="text-[10px] uppercase text-indigo-300 font-bold tracking-widest">2. Substitute t = &pi;</div>
+                                        <div class="text-xs text-slate-300 mt-1">Since 5 has no 't', it ignores the &pi;.</div>
+                                        <div class="font-mono text-xl font-bold text-indigo-400 mt-1">&rarr; 5</div>
+                                    </div>
+                                    
+                                    <i data-lucide="arrow-right" class="w-5 h-5 text-slate-500 hidden md:block"></i>
+                                    <i data-lucide="arrow-down" class="w-5 h-5 text-slate-500 md:hidden"></i>
+                                    
+                                    <!-- Step 3 -->
+                                    <div class="flex flex-col items-center text-center max-w-[120px]">
+                                        <div class="bg-amber-900/50 border border-amber-500/50 p-3 rounded-full mb-2"><i data-lucide="ruler" class="w-6 h-6 text-amber-400"></i></div>
+                                        <div class="text-[10px] uppercase text-amber-300 font-bold tracking-widest">3. Apply | |<sub>&infin;</sub></div>
+                                        <div class="font-mono text-xl font-bold text-amber-400 mt-1">|5| = 5</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-4 bg-rose-500/20 border border-rose-500/50 text-rose-200 p-3 rounded-lg text-sm text-center">
+                                    <strong>Verdict: NOT TRIVIAL.</strong> Because the final distance is 5 (and not 1), this metric fails the strict requirements of the trivial absolute value. The base field inherits a real, working metric!
+                                </div>
+
+                                <!-- EXPANDED SECTION: The Catch-22 -->
+                                <div class="mt-6 border-t border-slate-700 pt-5">
+                                    <h6 class="text-sm font-bold text-emerald-400 mb-3 flex items-center gap-2"><i data-lucide="alert-octagon" class="w-4 h-4"></i> Can we ever pass this test? (The Rubber Band Paradox)</h6>
+                                    <p class="text-sm text-slate-300 mb-4 leading-relaxed">The prompt asks if we can build this Archimedean metric in a way that keeps the base field trivial. To pass this test, we would need <strong class="text-white font-mono bg-slate-700 px-1 rounded">|k| = 1</strong> for every constant. Imagine the base field &Qopf; is the ground floor, and the function field &Qopf;(t) is an elevator built inside it. We want the elevator to go up (Archimedean) while keeping the ground floor perfectly flat (Trivial). This creates a mathematical paradox!</p>
+                                    
+                                    <div class="grid md:grid-cols-2 gap-4">
+                                        <div class="bg-slate-900 p-4 rounded-lg border border-slate-700 relative overflow-hidden flex flex-col">
+                                            <div class="text-[10px] uppercase text-slate-500 tracking-widest font-bold mb-2">If F is kept Trivial...</div>
+                                            <div class="font-mono text-xs text-slate-300 space-y-1 mb-3">
+                                                <div>|1| = 1</div>
+                                                <div>|1 + 1| = |2| = 1</div>
+                                                <div>|1 + 1 + 1| = |3| = 1</div>
+                                            </div>
+                                            <div class="mt-auto pt-3 border-t border-slate-700 text-xs text-rose-300 font-bold leading-relaxed">Like a rigid steel rod, distances never grow! This forces the entire parent metric to be Non-Archimedean.</div>
+                                        </div>
+                                        <div class="bg-slate-900 p-4 rounded-lg border border-slate-700 relative overflow-hidden flex flex-col">
+                                            <div class="text-[10px] uppercase text-slate-500 tracking-widest font-bold mb-2">If F(t) is Archimedean...</div>
+                                            <div class="font-mono text-xs text-slate-300 space-y-1 mb-3">
+                                                <div>|1| = 1</div>
+                                                <div>|1 + 1| = |2| = 2</div>
+                                                <div>|1 + 1 + 1| = |3| = 3</div>
+                                            </div>
+                                            <div class="mt-auto pt-3 border-t border-slate-700 text-xs text-emerald-300 font-bold leading-relaxed">Like a rubber band, distances must stretch and grow to infinity. The numbers 2 and 3 can no longer equal 1. This breaks the triviality!</div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-slate-700 p-3 rounded-lg text-sm text-white mt-4 border border-slate-600 shadow-sm">
+                                        <strong>The Conclusion:</strong> It is <em>impossible</em> to pass the test. An Archimedean absolute value on a function field <strong class="font-mono text-amber-400">F(t)</strong> acts like a virus—it forces the "Archimedean-ness" to stretch the embedded constants, completely destroying any triviality on the base field <strong class="font-mono text-amber-400">F</strong>.
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    `
+                },
+                setupInteraction: () => {
+                    const rSel = document.getElementById('p45-rt-sel');
+                    const tSel = document.getElementById('p45-t-val');
+                    
+                    const outRt = document.getElementById('p45-out-rt');
+                    const outSub = document.getElementById('p45-out-sub');
+                    const outEval = document.getElementById('p45-out-eval');
+                    const outAbs = document.getElementById('p45-out-abs');
+
+                    function updateEngine() {
+                        if(!tSel || !rSel) return;
+                        
+                        let t = tSel.value === 'pi' ? Math.PI : Math.E;
+                        let sym = tSel.value === 'pi' ? '\u03C0' : 'e';
+                        let rType = rSel.value;
+                        
+                        let val, strRt, strSub;
+                        
+                        if (rType === '1') {
+                            strRt = "(t\xB2 - 2) / (t + 1)";
+                            strSub = `t = ${sym}`;
+                            val = (t*t - 2) / (t + 1);
+                        } else if (rType === '2') {
+                            strRt = "3t / (t\xB2 + 4)";
+                            strSub = `t = ${sym}`;
+                            val = (3*t) / (t*t + 4);
+                        } else {
+                            strRt = "5";
+                            strSub = `t = ${sym}`;
+                            val = 5;
+                        }
+                        
+                        let absVal = Math.abs(val);
+
+                        if(outRt) outRt.innerText = strRt;
+                        if(outSub) outSub.innerText = strSub;
+                        if(outEval) outEval.innerText = val.toFixed(4);
+                        if(outAbs) outAbs.innerText = absVal.toFixed(4);
+                    }
+
+                    if (tSel && rSel) {
+                        tSel.addEventListener('change', updateEngine);
+                        rSel.addEventListener('change', updateEngine);
+                        updateEngine();
+                    }
+                },
+                steps: [
+                    { comment: "// Step 1: Embedding F(t) into R", text: "Let \\( F = \\mathbb{Q} \\). We know that the real numbers \\( \\mathbb{R} \\) are uncountable, while \\( \\mathbb{Q} \\) is countable. Therefore, there exist transcendental numbers \\( \\alpha \\in \\mathbb{R} \\) (such as \\( \\pi \\) or \\( e \\)).", math: "\\[ \\alpha \\in \\mathbb{R}, \\quad \\alpha \\notin \\overline{\\mathbb{Q}} \\]" },
+                    { text: "We define a mapping \\( \\phi : \\mathbb{Q}(t) \\to \\mathbb{R} \\) by simply evaluating the rational function at \\( t = \\alpha \\).", math: "\\[ \\phi\\left(\\frac{f(t)}{g(t)}\\right) = \\frac{f(\\alpha)}{g(\\alpha)} \\]" },
+                    { text: "Because \\( \\alpha \\) is transcendental, \\( g(\\alpha) \\neq 0 \\) for any non-zero polynomial \\( g \\in \\mathbb{Q}[t] \\). Thus, the mapping is a well-defined field isomorphism onto its image.", math: "\\[ \\phi \\text{ is an injection into } \\mathbb{R} \\]" },
+                    { comment: "// Step 2: Defining the Absolute Value", text: "We define our new absolute value on \\( \\mathbb{Q}(t) \\) by composing this embedding with the standard archimedean absolute value on \\( \\mathbb{R} \\).", math: "\\[ |R(t)|_{new} = |\\phi(R(t))|_\\infty = \\left| \\frac{f(\\alpha)}{g(\\alpha)} \\right| \\]" },
+                    { text: "Because this inherits the properties of the standard real absolute value, it is an Archimedean absolute value on \\( \\mathbb{Q}(t) \\).", math: "\\[ |1 + 1|_{new} = |2| = 2 \\not\\le 1 \\]" },
+                    { comment: "// Step 3: Is the restriction to F trivial?", text: "Let \\( k \\in \\mathbb{Q} \\) be a non-zero constant. Embedding it yields \\( \\phi(k) = k \\). Thus, its absolute value is \\( |k|_{new} = |k| \\).", math: "\\[ |k|_{new} \\text{ is the standard real absolute value on } \\mathbb{Q}. \\]" },
+                    { text: "For example, \\( |2|_{new} = 2 \\neq 1 \\). Therefore, the induced absolute value on the base field \\( F \\) is NOT trivial. (In fact, any archimedean absolute value on a field extension forces an archimedean, non-trivial absolute value on its prime subfield).", math: "\\[ \\text{No, it cannot be trivial on } F. \\quad \\blacksquare \\]", final: true }
+                ]
+            },
+
+            // --- PROBLEM 46 ---
+            {
+                id: 'prob-46',
+                title: 'Problem 46',
+                shortDesc: 'The 1/t-adic Valuation',
+                filename: '1_over_t_valuation.tex',
+                headerColor: "bg-emerald-50 text-emerald-900 border-emerald-100",
+                deepDive: {
+                    title: "The Infinity Perspective",
+                    icon: "orbit",
+                    color: "bg-emerald-100 text-emerald-700",
+                    customHtml: `
+                        <div class="space-y-6 fade-in pb-2">
+                            <div class="bg-emerald-600 text-white p-5 rounded-xl shadow-md">
+                                <h4 class="font-extrabold text-sm uppercase tracking-widest mb-3 flex items-center gap-2 text-emerald-100"><i data-lucide="key" class="w-5 h-5"></i> Problem 46 Statement</h4>
+                                <p class="text-sm leading-relaxed text-emerald-50 mb-3">The field F(t) contains the subring of polynomials F[t], but it also contains the subring F[1/t] of "polynomials in 1/t." Every element of F(t) can be written as a quotient of elements in F[1/t].</p>
+                                <p class="text-sm leading-relaxed text-emerald-50 mb-3">In F[1/t] the "polynomial" 1/t is clearly irreducible, so we can construct a 1/t-adic valuation v<sub>1/t</sub>.</p>
+                                <p class="text-sm leading-relaxed text-emerald-50 font-bold">Check that v<sub>1/t</sub> is the same as the v<sub>&infin;</sub> constructed above. This means all valuations constructed on F(t) are of the "p(t)-adic" type.</p>
+                            </div>
+                            
+                            <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-5 shadow-sm text-slate-700">
+                                <h5 class="font-bold text-emerald-800 mb-2 flex items-center gap-2"><i data-lucide="eye" class="w-4 h-4"></i> The Perspective Shift</h5>
+                                <p class="text-sm mb-3">If you stand at 0 and look toward Infinity, numbers get massively large. But what if you <em>stand</em> at Infinity and look back towards 0?</p>
+                                <p class="text-sm">Mathematically, we achieve this perspective shift with a simple substitution: let <strong class="font-mono text-emerald-700">u = 1/t</strong>. A polynomial that explodes to infinity as <i>t &rarr; &infin;</i> becomes a fraction that crashes into zero as <i>u &rarr; 0</i>. The "Infinity Valuation" is revealed to just be the standard <i>p</i>-adic valuation acting on the prime <strong class="font-mono text-emerald-700">p(u) = u</strong>.</p>
+                            </div>
+
+                            <!-- The Infinity Perspective Engine -->
+                            <div class="bg-slate-50 p-1.5 rounded-2xl border border-slate-200 shadow-inner mt-6">
+                                <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-100">
+                                    <div class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-4 flex items-center gap-2 justify-center border-b border-slate-100 pb-3">
+                                        <i data-lucide="orbit" class="w-4 h-4"></i> The Infinity Perspective Engine
+                                    </div>
+                                    <p class="text-xs text-center text-slate-500 mb-6 max-w-md mx-auto">Build a rational function R(t). Watch how substituting <strong class="font-mono text-emerald-600">u = 1/t</strong> proves the equivalence.</p>
+                                    
+                                    <div class="flex flex-col md:flex-row items-center justify-center gap-8 mb-6">
+                                        <!-- f(t) Controls -->
+                                        <div class="flex flex-col items-center">
+                                            <label class="text-[10px] font-bold text-slate-500 uppercase mb-2">deg( num )</label>
+                                            <input type="range" id="p46-deg-num" min="0" max="6" value="4" class="w-32 accent-emerald-500 cursor-pointer">
+                                            <div class="font-mono text-xl font-bold text-emerald-700 mt-2" id="p46-val-num">4</div>
+                                        </div>
+                                        
+                                        <!-- g(t) Controls -->
+                                        <div class="flex flex-col items-center">
+                                            <label class="text-[10px] font-bold text-slate-500 uppercase mb-2">deg( den )</label>
+                                            <input type="range" id="p46-deg-den" min="0" max="6" value="2" class="w-32 accent-emerald-500 cursor-pointer">
+                                            <div class="font-mono text-xl font-bold text-emerald-700 mt-2" id="p46-val-den">2</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- The Transformation Pipeline -->
+                                    <div class="bg-slate-900 rounded-xl p-5 border border-slate-700 text-white shadow-inner flex flex-col items-center">
+                                        
+                                        <!-- Step 1: Base Function -->
+                                        <div class="flex items-center justify-center gap-4 w-full max-w-md">
+                                            <div class="text-xs font-bold text-slate-400 uppercase tracking-widest w-24 text-right">R(t) =</div>
+                                            <div class="flex flex-col items-center font-mono">
+                                                <div class="border-b-2 border-slate-600 pb-1 mb-1">t<sup id="p46-rt-num" class="text-emerald-400">4</sup></div>
+                                                <div>t<sup id="p46-rt-den" class="text-emerald-400">2</sup></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="h-6 border-l-2 border-slate-700 my-2 relative">
+                                            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-800 text-[9px] uppercase tracking-wider text-slate-400 px-2 py-0.5 rounded border border-slate-600 whitespace-nowrap">Substitute t = 1/u</div>
+                                        </div>
+
+                                        <!-- Step 2: Substitution -->
+                                        <div class="flex items-center justify-center gap-4 w-full max-w-md">
+                                            <div class="text-xs font-bold text-slate-400 uppercase tracking-widest w-24 text-right">R(1/u) =</div>
+                                            <div class="flex flex-col items-center font-mono">
+                                                <div class="border-b-2 border-slate-600 pb-1 mb-1 text-slate-300">(1/u)<sup id="p46-ru-num" class="text-emerald-400">4</sup></div>
+                                                <div class="text-slate-300">(1/u)<sup id="p46-ru-den" class="text-emerald-400">2</sup></div>
+                                            </div>
+                                            <div class="text-slate-500">=</div>
+                                            <div class="flex flex-col items-center font-mono">
+                                                <div class="border-b-2 border-slate-600 pb-1 mb-1">u<sup id="p46-ru-den-flip" class="text-emerald-400">2</sup></div>
+                                                <div>u<sup id="p46-ru-num-flip" class="text-emerald-400">4</sup></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="h-6 border-l-2 border-slate-700 my-2 relative">
+                                            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-800 text-[9px] uppercase tracking-wider text-slate-400 px-2 py-0.5 rounded border border-slate-600 whitespace-nowrap">Simplify</div>
+                                        </div>
+
+                                        <!-- Step 3: Final Form -->
+                                        <div class="flex items-center justify-center gap-4 w-full max-w-md bg-emerald-900/30 p-3 rounded-lg border border-emerald-500/30">
+                                            <div class="text-xs font-bold text-emerald-400 uppercase tracking-widest w-24 text-right">Result =</div>
+                                            <div class="font-mono text-xl font-bold text-white">
+                                                u<sup id="p46-final-pow" class="text-emerald-300">-2</sup>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <!-- Conclusions -->
+                                    <div class="grid md:grid-cols-2 gap-4 mt-6">
+                                        <div class="bg-slate-100 p-4 rounded-xl text-center border border-slate-200">
+                                            <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Original v<sub>&infin;</sub></div>
+                                            <div class="font-mono text-xs text-slate-400 mb-1">deg(den) - deg(num)</div>
+                                            <div class="font-mono text-2xl text-slate-700 font-bold" id="p46-out-vinf">-</div>
+                                        </div>
+                                        <div class="bg-emerald-50 p-4 rounded-xl text-center border border-emerald-200 shadow-sm">
+                                            <div class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-2">New v<sub>1/t</sub> (using u)</div>
+                                            <div class="font-mono text-xs text-emerald-500/80 mb-1">Exponent of u</div>
+                                            <div class="font-mono text-2xl text-emerald-800 font-bold" id="p46-out-vu">-</div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 text-center text-sm font-bold text-emerald-700 bg-emerald-100/50 p-3 rounded-lg border border-emerald-200 shadow-sm flex items-center justify-center gap-2">
+                                        <i data-lucide="check-circle" class="w-4 h-4"></i> They are mathematically identical!
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                setupInteraction: () => {
+                    const sliderNum = document.getElementById('p46-deg-num');
+                    const sliderDen = document.getElementById('p46-deg-den');
+                    
+                    const valNum = document.getElementById('p46-val-num');
+                    const valDen = document.getElementById('p46-val-den');
+                    
+                    const rtNum = document.getElementById('p46-rt-num');
+                    const rtDen = document.getElementById('p46-rt-den');
+                    const ruNum = document.getElementById('p46-ru-num');
+                    const ruDen = document.getElementById('p46-ru-den');
+                    const ruNumFlip = document.getElementById('p46-ru-num-flip');
+                    const ruDenFlip = document.getElementById('p46-ru-den-flip');
+                    const finalPow = document.getElementById('p46-final-pow');
+                    
+                    const outVinf = document.getElementById('p46-out-vinf');
+                    const outVu = document.getElementById('p46-out-vu');
+
+                    function updateEngine() {
+                        if(!sliderNum || !sliderDen) return;
+                        
+                        let num = parseInt(sliderNum.value);
+                        let den = parseInt(sliderDen.value);
+                        
+                        valNum.innerText = num;
+                        valDen.innerText = den;
+                        
+                        rtNum.innerText = num;
+                        rtDen.innerText = den;
+                        
+                        ruNum.innerText = num;
+                        ruDen.innerText = den;
+                        
+                        ruNumFlip.innerText = num;
+                        ruDenFlip.innerText = den;
+                        
+                        let finalExp = den - num;
+                        finalPow.innerText = finalExp;
+                        
+                        outVinf.innerText = finalExp;
+                        outVu.innerText = finalExp;
+                    }
+
+                    if (sliderNum && sliderDen) {
+                        sliderNum.addEventListener('input', updateEngine);
+                        sliderDen.addEventListener('input', updateEngine);
+                        updateEngine();
+                    }
+                },
+                steps: [
+                    { comment: "// Evaluating the 1/t-adic valuation", text: "Let \\( R(t) = f(t)/g(t) \\in F(t) \\) be a rational function. We can write \\( f(t) \\) and \\( g(t) \\) explicitly:", math: "\\[ f(t) = a_n t^n + \\dots + a_0, \\quad g(t) = b_m t^m + \\dots + b_0 \\]" },
+                    { text: "We rewrite \\( R(t) \\) as a rational function in the new variable \\( u = 1/t \\). First, factor out the highest powers of \\( t \\):", math: "\\[ R(t) = \\frac{t^n(a_n + a_{n-1}t^{-1} + \\dots)}{t^m(b_m + b_{m-1}t^{-1} + \\dots)} = t^{n-m} \\frac{a_n + a_{n-1}u + \\dots}{b_m + b_{m-1}u + \\dots} \\]" },
+                    { text: "Substitute \\( t = u^{-1} \\) to get the function purely in terms of \\( u \\). Let \\( A(u) \\) and \\( B(u) \\) be the polynomials in the parentheses.", math: "\\[ R(u^{-1}) = u^{m-n} \\frac{A(u)}{B(u)} \\]" },
+                    { text: "Since \\( a_n \\neq 0 \\) and \\( b_m \\neq 0 \\), neither \\( A(u) \\) nor \\( B(u) \\) is divisible by \\( u \\). Therefore, the \\( u \\)-adic valuation (the multiplicity of \\( u \\) as a factor) is exactly the exponent \\( m - n \\).", math: "\\[ v_u(R) = m - n = \\deg(g) - \\deg(f) \\]" },
+                    { comment: "// Conclusion", text: "This perfectly matches our definition of the infinity valuation from Problem 40.", math: "\\[ v_{1/t}(R) = v_\\infty(R) \\quad \\blacksquare \\]", final: true }
+                ]
+            },
+
+            // --- PROBLEM 47 ---
+            {
+                id: 'prob-47',
+                title: 'Problem 47',
+                shortDesc: 'Valuations on Gaussian Integers',
+                filename: 'gaussian_valuations.tex',
+                headerColor: "bg-orange-50 text-orange-900 border-orange-100",
+                deepDive: {
+                    title: "Splitting Primes in 2D",
+                    icon: "split-square-vertical",
+                    color: "bg-orange-100 text-orange-700",
+                    customHtml: `
+                        <div class="space-y-6 fade-in pb-2">
+                            <div class="bg-orange-600 text-white p-5 rounded-xl shadow-md">
+                                <h4 class="font-extrabold text-sm uppercase tracking-widest mb-3 flex items-center gap-2 text-orange-100"><i data-lucide="key" class="w-5 h-5"></i> Problem 47 Statement</h4>
+                                <p class="text-sm leading-relaxed text-orange-50 mb-3">Let <strong>k = &Qopf;(i)</strong>. The integers are <strong>&Zopf;[i] = {a + bi : a, b &isin; &Zopf;}</strong>. The primes of &Zopf;[i] are of three kinds:</p>
+                                <ul class="text-sm space-y-1 text-orange-100 list-none ml-4 mb-3 font-mono bg-orange-700/40 p-3 rounded border border-orange-500/50">
+                                    <li>i) <strong>1 + i</strong> is prime (from p=2).</li>
+                                    <li>ii) If <strong>p &equiv; 3 (mod 4)</strong>, then p is prime in &Zopf;[i].</li>
+                                    <li>iii) If <strong>p &equiv; 1 (mod 4)</strong>, p splits into two primes: <strong>x + yi</strong> and <strong>x - yi</strong>.</li>
+                                </ul>
+                                <p class="text-sm leading-relaxed text-orange-50">In each case, use the prime &pi; &isin; &Zopf;[i] to construct an absolute value. Describe the induced absolute value on &Qopf;, and compute v<sub>&pi;</sub>(p).</p>
+                            </div>
+                            
+                            <!-- CRASH COURSE SECTION -->
+                            <div class="bg-white border border-orange-200 rounded-xl shadow-sm overflow-hidden mt-6">
+                                <div class="bg-orange-50 px-4 py-3 border-b border-orange-100 font-bold text-orange-800 flex items-center gap-2">
+                                    <i data-lucide="map" class="w-5 h-5 text-orange-600"></i> Crash Course: Imaginary Numbers & The 2D Grid
+                                </div>
+                                <div class="p-5 space-y-6">
+                                    <p class="text-sm text-slate-600 leading-relaxed mb-4">We are expanding our <i>p</i>-adic universe from the 1D number line (&Zopf;) into the 2D complex grid (&Zopf;[i]). What happens to our normal prime numbers in this new world?</p>
+                                    
+                                    <div class="grid md:grid-cols-2 gap-4">
+                                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
+                                            <h6 class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">The 1D Number Line (&Zopf;)</h6>
+                                            <p class="text-xs text-slate-500 mb-3">Numbers only go left and right. A prime number like <strong>5</strong> is a solid, unbreakable block on this line.</p>
+                                            <div class="w-full h-8 bg-slate-200 rounded-full relative flex items-center justify-center">
+                                                <div class="w-1 h-4 bg-slate-400 absolute left-1/2"></div>
+                                                <div class="absolute right-4 bg-orange-500 text-white font-bold text-xs px-2 py-0.5 rounded shadow-sm">5</div>
+                                            </div>
+                                        </div>
+                                        <div class="bg-orange-50 p-4 rounded-xl border border-orange-200 text-center">
+                                            <h6 class="text-xs font-bold uppercase tracking-widest text-orange-700 mb-2">The 2D Complex Grid (&Zopf;[i])</h6>
+                                            <p class="text-xs text-slate-600 mb-3">We add a vertical "imaginary" axis <strong>i</strong> (where i&sup2; = -1). The <strong>Gaussian Integers</strong> are the intersections on this grid (a + bi).</p>
+                                            <div class="w-full h-16 bg-slate-100 rounded border border-slate-300 relative flex items-center justify-center overflow-hidden">
+                                                <!-- Grid lines -->
+                                                <div class="absolute w-full h-px bg-slate-300"></div>
+                                                <div class="absolute h-full w-px bg-slate-300"></div>
+                                                <div class="absolute top-2 right-4 bg-orange-500 text-white font-bold text-[9px] px-1.5 py-0.5 rounded shadow-sm">2+i</div>
+                                                <div class="absolute bottom-2 right-4 bg-orange-500 text-white font-bold text-[9px] px-1.5 py-0.5 rounded shadow-sm">2-i</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-amber-50 p-4 rounded-xl border border-amber-200">
+                                        <h6 class="text-sm font-bold text-amber-800 mb-2 flex items-center gap-2"><i data-lucide="scissors" class="w-4 h-4"></i> Why do some primes "Split"?</h6>
+                                        <p class="text-sm text-slate-700 leading-relaxed mb-3">In 1D, 5 cannot be factored. But in the 2D grid, we discover a hidden secret: 5 can be written as the sum of two squares (5 = 2&sup2; + 1&sup2;). Because <strong>i&sup2; = -1</strong>, we can use algebra to factor this sum of squares into two smaller imaginary pieces!</p>
+                                        <div class="bg-white p-3 rounded-lg border border-amber-100 font-mono text-sm text-center shadow-sm text-amber-900 font-bold">
+                                            5 = 2&sup2; + 1&sup2; = (2 + i) &times; (2 - i)
+                                        </div>
+                                        <p class="text-xs text-slate-500 mt-3">Some primes (like 3) cannot be written as a sum of squares, so they remain unbreakable blocks (they are "inert"). The problem asks us to track what happens to our distance metrics when these primes split.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Gaussian Prime Splitting Engine -->
+                            <div class="bg-slate-50 p-1.5 rounded-2xl border border-slate-200 shadow-inner mt-6">
+                                <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-100">
+                                    <div class="text-[10px] font-bold text-orange-600 uppercase tracking-widest mb-4 flex items-center gap-2 justify-center border-b border-slate-100 pb-3">
+                                        <i data-lucide="split-square-vertical" class="w-4 h-4"></i> Gaussian Prime Splitting Engine
+                                    </div>
+                                    <p class="text-xs text-center text-slate-500 mb-6 max-w-md mx-auto">Select a standard rational prime <strong class="font-mono text-orange-600">p &isin; &Zopf;</strong> to see how it behaves in the 2D Gaussian Integer grid <strong class="font-mono text-orange-600">&Zopf;[i]</strong>.</p>
+                                    
+                                    <!-- Controls -->
+                                    <div class="flex flex-col items-center justify-center mb-6">
+                                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2">Select Rational Prime p</span>
+                                        <div class="flex flex-wrap gap-2 justify-center" id="p47-btn-group">
+                                            <button class="p47-btn px-4 py-2 rounded-lg font-mono font-bold text-sm bg-orange-600 text-white border border-orange-500 hover:bg-orange-500 transition-colors shadow-sm" data-p="2">p = 2</button>
+                                            <button class="p47-btn px-4 py-2 rounded-lg font-mono font-bold text-sm bg-slate-100 text-slate-600 border border-slate-300 hover:bg-slate-200 transition-colors shadow-sm" data-p="3">p = 3</button>
+                                            <button class="p47-btn px-4 py-2 rounded-lg font-mono font-bold text-sm bg-slate-100 text-slate-600 border border-slate-300 hover:bg-slate-200 transition-colors shadow-sm" data-p="5">p = 5</button>
+                                            <button class="p47-btn px-4 py-2 rounded-lg font-mono font-bold text-sm bg-slate-100 text-slate-600 border border-slate-300 hover:bg-slate-200 transition-colors shadow-sm" data-p="7">p = 7</button>
+                                            <button class="p47-btn px-4 py-2 rounded-lg font-mono font-bold text-sm bg-slate-100 text-slate-600 border border-slate-300 hover:bg-slate-200 transition-colors shadow-sm" data-p="13">p = 13</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Visualization Area -->
+                                    <div class="bg-slate-900 rounded-xl border border-slate-700 p-5 flex flex-col items-center shadow-inner relative overflow-hidden">
+                                        <!-- Top: Integer Line -->
+                                        <div class="text-center w-full relative z-10">
+                                            <div class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-1">Standard Prime (1D)</div>
+                                            <div class="font-mono text-2xl font-bold text-white mb-2" id="p47-display-p">2</div>
+                                            <div class="text-[10px] text-orange-400 font-mono bg-orange-900/30 px-2 py-0.5 rounded inline-block border border-orange-500/30" id="p47-display-mod">Special Case</div>
+                                        </div>
+                                        
+                                        <!-- Spliting Animation -->
+                                        <div class="my-4 w-full flex justify-center relative h-12 z-10">
+                                            <div id="p47-arrow-container" class="relative w-32 flex justify-center">
+                                                <!-- Dynamic SVG generated in JS -->
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Bottom: Gaussian Grid -->
+                                        <div class="text-center w-full relative z-10">
+                                            <div class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-2">Gaussian Prime(s) &pi; (2D)</div>
+                                            <div class="flex items-center justify-center gap-4" id="p47-display-pi">
+                                                <div class="bg-orange-500 text-white px-4 py-2 rounded-lg font-mono text-lg font-bold shadow-sm border border-orange-400">1 + i</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Status Info -->
+                                        <div id="p47-status" class="mt-6 w-full text-center text-sm font-bold bg-slate-800 border border-slate-600 text-slate-300 p-2 rounded-lg z-10 relative">
+                                            It "Ramifies". p = -i(1+i)&sup2;
+                                        </div>
+                                    </div>
+
+                                    <!-- The Analysis -->
+                                    <div class="mt-6 grid md:grid-cols-2 gap-4">
+                                        <div class="bg-slate-100 p-4 rounded-xl border border-slate-200 text-center flex flex-col justify-center">
+                                            <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Valuation of p: v<sub>&pi;</sub>(p)</div>
+                                            <div class="font-mono text-xs text-slate-400 mb-1">How many times does &pi; divide p?</div>
+                                            <div class="font-mono text-3xl text-slate-700 font-bold" id="p47-out-vp">2</div>
+                                        </div>
+                                        <div class="bg-orange-50 p-4 rounded-xl border border-orange-200 text-center shadow-sm flex flex-col justify-center relative">
+                                            <div class="text-[10px] font-bold text-orange-700 uppercase tracking-widest mb-2">Induced Absolute Value on &Qopf;</div>
+                                            <div class="text-sm font-bold text-orange-800 leading-tight">
+                                                Equivalent to the standard <br>
+                                                <strong class="font-mono text-lg text-orange-600 bg-white px-2 py-0.5 rounded shadow-sm inline-block mt-2" id="p47-out-induced">|x|<sub>2</sub></strong>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                setupInteraction: () => {
+                    const btns = document.querySelectorAll('.p47-btn');
+                    
+                    const dispP = document.getElementById('p47-display-p');
+                    const dispMod = document.getElementById('p47-display-mod');
+                    const dispPi = document.getElementById('p47-display-pi');
+                    const status = document.getElementById('p47-status');
+                    const outVp = document.getElementById('p47-out-vp');
+                    const outInd = document.getElementById('p47-out-induced');
+                    const arrowCont = document.getElementById('p47-arrow-container');
+
+                    const primeData = {
+                        '2': {
+                            mod: 'Special Case',
+                            type: 'ramifies',
+                            pis: ['1 + i'],
+                            statusText: 'It "Ramifies". 2 = -i(1+i)\xB2',
+                            vp: 2,
+                            ind: '|x|<sub>2</sub>'
+                        },
+                        '3': {
+                            mod: '3 \u2261 3 (mod 4)', // \u2261 is equiv
+                            type: 'inert',
+                            pis: ['3'],
+                            statusText: 'It is "Inert". It remains prime in \u2124[i].',
+                            vp: 1,
+                            ind: '|x|<sub>3</sub>'
+                        },
+                        '5': {
+                            mod: '5 \u2261 1 (mod 4)',
+                            type: 'splits',
+                            pis: ['2 + i', '2 - i'],
+                            statusText: 'It "Splits". 5 = (2+i)(2-i)',
+                            vp: 1,
+                            ind: '|x|<sub>5</sub>'
+                        },
+                        '7': {
+                            mod: '7 \u2261 3 (mod 4)',
+                            type: 'inert',
+                            pis: ['7'],
+                            statusText: 'It is "Inert". It remains prime in \u2124[i].',
+                            vp: 1,
+                            ind: '|x|<sub>7</sub>'
+                        },
+                        '13': {
+                            mod: '13 \u2261 1 (mod 4)',
+                            type: 'splits',
+                            pis: ['3 + 2i', '3 - 2i'],
+                            statusText: 'It "Splits". 13 = (3+2i)(3-2i)',
+                            vp: 1,
+                            ind: '|x|<sub>13</sub>'
+                        }
+                    };
+
+                    function updateEngine(pKey, btnClicked) {
+                        // Styles
+                        btns.forEach(b => {
+                            b.classList.remove('bg-orange-600', 'text-white', 'border-orange-500');
+                            b.classList.add('bg-slate-100', 'text-slate-600', 'border-slate-300');
+                        });
+                        btnClicked.classList.add('bg-orange-600', 'text-white', 'border-orange-500');
+                        btnClicked.classList.remove('bg-slate-100', 'text-slate-600', 'border-slate-300');
+
+                        const d = primeData[pKey];
+                        
+                        dispP.innerText = pKey;
+                        dispMod.innerText = d.mod;
+                        status.innerText = d.statusText;
+                        outVp.innerText = d.vp;
+                        outInd.innerHTML = d.ind;
+
+                        // Render Pi blocks
+                        dispPi.innerHTML = d.pis.map(pi => `<div class="bg-orange-500 text-white px-4 py-2 rounded-lg font-mono text-lg font-bold shadow-sm border border-orange-400">${pi}</div>`).join('');
+
+                        // Render SVG arrows based on type
+                        if (d.type === 'splits') {
+                            arrowCont.innerHTML = `
+                                <svg width="120" height="48" viewBox="0 0 120 48" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M60 0 C60 20, 20 20, 20 48" />
+                                    <path d="M60 0 C60 20, 100 20, 100 48" />
+                                    <polygon points="15,40 20,48 25,40" fill="#94a3b8" />
+                                    <polygon points="95,40 100,48 105,40" fill="#94a3b8" />
+                                </svg>
+                            `;
+                        } else {
+                            arrowCont.innerHTML = `
+                                <svg width="24" height="48" viewBox="0 0 24 48" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="0" x2="12" y2="48" />
+                                    <polygon points="7,40 12,48 17,40" fill="#94a3b8" />
+                                </svg>
+                            `;
+                        }
+                    }
+
+                    btns.forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            updateEngine(e.target.getAttribute('data-p'), e.target);
+                        });
+                    });
+                    
+                    if(btns.length > 0) updateEngine('2', btns[0]);
+                },
+                steps: [
+                    { comment: "// Evaluating the induced absolute value on Q", text: "Let \\( x \\in \\mathbb{Q} \\) be a non-zero rational number. Its factorization in \\( \\mathbb{Q} \\) is uniquely determined by standard primes \\( p \\). How does the \\( \\pi \\)-adic valuation on \\( \\mathbb{Q}(i) \\) affect \\( x \\)?", math: "\\[ v_\\pi(x) \\text{ depends solely on how } p \\text{ factors into } \\pi \\]" },
+                    { text: "Case 1: \\( p \\) is inert or splits. In both cases, \\( \\pi \\) divides \\( p \\) exactly once. Thus, the multiplicity of \\( \\pi \\) in \\( x \\) is exactly the multiplicity of \\( p \\) in \\( x \\).", math: "\\[ v_\\pi(x) = v_p(x) \\implies |x|_\\pi = c^{-v_p(x)} \\]" },
+                    { text: "Case 2: \\( p = 2 \\) ramifies. Here, \\( 2 = -i(1+i)^2 \\). The prime \\( \\pi = 1+i \\) divides 2 exactly twice. Thus, the multiplicity of \\( \\pi \\) in \\( x \\) is twice the multiplicity of 2 in \\( x \\).", math: "\\[ v_{1+i}(x) = 2v_2(x) \\implies |x|_{1+i} = c^{-2v_2(x)} = (c^2)^{-v_2(x)} \\]" },
+                    { comment: "// Conclusion", text: "In all cases, the restriction to \\( \\mathbb{Q} \\) is of the form \\( C^{-v_p(x)} \\), which is equivalent to the standard \\( p \\)-adic absolute value.", math: "\\[ \\text{The induced absolute value on } \\mathbb{Q} \\text{ is equivalent to } |x|_p \\quad \\blacksquare \\]", final: true }
+                ]
+            }
+        ];
+
+        const selectorContainer = document.getElementById('problem-selector');
+        const deepDiveContainer = document.getElementById('deep-dive-container');
+        const deepDiveHeader = document.getElementById('deep-dive-header');
+        const proofFilename = document.getElementById('proof-filename');
+        const proofContainer = document.getElementById('proof-container');
+        const btnNextStep = document.getElementById('btn-next-step');
+
+        let currentProblem = null;
+        let currentStepIndex = 0;
+
+        function initHub() {
+            problemsData.forEach((prob, index) => {
+                const btn = document.createElement('button');
+                btn.className = `problem-tab w-full text-left px-3 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors flex flex-col mb-2`;
+                btn.innerHTML = `
+                    <span class="font-bold text-sm mb-0.5">${prob.title}</span>
+                    <span class="text-xs opacity-80 truncate w-full">${prob.shortDesc}</span>
+                `;
+                btn.onclick = () => loadProblem(index);
+                selectorContainer.appendChild(btn);
+            });
+
+            // Initialize button listener safely
+            btnNextStep.addEventListener('click', renderNextStep);
+
+            loadProblem(0); // Load Problem 37 by default
+        }
+
+        function loadProblem(index) {
+            currentProblem = problemsData[index];
+            currentStepIndex = 0;
+
+            // Update Sidebar UI
+            document.querySelectorAll('.problem-tab').forEach((btn, i) => {
+                if (i === index) {
+                    btn.classList.add('active');
+                    btn.classList.remove('hover:bg-slate-50', 'text-slate-700');
+                } else {
+                    btn.classList.remove('active');
+                    btn.classList.add('hover:bg-slate-50', 'text-slate-700');
+                }
+            });
+            
+            // Header Color override
+            if (currentProblem.headerColor) {
+                deepDiveHeader.className = `px-5 py-3 border-b font-bold flex items-center gap-2 shrink-0 ${currentProblem.headerColor}`;
+            } else {
+                deepDiveHeader.className = `bg-indigo-50 px-5 py-3 border-b border-indigo-100 font-bold text-indigo-900 flex items-center gap-2 shrink-0`;
+            }
+
+            // Handle Custom Layouts
+            if (currentProblem.deepDive.customHtml) {
+                deepDiveContainer.innerHTML = `
+                    <div class="flex items-center gap-3 mb-5 border-b border-slate-100 pb-4 shrink-0">
+                        <div class="p-2.5 rounded-xl shadow-sm border ${currentProblem.deepDive.color.replace('text-','border-')} ${currentProblem.deepDive.color}">
+                            <i data-lucide="${currentProblem.deepDive.icon}" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-2xl font-extrabold text-slate-800 leading-tight">${currentProblem.deepDive.title}</h3>
+                    </div>
+                    ${currentProblem.deepDive.customHtml}
+                `;
+            }
+
+            // Safely trigger MathJax rendering
+            typesetMath(deepDiveContainer);
+
+            // Reset Proof Area
+            proofFilename.innerText = currentProblem.filename;
+            proofContainer.innerHTML = '';
+            
+            // Reset Button states safely
+            btnNextStep.className = 'bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-1.5 rounded text-sm font-sans font-bold transition-colors flex items-center gap-2 shadow-sm';
+            btnNextStep.innerHTML = 'Next Step <i data-lucide="arrow-right" class="w-4 h-4"></i>';
+            btnNextStep.disabled = false;
+
+            renderNextStep();
+            
+            // Execute interactive logic specific to problem
+            if (currentProblem.setupInteraction) {
+                currentProblem.setupInteraction();
+            }
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function renderNextStep() {
+            if (!currentProblem || currentStepIndex >= currentProblem.steps.length) return;
+
+            const stepData = currentProblem.steps[currentStepIndex];
+            const stepDiv = document.createElement('div');
+            stepDiv.className = 'proof-step fade-in';
+            
+            let html = '';
+            if (stepData.comment) {
+                html += `<div class="text-indigo-400 mb-1.5 font-mono text-xs">${stepData.comment}</div>`;
+            }
+            if (stepData.text) {
+                html += `<div class="text-slate-400 italic mb-2.5 font-sans text-sm">${stepData.text}</div>`;
+            }
+            if (stepData.math) {
+                let boxClass = stepData.final 
+                    ? 'bg-emerald-900/40 p-3.5 rounded-xl border border-emerald-700/50 text-emerald-300 font-bold shadow-sm text-center block'
+                    : 'bg-slate-800/80 p-3 rounded-xl border border-slate-700 shadow-sm overflow-x-auto text-center block';
+                html += `<div class="${boxClass}">${stepData.math}</div>`;
+            }
+            
+            if(stepData.final) {
+                 html += `<div class="text-emerald-400 mt-5 font-sans text-center font-bold fade-in flex justify-center items-center gap-2"><i data-lucide="check-circle" class="w-5 h-5"></i> Proof Complete!</div>`;
+            }
+
+            stepDiv.innerHTML = html;
+            proofContainer.appendChild(stepDiv);
+            
+            proofContainer.scrollTo({
+                top: proofContainer.scrollHeight,
+                behavior: 'smooth'
+            });
+
+            // Safely render math inside the new step
+            typesetMath(stepDiv);
+
+            currentStepIndex++;
+
+            if (currentStepIndex >= currentProblem.steps.length) {
+                btnNextStep.className = 'bg-slate-600 text-slate-300 px-4 py-1.5 rounded text-sm font-sans font-bold flex items-center gap-2 shadow-sm cursor-not-allowed';
+                btnNextStep.innerHTML = 'Finished <i data-lucide="check" class="w-4 h-4"></i>';
+                btnNextStep.disabled = true;
+            }
+            
+            if (window.lucide) lucide.createIcons({ root: stepDiv });
+        }
+
+        window.addEventListener('DOMContentLoaded', initHub);
+
+    </script>
+</body>
+</html>

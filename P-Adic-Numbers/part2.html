@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Absolute Values on a Field - Part 2</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax for rendering LaTeX -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            startup: {
+                typeset: false // We will trigger typesetting manually to avoid race conditions
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Custom animations and scrollbar */
+        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #c7c7cc; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a1a1aa; }
+        
+        /* Active problem tab style */
+        .problem-tab.active {
+            background-color: #4f46e5; /* indigo-600 */
+            color: white;
+            border-color: #4f46e5;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+        }
+
+        /* Seamless Page Transition Styles */
+        body {
+            opacity: 0;
+            animation: pageFadeIn 0.4s ease-in-out forwards;
+        }
+        @keyframes pageFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .page-fade-out {
+            animation: pageFadeOut 0.3s ease-in-out forwards;
+        }
+        @keyframes pageFadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        /* Hide scrollbar for tab menus */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-indigo-200 selection:text-indigo-900">
+
+    <!-- Header Section -->
+    <header class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white py-12 px-6 shadow-lg border-b-4 border-indigo-500">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex items-center gap-3 mb-2 text-indigo-300 font-bold tracking-widest text-sm uppercase">
+                <i data-lucide="book-open" class="w-4 h-4"></i> Chapter 2, Section 1 (Continued)
+            </div>
+            <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-4">The Algebra of Valuations</h1>
+            <p class="text-lg text-indigo-100 max-w-2xl leading-relaxed">
+                Problem 34 and beyond. By proving Lemma 2.1.3, we uncover the algebraic rules that govern the <i>p</i>-adic exponent, leading directly to the strange geometry where all triangles are isosceles.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto py-10 px-6">
+        <!-- INTERACTIVE TUTORIAL HUB WITH DEEP DIVE STACKED -->
+        <section id="tutorials" class="w-full">
+            <!-- 2 Column Layout: Sidebar + Stacked Main Content -->
+            <div class="grid lg:grid-cols-12 gap-6 items-start">
+                
+                <!-- COLUMN 1: Problem Selection Sidebar -->
+                <div class="lg:col-span-4 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col max-h-[800px] sticky top-8">
+                    <div class="bg-slate-100 px-4 py-3 border-b border-slate-200 font-bold text-slate-700 flex items-center justify-between shrink-0">
+                        <div class="flex items-center gap-2"><i data-lucide="list-todo" class="w-5 h-5 text-indigo-600"></i> Problems 34+</div>
+                    </div>
+                    
+                    <div class="p-3 space-y-2 overflow-y-auto flex-1" id="problem-selector">
+                        <!-- Buttons injected via JS -->
+                    </div>
+                    
+                    <!-- Cross-Page Navigation -->
+                    <div class="p-4 border-t border-slate-200 bg-slate-50 space-y-3">
+                        <a href="indexpart3.html" class="page-link group flex items-center justify-center gap-2 w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-xl text-sm font-bold transition-all shadow-md hover:shadow-lg">
+                            Continue to Problems 37+ 
+                            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                        <a href="index.html" class="page-link group flex items-center justify-center gap-2 w-full bg-white border-2 border-slate-300 hover:bg-slate-100 text-slate-700 px-4 py-3 rounded-xl text-sm font-bold transition-all shadow-sm">
+                            <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-1 transition-transform"></i>
+                            Back to Problems 31-33
+                        </a>
+                    </div>
+                </div>
+
+                <!-- COLUMN 2: Stacked Main Content (Deep Dive Top, Proof Bottom) -->
+                <div class="lg:col-span-8 flex flex-col space-y-6">
+                    
+                    <!-- TOP STACK: Deep Dive & Visual Concepts Area -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
+                        <div class="bg-indigo-50 px-5 py-3 border-b border-indigo-100 font-bold text-indigo-900 flex items-center gap-2 shrink-0" id="deep-dive-header">
+                            <i data-lucide="lightbulb" class="w-5 h-5 text-indigo-600"></i> Concept & Analogies
+                        </div>
+                        <div class="p-6 max-h-[850px] overflow-y-auto scroll-smooth" id="deep-dive-container">
+                            <!-- Rich Deep Dive HTML injected via JS -->
+                        </div>
+                    </div>
+
+                    <!-- BOTTOM STACK: Interactive Proof Area -->
+                    <div class="bg-slate-900 rounded-2xl shadow-xl overflow-hidden text-slate-300 font-mono text-sm md:text-base flex flex-col h-[400px] shrink-0">
+                        <div class="bg-slate-800 px-5 py-3 border-b border-slate-700 flex justify-between items-center shrink-0">
+                            <span class="text-slate-400 flex items-center gap-2"><i data-lucide="terminal" class="w-4 h-4"></i> <span id="proof-filename" class="text-xs">proof.tex</span></span>
+                            <button id="btn-next-step" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-1.5 rounded text-sm font-sans font-bold transition-colors flex items-center gap-2 shadow-sm">
+                                Next Step <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <div class="p-5 overflow-y-auto flex-1 space-y-5 scroll-smooth" id="proof-container">
+                            <!-- Proof steps injected via JS -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-8 text-center mt-12 border-t border-slate-800">
+        <p>Interactive companion for <em>p-adic Numbers: An Introduction</em> (Part 2)</p>
+    </footer>
+
+    <!-- Interactive Logic -->
+    <script>
+        // Smooth Page Transition Logic for our new navigation links
+        document.querySelectorAll('.page-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                // If it's just an anchor to the same page or user holds command/ctrl, don't intercept
+                if (this.getAttribute('href').startsWith('#') || e.ctrlKey || e.metaKey) return;
+                
+                e.preventDefault();
+                const targetUrl = this.href;
+                document.body.classList.add('page-fade-out');
+                
+                setTimeout(() => {
+                    window.location.href = targetUrl;
+                }, 250); // wait for animation before leaving
+            });
+        });
+
+        // Safely queue MathJax rendering to prevent race conditions that break DOM references
+        let mathJaxQueue = Promise.resolve();
+        function typesetMath(element) {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                mathJaxQueue = mathJaxQueue.then(() => window.MathJax.typesetPromise([element]))
+                                           .catch((err) => console.log('MathJax error: ', err));
+            }
+        }
+
+        // ==========================================
+        // PART 2 DATA HUB (Problems 34+)
+        // ==========================================
+        const problemsData = [
+            {
+                id: 'prob-34',
+                title: 'Problem 34',
+                shortDesc: 'Prove Lemma 2.1.3 (Algebra of v_p)',
+                filename: 'proof_lemma_2_1_3.tex',
+                headerColor: "bg-indigo-50 text-indigo-900 border-indigo-100",
+                deepDive: {
+                    title: "The Algebra of <i>p</i>-adic Valuations",
+                    icon: "plus-square",
+                    color: "bg-cyan-100 text-cyan-700",
+                    customHtml: `
+                        <div class="space-y-6 fade-in pb-2">
+                            
+                            <!-- Master Key -->
+                            <div class="bg-indigo-600 text-white p-5 rounded-xl shadow-md">
+                                <h4 class="font-extrabold text-sm uppercase tracking-widest mb-3 flex items-center gap-2 text-indigo-100">
+                                    <i data-lucide="key" class="w-5 h-5"></i> Lemma 2.1.3
+                                </h4>
+                                <div class="text-[15px] leading-relaxed text-indigo-50 font-mono bg-indigo-700/50 p-4 rounded-lg border border-indigo-500 mb-4 shadow-inner overflow-x-auto text-center">
+                                    For all x, y &isin; &#x211A;:<br><br>
+                                    i) v<sub>p</sub>(x &middot; y) = v<sub>p</sub>(x) + v<sub>p</sub>(y)<br>
+                                    ii) v<sub>p</sub>(x + y) &ge; min{v<sub>p</sub>(x), v<sub>p</sub>(y)}
+                                </div>
+                                <div class="bg-indigo-800/40 p-4 rounded-lg border border-indigo-500/50 mb-3">
+                                    <strong class="text-white block mb-2">What do these rules actually mean in plain English?</strong>
+                                    <ul class="space-y-2 text-sm text-indigo-100">
+                                        <li>&bull; <strong>The Product Rule (i):</strong> When you multiply two numbers, you just <em>add</em> their prime factors together. (For example, if x has two <i>p</i>'s and y has three <i>p</i>'s, x&middot;y will have five <i>p</i>'s).</li>
+                                        <li>&bull; <strong>The Sum Rule (ii):</strong> When you add two numbers, the result is <em>at least</em> as divisible by <i>p</i> as the least-divisible number you started with.</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Notation Explanation -->
+                            <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-5 shadow-sm text-slate-700 text-sm">
+                                <h5 class="font-bold text-indigo-800 mb-3 flex items-center gap-2"><i data-lucide="help-circle" class="w-4 h-4"></i> What does "For all x, y &isin; &#x211A;" mean?</h5>
+                                <p class="mb-3">This is a standard mathematical phrase used to set up a universal rule. Here is the breakdown:</p>
+                                <ul class="list-disc pl-5 space-y-2 mb-4 text-slate-700 marker:text-indigo-400">
+                                    <li><strong>"For all x, y":</strong> This means that the rules that follow are universal and apply to any two items you choose to plug in (which we are temporarily calling x and y).</li>
+                                    <li><strong>"&isin;" (Element of):</strong> This is the mathematical symbol for "belongs to" or "is inside the group of."</li>
+                                    <li><strong>"&#x211A;" (Rational Numbers):</strong> The "blackboard bold" Q stands for the set of all rational numbers&mdash;meaning any number that can be written as a standard fraction, like 1/2, 5/3, or even &minus;7 (since it's just &minus;7/1).</li>
+                                </ul>
+                                <div class="bg-white p-4 rounded-lg border border-indigo-100/50 shadow-sm text-sm text-slate-700 leading-relaxed">
+                                    <strong class="text-indigo-700 block mb-1">Real-World Example:</strong>
+                                    Imagine you are managing a shipping facility and you establish a universal rule. You might say: <em>"For all x, y &isin; [Boxes in the Warehouse], the combined weight of x and y must not exceed the forklift's capacity."</em> It doesn't matter if you pick a box of feathers or a box of lead; the rule applies universally to every single box. In this math problem, the "boxes" are fractions, and the "rule" is the Product and Sum algebra rules. The notation simply guarantees that no matter which two fractions you pick, the math will perfectly hold up.
+                                </div>
+                            </div>
+
+                            <!-- BIG PICTURE INFOGRAPHIC -->
+                            <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-md text-slate-200 text-sm">
+                                <h5 class="font-bold text-white mb-4 flex items-center gap-2"><i data-lucide="network" class="w-5 h-5 text-indigo-400"></i> The Big Picture: How the Rules Build a Universe</h5>
+                                <p class="leading-relaxed mb-6 text-slate-300">
+                                    It might feel like these rules override one another, but they don't! They are simply separate physical laws governing our new mathematical universe to ensure it functions as a valid <strong>distance metric</strong> (which we define formally in Def 2.1.4). Here is the hierarchy of how they interact:
+                                </p>
+                                
+                                <!-- Flowchart -->
+                                <div class="flex flex-col items-center w-full font-mono text-[11px] sm:text-xs">
+                                    <!-- Root -->
+                                    <div class="bg-indigo-600 text-white px-6 py-2.5 rounded-lg shadow-sm font-bold w-[90%] md:w-3/4 text-center border-2 border-indigo-400 z-10">
+                                        Requirements for a Valid Distance Metric
+                                    </div>
+                                    <!-- Splitting Paths -->
+                                    <div class="flex w-full md:w-3/4 justify-around -mt-0.5">
+                                        <div class="w-0.5 h-6 bg-slate-500"></div>
+                                        <div class="w-0.5 h-6 bg-slate-500"></div>
+                                    </div>
+                                    <div class="flex w-[70%] md:w-[60%] justify-between border-t-2 border-slate-500 h-6">
+                                        <div class="w-0.5 h-full bg-slate-500 -ml-[1px]"></div>
+                                        <div class="w-0.5 h-full bg-slate-500 -mr-[1px]"></div>
+                                    </div>
+                                    
+                                    <div class="flex w-full gap-3 md:gap-6">
+                                        <!-- Left Branch: Multiplication -->
+                                        <div class="flex-1 flex flex-col items-center">
+                                            <div class="bg-slate-700 text-blue-300 px-2 py-1.5 rounded-t-lg w-full text-center font-bold tracking-wider text-[9px] uppercase border border-b-0 border-slate-600">Governs Multiplication</div>
+                                            <div class="bg-blue-900/40 border border-blue-500 text-blue-100 px-2 py-3 rounded-b-lg shadow-sm w-full text-center font-bold">
+                                                1. Product Rule
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Right Branch: Addition -->
+                                        <div class="flex-1 flex flex-col items-center">
+                                            <div class="bg-slate-700 text-cyan-300 px-2 py-1.5 rounded-t-lg w-full text-center font-bold tracking-wider text-[9px] uppercase border border-b-0 border-slate-600">Governs Addition</div>
+                                            <div class="bg-cyan-900/40 border border-cyan-500 text-cyan-100 px-2 py-3 rounded-b-lg shadow-sm w-full text-center font-bold">
+                                                2. Sum Rule
+                                            </div>
+                                            
+                                            <!-- Sub-branch for Isosceles -->
+                                            <div class="w-0.5 h-6 bg-violet-500 my-0 relative">
+                                                <i data-lucide="arrow-down" class="w-3.5 h-3.5 absolute -bottom-2 -left-1.5 text-violet-500"></i>
+                                            </div>
+                                            <div class="text-[9px] text-violet-300 uppercase tracking-widest mt-1 mb-1.5 font-bold text-center">Strict Consequence</div>
+                                            <div class="bg-violet-900/40 border border-violet-500 text-violet-100 px-2 py-3 rounded-lg shadow-sm w-full text-center font-bold">
+                                                3. Isosceles Principle
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Explanations with Mini Infographics -->
+                            <div class="grid md:grid-cols-3 gap-4 mt-6">
+                                
+                                <!-- Product Rule Card -->
+                                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 shadow-sm flex flex-col">
+                                    <h5 class="text-[11px] font-bold text-blue-800 uppercase tracking-wider mb-2 flex items-center gap-1.5"><i data-lucide="x" class="w-3.5 h-3.5"></i> 1. Product Rule</h5>
+                                    <p class="text-xs text-slate-700 leading-relaxed mb-2">When multiplying rationals, prime factorizations combine. Due to basic exponent rules <span class="font-mono text-[10px] bg-blue-100/60 px-1 rounded shadow-sm whitespace-nowrap">p<sup>a</sup> &middot; p<sup>b</sup> = p<sup>a+b</sup></span>, multiplication turns into exact addition of exponents.</p>
+                                    
+                                    <!-- Mini Visual -->
+                                    <div class="bg-white/70 rounded-lg p-2.5 my-3 flex flex-wrap items-center justify-center gap-2 border border-blue-100 shadow-inner">
+                                        <div class="flex gap-1"><div class="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-sm"></div><div class="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-sm"></div></div>
+                                        <span class="text-blue-500 font-black">&times;</span>
+                                        <div class="flex gap-1"><div class="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-sm"></div></div>
+                                        <span class="text-blue-500 font-black">=</span>
+                                        <div class="flex gap-1"><div class="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-sm"></div><div class="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-sm"></div><div class="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-sm"></div></div>
+                                    </div>
+
+                                    <div class="mt-auto pt-3 border-t border-blue-200/80 text-[11px] text-blue-900 leading-relaxed">
+                                        <strong>Relevance:</strong> This proves the <em>Multiplicativity Axiom</em>. Without it, our future distance wouldn't scale predictably when we multiply numbers.
+                                    </div>
+                                </div>
+                                
+                                <!-- Sum Rule Card -->
+                                <div class="bg-cyan-50 border border-cyan-200 rounded-xl p-4 shadow-sm flex flex-col">
+                                    <h5 class="text-[11px] font-bold text-cyan-800 uppercase tracking-wider mb-2 flex items-center gap-1.5"><i data-lucide="plus" class="w-3.5 h-3.5"></i> 2. Sum Rule</h5>
+                                    <p class="text-xs text-slate-700 leading-relaxed mb-2">When adding, you factor out their minimum shared power. It is an inequality <span class="font-mono text-[10px] bg-cyan-100/60 px-1 rounded shadow-sm whitespace-nowrap">&ge;</span> because adding the integer remainders might accidentally generate <em>new</em> powers of <i>p</i>!</p>
+                                    
+                                    <!-- Mini Visual -->
+                                    <div class="bg-white/70 rounded-lg py-2 px-3 my-3 flex flex-col items-center justify-center border border-cyan-100 shadow-inner">
+                                        <div class="flex w-full justify-around text-[10px] font-bold text-cyan-700 mb-1">
+                                            <span>x: 2 factors</span><span>y: 4 factors</span>
+                                        </div>
+                                        <div class="flex w-full justify-center">
+                                            <div class="border-b-[3px] border-l-[3px] border-r-[3px] border-cyan-400 w-32 h-2.5 rounded-b-md"></div>
+                                        </div>
+                                        <i data-lucide="arrow-down" class="w-4 h-4 text-cyan-500 -mt-0.5"></i>
+                                        <span class="text-[10px] font-bold text-cyan-800 uppercase tracking-wide bg-cyan-100 px-2 py-0.5 rounded">Min: 2 Guaranteed</span>
+                                    </div>
+
+                                    <div class="mt-auto pt-3 border-t border-cyan-200/80 text-[11px] text-cyan-900 leading-relaxed">
+                                        <strong>Relevance:</strong> This proves the <em>Triangle Inequality</em>. It guarantees that taking a "detour" (adding x and y) won't result in an impossible, physics-breaking distance.
+                                    </div>
+                                </div>
+                                
+                                <!-- Isosceles Principle Card -->
+                                <div class="bg-violet-50 border border-violet-200 rounded-xl p-4 shadow-sm flex flex-col">
+                                    <h5 class="text-[11px] font-bold text-violet-800 uppercase tracking-wider mb-2 flex items-center gap-1.5"><i data-lucide="triangle" class="w-3.5 h-3.5"></i> 3. Isosceles Principle</h5>
+                                    <p class="text-xs text-slate-700 leading-relaxed mb-2">If <span class="font-mono text-[10px] bg-violet-100/60 px-1 rounded shadow-sm whitespace-nowrap">v<sub>p</sub>(x) &ne; v<sub>p</sub>(y)</span>, the remainders mathematically <em>cannot</em> generate a new factor of <i>p</i>. The sum rule becomes a strict equality.</p>
+                                    
+                                    <!-- Mini Visual -->
+                                    <div class="bg-white/70 rounded-lg p-2 my-3 flex flex-col items-center justify-center border border-violet-100 shadow-inner h-[80px]">
+                                        <svg width="45" height="40" viewBox="0 0 100 100" class="text-violet-600 overflow-visible">
+                                            <!-- Triangle -->
+                                            <polygon points="50,10 90,90 10,90" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/>
+                                            <!-- Hash marks for equal sides -->
+                                            <line x1="22" y1="50" x2="38" y2="50" stroke="currentColor" stroke-width="6"/>
+                                            <line x1="62" y1="50" x2="78" y2="50" stroke="currentColor" stroke-width="6"/>
+                                        </svg>
+                                        <span class="text-[9px] font-bold text-violet-800 uppercase tracking-wide mt-2">Forces 2 Equal Sides</span>
+                                    </div>
+
+                                    <div class="mt-auto pt-3 border-t border-violet-200/80 text-[11px] text-violet-900 leading-relaxed">
+                                        <strong>Relevance:</strong> This consequence is the defining trait of our new world! It forces all triangles in this geometry to have two equal, longer sides.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Mega Interactive Explorer -->
+                            <div class="bg-slate-50 p-1.5 rounded-2xl border border-slate-200 shadow-inner mt-6">
+                                <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-100">
+                                    <div class="text-[10px] font-bold text-indigo-500 uppercase tracking-widest mb-4 flex items-center gap-2 justify-center border-b border-slate-100 pb-3">
+                                        <i data-lucide="sliders-horizontal" class="w-4 h-4"></i> Global Value Controls
+                                    </div>
+                                    
+                                    <!-- Inputs -->
+                                    <div class="flex gap-6 items-center justify-center flex-wrap">
+                                        <!-- X Fraction -->
+                                        <div class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200">
+                                            <span class="font-bold text-slate-600 font-mono px-2">x =</span>
+                                            <div class="flex flex-col gap-1 w-16">
+                                                <input type="number" id="p34-xn" value="12" class="text-center border-2 border-slate-300 rounded outline-none focus:border-indigo-400 font-mono font-bold text-sm py-1 shadow-sm transition-colors">
+                                                <div class="h-0.5 bg-slate-400 rounded-full"></div>
+                                                <input type="number" id="p34-xd" value="5" class="text-center border-2 border-slate-300 rounded outline-none focus:border-indigo-400 font-mono font-bold text-sm py-1 shadow-sm transition-colors">
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Y Fraction -->
+                                        <div class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200">
+                                            <span class="font-bold text-slate-600 font-mono px-2">y =</span>
+                                            <div class="flex flex-col gap-1 w-16">
+                                                <input type="number" id="p34-yn" value="28" class="text-center border-2 border-slate-300 rounded outline-none focus:border-indigo-400 font-mono font-bold text-sm py-1 shadow-sm transition-colors">
+                                                <div class="h-0.5 bg-slate-400 rounded-full"></div>
+                                                <input type="number" id="p34-yd" value="3" class="text-center border-2 border-slate-300 rounded outline-none focus:border-indigo-400 font-mono font-bold text-sm py-1 shadow-sm transition-colors">
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Prime Dropdown -->
+                                        <div class="flex flex-col bg-indigo-50 p-2 rounded-lg border border-indigo-200">
+                                            <label class="text-[10px] font-bold text-indigo-500 uppercase mb-1 text-center">Prime (p)</label>
+                                            <select id="p34-p" class="border-2 border-indigo-300 rounded-lg px-3 py-2 outline-none focus:border-indigo-500 bg-white text-indigo-800 font-bold font-mono text-sm shadow-sm cursor-pointer transition-colors w-20 text-center">
+                                                <option value="2" selected>2</option>
+                                                <option value="3">3</option>
+                                                <option value="5">5</option>
+                                                <option value="7">7</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Dual Engines Display -->
+                                <div class="grid lg:grid-cols-2 gap-4 mt-4 px-3">
+                                    
+                                    <!-- Product Engine -->
+                                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex flex-col items-center">
+                                        <div class="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-4">Product Rule Engine</div>
+                                        <div class="flex items-center justify-center gap-2 w-full mb-4">
+                                            <div class="bg-white p-2 rounded-lg shadow-sm border border-slate-200 text-center flex-1">
+                                                <div class="text-[9px] text-slate-400 font-mono font-bold mb-1 uppercase">v<sub>p</sub>(x)</div>
+                                                <div class="font-mono font-bold text-xl text-slate-700" id="p34-prod-vx">-</div>
+                                            </div>
+                                            <div class="text-blue-400 font-bold text-xl">+</div>
+                                            <div class="bg-white p-2 rounded-lg shadow-sm border border-slate-200 text-center flex-1">
+                                                <div class="text-[9px] text-slate-400 font-mono font-bold mb-1 uppercase">v<sub>p</sub>(y)</div>
+                                                <div class="font-mono font-bold text-xl text-slate-700" id="p34-prod-vy">-</div>
+                                            </div>
+                                            <div class="text-blue-400 font-bold text-xl">=</div>
+                                            <div class="bg-blue-600 text-white p-2 rounded-lg shadow-sm border border-blue-700 text-center flex-1 relative">
+                                                <div class="absolute -top-2 left-1/2 -translate-x-1/2 bg-blue-800 text-[8px] uppercase px-1 rounded shadow-sm text-blue-100">Sum</div>
+                                                <div class="font-mono font-bold text-2xl" id="p34-prod-sum">-</div>
+                                            </div>
+                                        </div>
+                                        <div class="w-full bg-white border border-blue-100 rounded-lg p-3 text-center shadow-sm">
+                                            <span class="text-xs text-slate-500 mr-2">Actual v<sub>p</sub>(x &middot; y) =</span>
+                                            <span class="font-bold font-mono text-xl text-blue-800" id="p34-prod-actual">-</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Sum Engine -->
+                                    <div class="bg-cyan-50 border border-cyan-200 rounded-xl p-4 flex flex-col items-center">
+                                        <div class="text-[10px] font-bold text-cyan-600 uppercase tracking-widest mb-4">Sum Rule Engine</div>
+                                        <div class="flex items-center justify-center gap-2 w-full mb-4">
+                                            <div class="bg-white p-2 rounded-lg shadow-sm border border-slate-200 text-center flex-1">
+                                                <div class="text-[9px] text-slate-400 font-mono font-bold mb-1 uppercase">v<sub>p</sub>(x)</div>
+                                                <div class="font-mono font-bold text-xl text-slate-700" id="p34-sum-vx">-</div>
+                                            </div>
+                                            <div class="text-cyan-400 font-bold text-[9px] uppercase tracking-widest text-center leading-tight mx-1">Compare<br>&rarr;</div>
+                                            <div class="bg-white p-2 rounded-lg shadow-sm border border-slate-200 text-center flex-1">
+                                                <div class="text-[9px] text-slate-400 font-mono font-bold mb-1 uppercase">v<sub>p</sub>(y)</div>
+                                                <div class="font-mono font-bold text-xl text-slate-700" id="p34-sum-vy">-</div>
+                                            </div>
+                                            <div class="text-cyan-400 font-bold text-xl">&rarr;</div>
+                                            <div class="bg-cyan-600 text-white p-2 rounded-lg shadow-sm border border-cyan-700 text-center flex-1 relative">
+                                                <div class="absolute -top-2 left-1/2 -translate-x-1/2 bg-cyan-800 text-[8px] uppercase px-1 rounded shadow-sm text-cyan-100">Min</div>
+                                                <div class="font-mono font-bold text-2xl" id="p34-sum-min">-</div>
+                                            </div>
+                                        </div>
+                                        <div class="w-full flex items-center justify-center gap-3 bg-white border border-cyan-100 rounded-lg p-3 text-center shadow-sm">
+                                            <span class="text-xs text-slate-500">Actual v<sub>p</sub>(x + y) =</span>
+                                            <span class="font-bold font-mono text-xl text-cyan-800" id="p34-sum-actual">-</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Sum Rule Status Alert -->
+                                    <div id="p34-sum-status" class="lg:col-span-2 w-full text-center px-4 py-3 rounded-xl border shadow-sm text-sm mt-1 transition-colors">
+                                        <!-- Dynamic JS Status -->
+                                    </div>
+                                </div>
+
+                                <!-- Live Synthesis Engine -->
+                                <div class="mx-3 mb-3 mt-4 bg-indigo-900 text-indigo-50 rounded-xl p-5 shadow-inner border border-indigo-700">
+                                    <h4 class="text-[11px] font-bold text-indigo-300 uppercase tracking-widest mb-3 flex items-center gap-2 border-b border-indigo-800/80 pb-3">
+                                        <i data-lucide="network" class="w-4 h-4"></i> Live Synthesis: How these rules connect right now
+                                    </h4>
+                                    <div id="p34-synthesis-text" class="text-sm leading-relaxed space-y-3">
+                                        <!-- Dynamic Synthesis Text Injected Here -->
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    `
+                },
+                setupInteraction: () => {
+                    function getVp(n, p) {
+                        if (n === 0) return Infinity;
+                        let v = 0;
+                        let temp = Math.abs(n);
+                        while (temp % p === 0) {
+                            v++;
+                            temp /= p;
+                        }
+                        return v;
+                    }
+
+                    function fmt(val) {
+                        return val === Infinity ? '&infin;' : val;
+                    }
+
+                    const xnIn = document.getElementById('p34-xn');
+                    const xdIn = document.getElementById('p34-xd');
+                    const ynIn = document.getElementById('p34-yn');
+                    const ydIn = document.getElementById('p34-yd');
+                    const pSel = document.getElementById('p34-p');
+
+                    const outProdVx = document.getElementById('p34-prod-vx');
+                    const outProdVy = document.getElementById('p34-prod-vy');
+                    const outProdSum = document.getElementById('p34-prod-sum');
+                    const outProdActual = document.getElementById('p34-prod-actual');
+
+                    const outSumVx = document.getElementById('p34-sum-vx');
+                    const outSumVy = document.getElementById('p34-sum-vy');
+                    const outSumMin = document.getElementById('p34-sum-min');
+                    const outSumActual = document.getElementById('p34-sum-actual');
+                    const outSumStatus = document.getElementById('p34-sum-status');
+                    const outSynthesis = document.getElementById('p34-synthesis-text');
+
+                    function calculateAll() {
+                        if (!xnIn || !xdIn || !ynIn || !ydIn || !pSel || !outSynthesis) return;
+
+                        let xn = parseInt(xnIn.value); 
+                        let xd = parseInt(xdIn.value);
+                        let yn = parseInt(ynIn.value); 
+                        let yd = parseInt(ydIn.value);
+                        let p = parseInt(pSel.value);
+
+                        // Robust NaN handling
+                        if (isNaN(xn) || isNaN(xd) || isNaN(yn) || isNaN(yd) || xd === 0 || yd === 0) {
+                            outProdVx.innerText = '-'; outProdVy.innerText = '-'; outProdSum.innerText = '-'; outProdActual.innerText = '-';
+                            outSumVx.innerText = '-'; outSumVy.innerText = '-'; outSumMin.innerText = '-'; outSumActual.innerText = '-';
+                            outSumStatus.className = "lg:col-span-2 w-full text-center px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-500 shadow-sm text-sm";
+                            outSumStatus.innerHTML = `Waiting for valid non-zero denominators...`;
+                            outSynthesis.innerHTML = `Awaiting inputs...`;
+                            return;
+                        }
+
+                        let vx = (xn === 0) ? Infinity : getVp(xn, p) - getVp(xd, p);
+                        let vy = (yn === 0) ? Infinity : getVp(yn, p) - getVp(yd, p);
+
+                        // --- Product Rule ---
+                        let prodN = xn * yn;
+                        let prodD = xd * yd;
+                        let vprod = (prodN === 0) ? Infinity : getVp(prodN, p) - getVp(prodD, p);
+
+                        outProdVx.innerHTML = fmt(vx);
+                        outProdVy.innerHTML = fmt(vy);
+                        outProdSum.innerHTML = (vx === Infinity || vy === Infinity) ? '&infin;' : (vx + vy);
+                        outProdActual.innerHTML = fmt(vprod);
+
+                        // --- Sum Rule ---
+                        // Mathematically perform the addition of fractions: xn/xd + yn/yd
+                        let cross1 = xn * yd;
+                        let cross2 = yn * xd;
+                        let sumN = cross1 + cross2;
+                        let sumD = xd * yd;
+                        let vsum = (sumN === 0) ? Infinity : getVp(sumN, p) - getVp(sumD, p);
+                        let vmin = Math.min(vx, vy);
+
+                        outSumVx.innerHTML = fmt(vx);
+                        outSumVy.innerHTML = fmt(vy);
+                        outSumMin.innerHTML = fmt(vmin);
+                        outSumActual.innerHTML = fmt(vsum);
+
+                        // --- Generate Dynamic Content (Pure HTML to prevent MathJax conflicts) ---
+                        let sumStatusHTML = "";
+                        let sumStatusClass = "";
+                        let synthesisHTML = "";
+
+                        if (vsum === Infinity && vmin === Infinity) {
+                            sumStatusClass = "lg:col-span-2 w-full text-center px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-700 shadow-sm text-sm";
+                            sumStatusHTML = `Both values evaluate to zero. &infin; &ge; &infin; is trivially true.`;
+                            synthesisHTML = `<p>Since both numbers are zero, everything is infinitely divisible by <i>${p}</i>. The Product and Sum rules trivially hold at infinity.</p>`;
+                        } else if (vx !== vy) {
+                            sumStatusClass = "lg:col-span-2 w-full text-center px-4 py-3 rounded-xl border border-violet-300 bg-violet-50 text-violet-800 shadow-sm text-sm font-medium";
+                            sumStatusHTML = `<i data-lucide="triangle" class="inline w-4 h-4 mb-0.5 text-violet-600 mr-1"></i><strong>Isosceles Principle Triggered!</strong> Because v<sub>p</sub>(x) &ne; v<sub>p</sub>(y), the valuation of the sum is <em>exactly</em> the minimum. <br><span class="font-mono bg-violet-200/50 px-2 py-0.5 rounded mt-1.5 inline-block border border-violet-300 shadow-sm">Actual (${fmt(vsum)}) = Min (${fmt(vmin)})</span>`;
+                            
+                            synthesisHTML = `
+                                <p><span class="text-blue-300 font-bold mr-2 tracking-wide uppercase text-[10px]">Product Rule:</span> Exponents added reliably: <span class="font-mono bg-indigo-800 px-1 rounded">${fmt(vx)} + ${fmt(vy)} = ${fmt(vprod)}</span>.</p>
+                                <div class="mt-2"><span class="text-violet-300 font-bold mr-2 tracking-wide uppercase text-[10px]">The Mismatch (Isosceles):</span> Your inputs <strong>v<sub>p</sub>(x) = ${fmt(vx)}</strong> and <strong>v<sub>p</sub>(y) = ${fmt(vy)}</strong> differ. Let's trace the fraction addition to see why the answer is exactly <strong>${fmt(vmin)}</strong>:</div>
+                                <div class="bg-indigo-950/50 py-3 px-2 rounded-lg border border-indigo-800/50 font-mono text-center text-indigo-200 my-2 shadow-inner text-sm space-y-1.5">
+                                    <div class="text-[9px] uppercase text-indigo-400 font-bold tracking-tighter">Step 1: Find a Common Denominator</div>
+                                    <div>(${xn} &times; ${yd}) / (${xd} &times; ${yd}) + (${yn} &times; ${xd}) / (${yd} &times; ${xd})</div>
+                                    <div class="text-[9px] uppercase text-indigo-400 font-bold tracking-tighter pt-1">Step 2: Equivalent Fractions</div>
+                                    <div>= ${cross1} / ${sumD} + ${cross2} / ${sumD}</div>
+                                    <div class="text-[9px] uppercase text-indigo-400 font-bold tracking-tighter pt-1">Step 3: Combine Numerators</div>
+                                    <div class="font-bold text-violet-300 text-base">= ${sumN} / ${sumD}</div>
+                                </div>
+                                <p>Because of the mismatch, one side of the numerator addition (${cross1} or ${cross2}) was significantly more divisible by <i>${p}</i> than the other. Adding them mathematically locked the total divisibility to the <strong>smaller</strong> of the two. This "locks" the valuation exactly to the minimum. The Isosceles Principle is active!</p>
+                            `;
+                        } else if (vsum > vmin) {
+                            let extractedPow = Math.pow(p, vsum);
+                            let remainder = sumN / extractedPow;
+                            
+                            sumStatusClass = "lg:col-span-2 w-full text-center px-4 py-3 rounded-xl border border-amber-300 bg-amber-50 text-amber-800 shadow-sm text-sm font-medium";
+                            sumStatusHTML = `<i data-lucide="arrow-up-circle" class="inline w-4 h-4 mb-0.5 text-amber-600 mr-1"></i><strong>Strict Inequality Triggered!</strong> Adding the terms generated <em>extra</em> hidden factors of <i>${p}</i>. <br><span class="font-mono bg-amber-200/50 px-2 py-0.5 rounded mt-1.5 inline-block border border-amber-300 shadow-sm">Actual (${fmt(vsum)}) &gt; Min (${fmt(vmin)})</span>`;
+                            
+                            synthesisHTML = `
+                                <p><span class="text-blue-300 font-bold mr-2 tracking-wide uppercase text-[10px]">Product Rule:</span> Exponents added reliably: <span class="font-mono bg-indigo-800 px-1 rounded">${fmt(vx)} + ${fmt(vy)} = ${fmt(vprod)}</span>.</p>
+                                <div class="mt-2"><span class="text-amber-300 font-bold mr-2 tracking-wide uppercase text-[10px]">The Tie-Breaker (Strict Inequality):</span> Your inputs <strong>v<sub>p</sub>(x)</strong> and <strong>v<sub>p</sub>(y)</strong> both equal <strong>${fmt(vx)}</strong>. They tied! Let's see how they combined to produce more factors of <i>${p}</i>:</div>
+                                <div class="bg-indigo-950/50 py-3 px-2 rounded-lg border border-indigo-800/50 font-mono text-center text-indigo-200 my-2 shadow-inner text-sm space-y-1.5">
+                                    <div class="text-[9px] uppercase text-indigo-400 font-bold tracking-tighter">Step 1: Find a Common Denominator</div>
+                                    <div>(${xn} &times; ${yd}) / (${xd} &times; ${yd}) + (${yn} &times; ${xd}) / (${yd} &times; ${xd})</div>
+                                    <div class="text-[9px] uppercase text-indigo-400 font-bold tracking-tighter pt-1">Step 2: Equivalent Fractions</div>
+                                    <div>= ${cross1} / ${sumD} + ${cross2} / ${sumD}</div>
+                                    <div class="text-[9px] uppercase text-indigo-400 font-bold tracking-tighter pt-1">Step 3: Combine Numerators</div>
+                                    <div class="font-bold text-amber-300 text-base">= ${sumN} / ${sumD}</div>
+                                </div>
+                                <p>The new combined numerator is <strong>${sumN}</strong>. To find its valuation, we factor out all the <i>${p}</i>'s: <strong>${sumN} = ${extractedPow} &times; ${remainder} = ${p}<sup>${fmt(vsum)}</sup> &times; ${remainder}</strong>.</p>
+                                <p>Because the original numbers were perfectly tied in their divisibility, their leftover parts (${cross1} and ${cross2}) bumped into each other during fraction addition and accidentally formed <strong>extra</strong> multiples of <i>${p}</i>! This results in a final exponent of <strong>${fmt(vsum)}</strong>. This is exactly why the Sum Rule uses a <strong>&ge;</strong> sign instead of an = sign.</p>
+                            `;
+                        } else {
+                            let extractedPow = Math.pow(p, vsum);
+                            let remainder = sumN / extractedPow;
+                            
+                            sumStatusClass = "lg:col-span-2 w-full text-center px-4 py-3 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-800 shadow-sm text-sm font-medium";
+                            sumStatusHTML = `<i data-lucide="check-circle" class="inline w-4 h-4 mb-0.5 text-emerald-600 mr-1"></i><strong>Equality Maintained.</strong> The remainder terms did not generate any new factors of <i>${p}</i>. <br><span class="font-mono bg-emerald-200/50 px-2 py-0.5 rounded mt-1.5 inline-block border border-emerald-300 shadow-sm">Actual (${fmt(vsum)}) = Min (${fmt(vmin)})</span>`;
+                            
+                            synthesisHTML = `
+                                <p><span class="text-blue-300 font-bold mr-2 tracking-wide uppercase text-[10px]">Product Rule:</span> predictably added exponents: <span class="font-mono bg-indigo-800 px-1 rounded">${fmt(vx)} + ${fmt(vy)} = ${fmt(vprod)}</span>.</p>
+                                <div class="mt-2"><span class="text-emerald-300 font-bold mr-2 tracking-wide uppercase text-[10px]">A Tie, but no boost:</span> <strong>v<sub>p</sub>(x)</strong> and <strong>v<sub>p</sub>(y)</strong> both equal <strong>${fmt(vx)}</strong>. Even though they tied, let's see how they added:</div>
+                                <div class="bg-indigo-950/50 py-3 px-2 rounded-lg border border-indigo-800/50 font-mono text-center text-indigo-200 my-2 shadow-inner text-sm space-y-1.5">
+                                    <div class="text-[9px] uppercase text-indigo-400 font-bold tracking-tighter">Step 1: Find a Common Denominator</div>
+                                    <div>(${xn} &times; ${yd}) / (${xd} &times; ${yd}) + (${yn} &times; ${xd}) / (${yd} &times; ${xd})</div>
+                                    <div class="text-[9px] uppercase text-indigo-400 font-bold tracking-tighter pt-1">Step 2: Equivalent Fractions</div>
+                                    <div>= ${cross1} / ${sumD} + ${cross2} / ${sumD}</div>
+                                    <div class="text-[9px] uppercase text-indigo-400 font-bold tracking-tighter pt-1">Step 3: Combine Numerators</div>
+                                    <div class="font-bold text-emerald-400 text-base">= ${sumN} / ${sumD}</div>
+                                </div>
+                                <p>The new combined numerator is <strong>${sumN}</strong>. Factoring out the <i>${p}</i>'s gives: <strong>${sumN} = ${extractedPow} &times; ${remainder} = ${p}<sup>${fmt(vsum)}</sup> &times; ${remainder}</strong>.</p>
+                                <p>Even though the original numbers tied, adding their cross-multiplied terms (${cross1} and ${cross2}) didn't happen to accidentally create any new factors of <i>${p}</i> this time. The Sum Rule correctly predicted the minimum floor was <strong>${fmt(vmin)}</strong>, and the result stayed safely at that floor.</p>
+                            `;
+                        }
+
+                        // Update the DOM
+                        outSumStatus.className = sumStatusClass;
+                        outSumStatus.innerHTML = sumStatusHTML;
+                        outSynthesis.innerHTML = synthesisHTML;
+
+                        // Re-render only the icons in the updated containers
+                        if (window.lucide) {
+                            lucide.createIcons({ root: outSumStatus });
+                            lucide.createIcons({ root: outSynthesis });
+                        }
+                    }
+
+                    // Attach scoped listeners using input and change for cross-browser safety
+                    [xnIn, xdIn, ynIn, ydIn, pSel].forEach(el => {
+                        if (el) {
+                            el.addEventListener('input', calculateAll);
+                            el.addEventListener('change', calculateAll);
+                        }
+                    });
+
+                    // Initial Run
+                    calculateAll();
+                },
+                steps: [
+                    { comment: "// Goal 1: Prove the Product Rule", text: "Assume \\( x, y \\neq 0 \\) (the zero case is trivially true). We extract the highest powers of \\( p \\) from each number, where \\( n = v_p(x) \\) and \\( m = v_p(y) \\). This leaves rational fractions where \\( p \\) does not divide any numerator or denominator.", math: "\\[ x = p^n \\frac{a}{b} \\quad \\text{and} \\quad y = p^m \\frac{c}{d} \\]" },
+                    { text: "Multiply \\( x \\) and \\( y \\) together. The powers of \\( p \\) add algebraically, and the rational components multiply:", math: "\\[ xy = p^{n + m} \\left( \\frac{ac}{bd} \\right) \\]" },
+                    { text: "Since \\( p \\) is prime, if it doesn't divide \\( a, b, c, \\) or \\( d \\), it cannot divide the products \\( ac \\) or \\( bd \\). Thus, the exponent of the product is precisely the sum of exponents.", math: "\\[ v_p(xy) = n + m = v_p(x) + v_p(y) \\quad \\text{(Product Rule verified)} \\]" },
+                    
+                    { comment: "// Goal 2: Prove the Sum Rule", text: "Assume without loss of generality that \\( n \\le m \\). Factor out the smaller power \\( p^n \\) from the sum \\( x+y \\):", math: "\\[ x + y = p^n \\left( \\frac{a}{b} + p^{m - n} \\frac{c}{d} \\right) \\]" },
+                    { text: "Find a common denominator to combine the terms inside the parentheses:", math: "\\[ x + y = p^n \\left( \\frac{ad + p^{m - n}bc}{bd} \\right) \\]" },
+                    { text: "The denominator \\( bd \\) has no factors of \\( p \\). The numerator is an integer, so it contains zero or more factors of \\( p \\). Thus, the valuation of this bracketed fraction is \\( \\ge 0 \\):", math: "\\[ v_p\\left(\\frac{ad + p^{m - n}bc}{bd}\\right) \\ge 0 \\]" },
+                    { text: "Using the Product Rule we just proved, the total valuation is \\( n \\) plus the fraction's valuation. Since the fraction's valuation is non-negative, the total is \\( \\ge n \\)!", math: "\\[ v_p(x+y) \\ge n = \\min(v_p(x), v_p(y)) \\]" },
+                    
+                    { comment: "// Goal 3: Prove the Isosceles Principle", text: "What happens if the valuations are strictly different? Suppose \\( n < m \\) strictly. Then \\( m - n > 0 \\).", math: "\\[ p^{m - n} \\text{ is a strict multiple of } p \\]" },
+                    { text: "Look at our combined numerator \\( ad + p^{m - n}bc \\). Since \\( p \\) does not divide \\( a \\) or \\( d \\), the term \\( ad \\) is NOT divisible by \\( p \\). Adding a strict multiple of \\( p \\) to it means the entire numerator remains NOT divisible by \\( p \\).", math: "\\[ ad + p^{m - n}bc \\not\\equiv 0 \\pmod p \\]" },
+                    { text: "Because the numerator has exactly zero factors of \\( p \\), the bracketed fraction's valuation is exactly 0. The inequality collapses into a strict equality, forcing all triangles in \\( \\mathbb{Q}_p \\) to be isosceles!", math: "\\[ \\text{If } v_p(x) \\neq v_p(y), \\text{ then } v_p(x+y) = \\min(v_p(x), v_p(y)) \\quad \\blacksquare \\]", final: true }
+                ]
+            },
+            {
+                id: 'def-214',
+                title: 'Def 2.1.4 & Prop 2.1.5',
+                shortDesc: 'The p-adic Absolute Value',
+                filename: 'def_p_adic_absolute.tex',
+                headerColor: "bg-slate-100 text-slate-800 border-slate-200",
+                deepDive: {
+                    title: "The <i>p</i>-adic Absolute Value",
+                    icon: "ruler",
+                    color: "bg-indigo-100 text-indigo-700",
+                    customHtml: `
+                        <div class="space-y-6 fade-in pb-2">
+                            <div class="bg-indigo-600 text-white p-5 rounded-xl shadow-md">
+                                <h4 class="font-extrabold text-sm uppercase tracking-widest mb-2 flex items-center gap-2 text-indigo-100">
+                                    <i data-lucide="target" class="w-5 h-5"></i> The Final Destination
+                                </h4>
+                                <p class="text-sm leading-relaxed text-indigo-50">
+                                    We finally have all the pieces to define the official <i>p</i>-adic distance metric. We take the exponent we've been calculating (v<sub>p</sub>(x)) and push it into the denominator of a real number. 
+                                </p>
+                            </div>
+                            
+                            <div class="bg-slate-50 border-l-4 border-indigo-500 p-5 rounded-xl shadow-sm">
+                                <h4 class="text-[10px] font-bold text-indigo-800 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                                    <i data-lucide="book-marked" class="w-4 h-4"></i> Definition 2.1.4
+                                </h4>
+                                <p class="text-sm text-slate-700 font-medium leading-relaxed">For any x &isin; &#x211A;, we define the <i>p</i>-adic absolute value |x|<sub>p</sub> as follows:</p>
+                                <div class="bg-white border border-slate-200 p-4 mt-3 rounded-lg text-center text-lg font-bold text-slate-800 shadow-sm overflow-x-auto block">
+                                    |x|<sub>p</sub> = p<sup>-v<sub>p</sub>(x)</sup> = 1 / p<sup>v<sub>p</sub>(x)</sup>
+                                </div>
+                                <p class="text-sm text-slate-700 font-medium leading-relaxed mt-3">If x = 0, we set |0|<sub>p</sub> = p<sup>-&infin;</sup> = 0.</p>
+                            </div>
+
+                            <!-- Proposition 2.1.5 -->
+                            <div class="bg-indigo-50 border-l-4 border-indigo-500 p-5 shadow-sm mt-4 rounded-r-xl">
+                                <h4 class="text-[10px] font-bold text-indigo-800 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                                    <i data-lucide="bookmark-check" class="w-4 h-4"></i> Proposition 2.1.5
+                                </h4>
+                                <p class="text-sm text-slate-700 font-medium leading-relaxed mb-3">The function |x|<sub>p</sub> is a <strong>non-archimedean</strong> absolute value on &#x211A;.</p>
+                                <div class="bg-white/60 p-3 rounded text-sm text-slate-700 italic border border-indigo-100 shadow-inner">
+                                    <strong>Proof:</strong> Everything follows at once from Lemma 2.1.3! (The Product Rule guarantees the multiplicative property, and the Sum Rule guarantees the strong triangle inequality).
+                                </div>
+                            </div>
+
+                            <!-- Intuition / Explanation -->
+                            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm mt-4 relative overflow-hidden">
+                                <div class="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+                                    <i data-lucide="microscope" class="w-24 h-24"></i>
+                                </div>
+                                <h4 class="text-xs font-bold text-slate-800 mb-2 uppercase tracking-wider flex items-center gap-2 relative z-10"><i data-lucide="eye" class="w-4 h-4 text-slate-500"></i> What is this actually doing?</h4>
+                                <p class="text-sm text-slate-600 leading-relaxed relative z-10">
+                                    To get a general impression about what the <i>p</i>-adic absolute value is doing, notice that when a number <i>n</i> is very divisible by our prime <i>p</i>, the valuation v<sub>p</sub>(n) will be <strong>large</strong>. 
+                                    <br><br>
+                                    Because of that minus sign in the exponent, the absolute value |n|<sub>p</sub> will then be <strong>small</strong>! So the <i>p</i>-adic absolute value gives, in a strange sort of way, a physical measure of <em>how divisible</em> by <i>p</i> a number is. Highly divisible numbers are physically close to zero.
+                                </p>
+                            </div>
+
+                            <!-- Def 2.1.4 Interactive Visualizer -->
+                            <div class="mt-6 bg-slate-50 p-5 rounded-xl border border-slate-200 shadow-inner">
+                                <h4 class="text-xs font-bold text-indigo-600 uppercase tracking-widest mb-4 flex items-center justify-center gap-2 border-b border-slate-200 pb-2">
+                                    <i data-lucide="activity" class="w-4 h-4"></i> Distance Visualizer
+                                </h4>
+                                <div class="flex flex-col md:flex-row items-center justify-center gap-6">
+                                    <div class="flex flex-col gap-1 w-32">
+                                        <label class="text-[10px] font-bold text-slate-500 uppercase text-center">Number (x)</label>
+                                        <input type="number" id="def-x" value="250" class="text-center border-2 border-slate-300 rounded outline-none focus:border-indigo-400 font-mono font-bold py-2 shadow-sm">
+                                    </div>
+                                    <div class="flex flex-col gap-1 w-32">
+                                        <label class="text-[10px] font-bold text-slate-500 uppercase text-center">Prime (p)</label>
+                                        <select id="def-p" class="text-center border-2 border-slate-300 rounded outline-none focus:border-indigo-400 font-mono font-bold py-2 shadow-sm cursor-pointer">
+                                            <option value="2">2</option>
+                                            <option value="5" selected>5</option>
+                                            <option value="7">7</option>
+                                        </select>
+                                    </div>
+                                    <div class="text-slate-300 hidden md:block"><i data-lucide="arrow-right" class="w-8 h-8"></i></div>
+                                    <div class="flex-1 flex flex-col items-center justify-center w-full md:w-auto">
+                                        <div class="text-[10px] font-bold text-indigo-500 uppercase mb-2">p-adic Absolute Value</div>
+                                        <div class="font-mono text-3xl font-bold text-indigo-700 bg-white px-6 py-3 border border-indigo-200 rounded-lg shadow-md w-full text-center" id="def-out">
+                                            1/125
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    `
+                },
+                setupInteraction: () => {
+                    function getVp(n, p) {
+                        if (n === 0) return Infinity;
+                        let v = 0;
+                        let temp = Math.abs(n);
+                        while (temp % p === 0) {
+                            v++;
+                            temp /= p;
+                        }
+                        return v;
+                    }
+
+                    const xIn = document.getElementById('def-x');
+                    const pSel = document.getElementById('def-p');
+                    const out = document.getElementById('def-out');
+
+                    function updateDef() {
+                        let x = parseInt(xIn.value);
+                        let p = parseInt(pSel.value);
+                        if (isNaN(x)) { out.innerText = '-'; return; }
+                        
+                        if (x === 0) {
+                            out.innerHTML = '0 <span class="text-sm text-slate-400 ml-2 block md:inline mt-1 md:mt-0">(p<sup>-&infin;</sup>)</span>';
+                            return;
+                        }
+                        
+                        let vp = getVp(x, p);
+                        if (vp === 0) {
+                            out.innerHTML = '1 <span class="text-sm text-slate-400 ml-2 block md:inline mt-1 md:mt-0">(p<sup>0</sup>)</span>';
+                        } else if (vp > 0) {
+                            let val = Math.pow(p, vp);
+                            out.innerHTML = `1/${val} <span class="text-sm text-slate-400 ml-2 block md:inline mt-1 md:mt-0">(p<sup>-${vp}</sup>)</span>`;
+                        } else {
+                            // Only handles integers in this simplified demo
+                            out.innerHTML = `p<sup>${-vp}</sup>`;
+                        }
+                    }
+
+                    if (xIn && pSel) {
+                        xIn.addEventListener('input', updateDef);
+                        pSel.addEventListener('change', updateDef);
+                        updateDef();
+                    }
+                },
+                steps: [
+                    { comment: "// Checking the axioms for our brand new absolute value metric.", text: "Let's verify that the new definition satisfies the critical Axiom 3 (The Strong Triangle Inequality).", math: "\\[ |x+y|_p \\le \\max(|x|_p, |y|_p) \\]" },
+                    { text: "We substitute our new definition into the left side of the inequality:", math: "\\[ |x+y|_p = p^{-v_p(x+y)} \\]" },
+                    { text: "From Problem 34, we know the Sum Rule: \\( v_p(x+y) \\ge \\min(v_p(x), v_p(y)) \\). Because we are placing this exponent in a negative power (which flips the inequality direction), the \\( \\ge \\) becomes a \\( \\le \\), and the minimum becomes a maximum:", math: "\\[ p^{-v_p(x+y)} \\le p^{-\\min(v_p(x), v_p(y))} = \\max(p^{-v_p(x)}, p^{-v_p(y)}) \\]" },
+                    { text: "Substituting the definitions back in, we get the exact Non-Archimedean strong triangle inequality!", math: "\\[ |x+y|_p \\le \\max(|x|_p, |y|_p) \\quad \\blacksquare \\]", final: true }
+                ]
+            },
+            {
+                id: 'prob-35',
+                title: 'Problem 35',
+                shortDesc: 'Compute specific 7-adic distances',
+                filename: 'compute_7_adic.tex',
+                headerColor: "bg-orange-50 text-orange-900 border-orange-100",
+                deepDive: {
+                    title: "Computing 7-adic Distances",
+                    icon: "calculator",
+                    color: "bg-orange-100 text-orange-700",
+                    customHtml: `
+                        <div class="space-y-6 fade-in pb-2">
+                            
+                            <!-- Theory Block -->
+                            <div class="bg-orange-600 text-white p-5 rounded-xl shadow-md">
+                                <h4 class="font-extrabold text-sm uppercase tracking-widest mb-3 flex items-center gap-2 text-orange-100">
+                                    <i data-lucide="arrow-left-right" class="w-5 h-5"></i> Valuations vs. Absolute Values
+                                </h4>
+                                <p class="text-sm leading-relaxed text-orange-50 mb-3">
+                                    The connection between a non-archimedean absolute value and an additive valuation (like in Lemma 2.1.3) is quite general. One can actually develop the entire theory of <i>p</i>-adic numbers taking either object as the foundation!
+                                </p>
+                                <p class="text-sm leading-relaxed text-orange-50 bg-orange-700/50 p-3 rounded-lg border border-orange-500/50 shadow-inner">
+                                    <strong>Why we prefer Absolute Values:</strong> In this book, we will stick to absolute values |x|<sub>p</sub> because they map directly to our geometric intuition of "distance." However, as we will see below, it is almost always easier to calculate the valuation v<sub>p</sub>(x) first and then convert it using the formula <strong>|x|<sub>p</sub> = p<sup>-v<sub>p</sub>(x)</sup></strong>.
+                                </p>
+                            </div>
+
+                            <!-- Problem 35 Interactive Engine -->
+                            <div class="bg-slate-50 p-1.5 rounded-2xl border border-slate-200 shadow-inner mt-6">
+                                <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-100">
+                                    <div class="text-[10px] font-bold text-orange-600 uppercase tracking-widest mb-4 flex items-center gap-2 justify-center border-b border-slate-100 pb-3">
+                                        <i data-lucide="cpu" class="w-4 h-4"></i> 7-adic Computation Engine
+                                    </div>
+                                    
+                                    <!-- Preset Buttons -->
+                                    <div class="flex flex-wrap justify-center gap-2 mb-6">
+                                        <button class="prob35-preset bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 px-3 py-1.5 rounded shadow-sm text-sm font-bold transition-colors" data-n="35" data-d="1">|35|</button>
+                                        <button class="prob35-preset bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 px-3 py-1.5 rounded shadow-sm text-sm font-bold transition-colors" data-n="56" data-d="12">|56/12|</button>
+                                        <button class="prob35-preset bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 px-3 py-1.5 rounded shadow-sm text-sm font-bold transition-colors" data-n="177553" data-d="1">|177553|</button>
+                                        <button class="prob35-preset bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 px-3 py-1.5 rounded shadow-sm text-sm font-bold transition-colors" data-n="3" data-d="686">|3/686|</button>
+                                    </div>
+
+                                    <!-- Custom Input -->
+                                    <div class="flex items-center justify-center gap-4 mb-6 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                        <div class="text-sm font-bold text-slate-500 uppercase tracking-wide">Custom:</div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="font-mono text-xl text-slate-400">|</span>
+                                            <div class="flex flex-col gap-1 w-20">
+                                                <input type="number" id="p35-n" value="56" class="text-center border-2 border-slate-300 rounded outline-none focus:border-orange-400 font-mono font-bold text-base py-1 shadow-sm transition-colors">
+                                                <div class="h-0.5 bg-slate-400 rounded-full"></div>
+                                                <input type="number" id="p35-d" value="12" class="text-center border-2 border-slate-300 rounded outline-none focus:border-orange-400 font-mono font-bold text-base py-1 shadow-sm transition-colors">
+                                            </div>
+                                            <span class="font-mono text-xl text-slate-400">|<sub>7</sub></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Visual Pipeline -->
+                                    <div class="flex flex-col items-center w-full max-w-sm mx-auto">
+                                        
+                                        <!-- Step 1: Simplify -->
+                                        <div class="w-full bg-slate-100 border border-slate-200 rounded-lg p-3 text-center relative shadow-sm">
+                                            <div class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Step 1: Simplify Fraction</div>
+                                            <div class="font-mono font-bold text-lg text-slate-700" id="p35-out-simplified">-</div>
+                                            <div class="absolute -bottom-3.5 left-1/2 -translate-x-1/2 text-slate-300 z-10"><i data-lucide="arrow-down-circle" class="w-6 h-6 fill-white"></i></div>
+                                        </div>
+                                        
+                                        <div class="h-4 w-0.5 bg-slate-200"></div>
+
+                                        <!-- Step 2: Extract 7s -->
+                                        <div class="w-full bg-orange-50 border border-orange-200 rounded-lg p-3 text-center relative shadow-sm">
+                                            <div class="text-[9px] font-bold text-orange-600 uppercase tracking-widest mb-1">Step 2: Isolate Powers of 7</div>
+                                            <div class="font-mono font-bold text-lg text-orange-800" id="p35-out-factored">-</div>
+                                            <div class="text-xs text-orange-600 font-bold mt-2 bg-orange-100/50 py-1 rounded inline-block px-3 border border-orange-200">Valuation v<sub>7</sub> = <span id="p35-out-v">-</span></div>
+                                            <div class="absolute -bottom-3.5 left-1/2 -translate-x-1/2 text-orange-300 z-10"><i data-lucide="arrow-down-circle" class="w-6 h-6 fill-white"></i></div>
+                                        </div>
+
+                                        <div class="h-4 w-0.5 bg-orange-200"></div>
+
+                                        <!-- Step 3: Distance -->
+                                        <div class="w-full bg-slate-900 border border-slate-800 rounded-lg p-4 text-center shadow-lg">
+                                            <div class="text-[9px] font-bold text-indigo-400 uppercase tracking-widest mb-1">Step 3: Final Distance (7<sup>-v</sup>)</div>
+                                            <div class="font-mono font-bold text-3xl text-white mt-2" id="p35-out-distance">-</div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                setupInteraction: () => {
+                    // Helper: GCD
+                    function gcd(a, b) {
+                        a = Math.abs(a); b = Math.abs(b);
+                        while (b) { let t = b; b = a % b; a = t; }
+                        return a;
+                    }
+
+                    // Helper: Factor out prime
+                    function extractPrime(num, p) {
+                        if (num === 0) return { power: Infinity, remainder: 0 };
+                        let power = 0;
+                        let remainder = Math.abs(num);
+                        while (remainder % p === 0) {
+                            power++;
+                            remainder /= p;
+                        }
+                        // preserve sign
+                        if (num < 0) remainder = -remainder;
+                        return { power, remainder };
+                    }
+
+                    const nIn = document.getElementById('p35-n');
+                    const dIn = document.getElementById('p35-d');
+                    const btnPresets = document.querySelectorAll('.prob35-preset');
+                    
+                    const outSimp = document.getElementById('p35-out-simplified');
+                    const outFact = document.getElementById('p35-out-factored');
+                    const outV = document.getElementById('p35-out-v');
+                    const outDist = document.getElementById('p35-out-distance');
+
+                    function calculate7Adic() {
+                        if (!nIn || !dIn) return;
+                        
+                        let n = parseInt(nIn.value);
+                        let d = parseInt(dIn.value);
+                        const p = 7;
+
+                        if (isNaN(n) || isNaN(d) || d === 0) {
+                            outSimp.innerText = '-'; outFact.innerText = '-'; 
+                            outV.innerText = '-'; outDist.innerText = '-';
+                            return;
+                        }
+
+                        // Step 1: Simplify
+                        let divisor = gcd(n, d);
+                        let sn = n / divisor;
+                        let sd = d / divisor;
+
+                        // Force positive denominator
+                        if (sd < 0) { sn = -sn; sd = -sd; }
+
+                        let simpStr = sd === 1 ? `${sn}` : `${sn} / ${sd}`;
+                        outSimp.innerText = simpStr;
+
+                        if (sn === 0) {
+                            outFact.innerHTML = `0`;
+                            outV.innerHTML = `&infin;`;
+                            outDist.innerHTML = `0`;
+                            return;
+                        }
+
+                        // Step 2: Extract
+                        let extN = extractPrime(sn, p);
+                        let extD = extractPrime(sd, p);
+                        
+                        let totalV = extN.power - extD.power;
+                        
+                        // Formatting the factored string
+                        let factStr = "";
+                        let remFraction = "";
+                        
+                        if (extD.remainder === 1) {
+                            remFraction = `${extN.remainder}`;
+                        } else {
+                            remFraction = `(${extN.remainder} / ${extD.remainder})`;
+                        }
+
+                        if (totalV === 0) {
+                            factStr = `7<sup>0</sup> &times; ${remFraction}`;
+                        } else {
+                            factStr = `7<sup>${totalV}</sup> &times; ${remFraction}`;
+                        }
+                        
+                        outFact.innerHTML = factStr;
+                        outV.innerText = totalV;
+
+                        // Step 3: Distance
+                        if (totalV === 0) {
+                            outDist.innerHTML = `1`;
+                        } else if (totalV > 0) {
+                            outDist.innerHTML = `1 / ${Math.pow(p, totalV)}`;
+                        } else {
+                            outDist.innerHTML = `${Math.pow(p, -totalV)}`;
+                        }
+                    }
+
+                    // Attach Listeners
+                    if (nIn && dIn) {
+                        nIn.addEventListener('input', calculate7Adic);
+                        dIn.addEventListener('input', calculate7Adic);
+                        
+                        btnPresets.forEach(btn => {
+                            btn.addEventListener('click', (e) => {
+                                nIn.value = e.target.getAttribute('data-n');
+                                dIn.value = e.target.getAttribute('data-d');
+                                calculate7Adic();
+                            });
+                        });
+
+                        calculate7Adic(); // init
+                    }
+                },
+                steps: [
+                    { comment: "// Computing |35|_7", text: "Factor the integer into a power of 7 and a remainder not divisible by 7.", math: "\\[ 35 = 7^1 \\times 5 \\]" },
+                    { text: "The exponent tells us the valuation. We plug this directly into the definition of the 7-adic absolute value:", math: "\\[ v_7(35) = 1 \\implies |35|_7 = 7^{-1} = \\frac{1}{7} \\]" },
+                    
+                    { comment: "// Computing |56/12|_7", text: "First, always simplify the fraction by dividing out common terms (gcd = 4).", math: "\\[ \\frac{56}{12} = \\frac{14}{3} \\]" },
+                    { text: "Extract the highest power of 7 from the numerator and denominator.", math: "\\[ \\frac{14}{3} = 7^1 \\times \\frac{2}{3} \\]" },
+                    { text: "The exponent is 1, so the distance is physically identical to the integer 35 above!", math: "\\[ v_7\\left(\\frac{56}{12}\\right) = 1 \\implies \\left|\\frac{56}{12}\\right|_7 = \\frac{1}{7} \\]" },
+
+                    { comment: "// Computing |177553|_7", text: "We check if 177553 is divisible by 7. Doing the long division, we find a remainder of 5.", math: "\\[ 177553 = (7 \\times 25364) + 5 \\]" },
+                    { text: "Because it does not cleanly divide by 7 even once, its valuation is exactly 0.", math: "\\[ v_7(177553) = 0 \\implies |177553|_7 = 7^0 = 1 \\]" },
+
+                    { comment: "// Computing |3/686|_7", text: "Factor the denominator to find any hidden powers of 7.", math: "\\[ 686 = 2 \\times 343 = 2 \\times 7^3 \\]" },
+                    { text: "Because the 7 is trapped in the denominator, the fraction's overall valuation is negative!", math: "\\[ \\frac{3}{686} = 7^{-3} \\times \\frac{3}{2} \\implies v_7\\left(\\frac{3}{686}\\right) = -3 \\]" },
+                    { text: "Applying the negative sign from the distance formula cancels out the negative valuation, resulting in a massively large distance.", math: "\\[ \\left|\\frac{3}{686}\\right|_7 = 7^{-(-3)} = 7^3 = 343 \\quad \\blacksquare \\]", final: true }
+                ]
+            },
+            {
+                id: 'prob-36',
+                title: 'Problem 36',
+                shortDesc: 'Generalizing Valuations to Absolute Values',
+                filename: 'general_valuations.tex',
+                headerColor: "bg-emerald-50 text-emerald-900 border-emerald-100",
+                deepDive: {
+                    title: "The Valuation / Absolute Value Bridge",
+                    icon: "repeat",
+                    color: "bg-emerald-100 text-emerald-700",
+                    customHtml: `
+                        <div class="space-y-6 fade-in pb-2">
+                            
+                            <!-- Master Key -->
+                            <div class="bg-emerald-600 text-white p-5 rounded-xl shadow-md">
+                                <h4 class="font-extrabold text-sm uppercase tracking-widest mb-3 flex items-center gap-2 text-emerald-100">
+                                    <i data-lucide="key" class="w-5 h-5"></i> Problem 36 Statement
+                                </h4>
+                                <p class="text-sm leading-relaxed text-emerald-50 mb-3">
+                                    Let <strong>A</strong> be an integral domain, and let <strong>K</strong> be its field of fractions. Let <strong>v : A &setminus; {0} &rarr; &#x211D;</strong> be a function satisfying the conditions of Lemma 2.1.3, i.e., a valuation on A. Extend v to K by setting <strong>v(a/b) = v(a) &minus; v(b)</strong>.
+                                </p>
+                                <p class="text-sm leading-relaxed text-emerald-50 mb-3">
+                                    Show that the function <strong>| |<sub>v</sub> : K &rarr; &#x211D;<sup>+</sup></strong> defined by:
+                                </p>
+                                <div class="bg-emerald-800/40 p-3 rounded-lg border border-emerald-500/50 mb-3 text-sm text-center font-mono shadow-inner">
+                                    |x|<sub>v</sub> = e<sup>&minus;v(x)</sup> for x &ne; 0, and |0| = 0
+                                </div>
+                                <p class="text-sm leading-relaxed text-emerald-50">
+                                    is a non-archimedean absolute value on K. Conversely, show that if | | is a non-archimedean absolute value, then <strong>&minus;log | |</strong> is a valuation.
+                                </p>
+                                <div class="bg-emerald-800/40 p-4 rounded-lg border border-emerald-500/50 mt-4">
+                                    <strong class="text-white block mb-2">What is this actually saying?</strong>
+                                    <ul class="space-y-2 text-sm text-emerald-100">
+                                        <li>&bull; <strong>The goal:</strong> Prove that we can turn a "valuation" (a way of counting prime factors, which is additive) into an "absolute value" (a way of measuring distance, which is multiplicative), and vice versa.</li>
+                                        <li>&bull; <strong>The method:</strong> We use the exponential function $e^{-v(x)}$ as the magic bridge to translate between the two worlds.</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Interactive Jargon Translator -->
+                            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden mt-6">
+                                <div class="bg-slate-50 border-b border-slate-200 px-4 py-3 flex gap-2 overflow-x-auto hide-scrollbar">
+                                    <button class="p36-tab-btn active bg-emerald-600 text-white px-4 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors" data-target="tab-setup">1. The Setup</button>
+                                    <button class="p36-tab-btn bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 px-4 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors" data-target="tab-extend">2. The Extension</button>
+                                    <button class="p36-tab-btn bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 px-4 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors" data-target="tab-bridge">3. The Bridge</button>
+                                    <div class="w-px bg-slate-300 mx-1"></div>
+                                    <button class="p36-tab-btn bg-white hover:bg-slate-100 text-indigo-600 border border-slate-200 px-4 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors flex items-center gap-1.5" data-target="tab-why"><i data-lucide="lightbulb" class="w-3.5 h-3.5"></i> Why It Matters</button>
+                                </div>
+                                <div class="p-5 relative min-h-[180px] bg-emerald-50/30">
+                                    
+                                    <!-- Tab 1 -->
+                                    <div id="tab-setup" class="p36-tab-content block fade-in">
+                                        <h5 class="font-bold text-emerald-800 mb-2 flex items-center gap-2"><i data-lucide="boxes" class="w-4 h-4"></i> Integral Domain & Field of Fractions</h5>
+                                        <p class="text-sm text-slate-700 leading-relaxed mb-3">Imagine starting with a basic set of numbers where you can only add, subtract, and multiply—like the whole Integers (&#x2124;). This safe space is the <strong>Integral Domain (A)</strong>.</p>
+                                        <p class="text-sm text-slate-700 leading-relaxed">But we want to do division, too! So, we invent fractions using those base numbers to get the Rational Numbers (&#x211A;). This upgraded space is the <strong>Field of Fractions (K)</strong>.</p>
+                                        <div class="mt-3 bg-white p-3 rounded border border-emerald-200 shadow-sm">
+                                            <strong class="text-emerald-700 text-xs uppercase tracking-wide block mb-1">Example:</strong>
+                                            <span class="text-sm text-slate-600">Start with <strong>A = Integers (..., -1, 0, 1, 2, ...)</strong>. You can't divide 3 by 2 and stay in A. By pairing them up as fractions, we build <strong>K = Rational Numbers (like 3/2 or -7/4)</strong>.</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Tab 2 -->
+                                    <div id="tab-extend" class="p36-tab-content hidden fade-in">
+                                        <h5 class="font-bold text-emerald-800 mb-2 flex items-center gap-2"><i data-lucide="expand" class="w-4 h-4"></i> Stretching the Rule to Fractions</h5>
+                                        <p class="text-sm text-slate-700 leading-relaxed mb-3">Suppose you have a "valuation" <strong>v</strong> that acts like a prime-factor counter on your base numbers (e.g., counting how many 7s are in an integer).</p>
+                                        <p class="text-sm text-slate-700 leading-relaxed mb-3">How do you count factors in a <em>fraction</em>? Simple: count the factors in the top (a), count the factors in the bottom (b), and subtract them. <strong>v(a/b) = v(a) &minus; v(b)</strong>.</p>
+                                        <p class="text-sm text-slate-700 leading-relaxed">This proves that if a rule works for whole numbers, we can naturally stretch it to work perfectly for fractions.</p>
+                                        <div class="mt-3 bg-white p-3 rounded border border-emerald-200 shadow-sm">
+                                            <strong class="text-emerald-700 text-xs uppercase tracking-wide block mb-1">Example:</strong>
+                                            <span class="text-sm text-slate-600">Let <strong>v<sub>2</sub></strong> count the number of 2s. For 12, <strong>v<sub>2</sub>(12) = 2</strong> (since 12 = 2&sup2; &times; 3). For 5, <strong>v<sub>2</sub>(5) = 0</strong>. To find the valuation of the fraction 12/5, just subtract: <strong>v<sub>2</sub>(12/5) = 2 &minus; 0 = 2</strong>.</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tab 3 -->
+                                    <div id="tab-bridge" class="p36-tab-content hidden fade-in">
+                                        <h5 class="font-bold text-emerald-800 mb-2 flex items-center gap-2"><i data-lucide="repeat" class="w-4 h-4"></i> Connecting Algebra to Geometry</h5>
+                                        <p class="text-sm text-slate-700 leading-relaxed mb-3">This is the grand finale of the problem statement. A <strong>valuation</strong> is an <em>additive</em> concept (when you multiply numbers, you add their prime factors).</p>
+                                        <p class="text-sm text-slate-700 leading-relaxed">An <strong>absolute value</strong> is a <em>multiplicative</em> concept (it measures physical distance). The problem asks you to prove that the exponential function <strong>e<sup>&minus;x</sup></strong> acts as a perfect mathematical bridge translating the additive world into the multiplicative world, and the logarithmic function goes backwards!</p>
+                                        <div class="mt-3 bg-white p-3 rounded border border-emerald-200 shadow-sm">
+                                            <strong class="text-emerald-700 text-xs uppercase tracking-wide block mb-1">Example:</strong>
+                                            <span class="text-sm text-slate-600">If a number has many prime factors, its valuation is large (e.g., <strong>v = 3</strong>). By putting it in a negative exponent, <strong>|x| = e<sup>&minus;3</sup> &approx; 0.05</strong>. It successfully translates "highly divisible" into "physically close to zero."</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tab Why -->
+                                    <div id="tab-why" class="p36-tab-content hidden fade-in">
+                                        <h5 class="font-bold text-indigo-800 mb-2 flex items-center gap-2">Why does this matter?</h5>
+                                        <p class="text-sm text-slate-700 leading-relaxed mb-3"><strong>1. It proves the p-adic distance isn't just a random guess.</strong> Up until now, you might have wondered: <em>Why define the p-adic distance as p<sup>-v</sup>?</em> Problem 36 proves that you don't have a choice. If you have an additive valuation (like counting prime factors), the <strong>only</strong> way to turn it into a valid geometric "distance" is to shove it into a negative exponent.</p>
+                                        <p class="text-sm text-slate-700 leading-relaxed"><strong>2. It makes the math universal.</strong> By using abstract terms like "Integral Domain" instead of specifically saying "Integers", the problem proves that this exponential bridge works for <em>any</em> mathematical universe. You could swap out numbers for polynomials, and as long as you can "count" factors, you can build a bizarre, non-archimedean geometry out of them!</p>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- The Interactive Bridge -->
+                            <div class="bg-slate-900 rounded-2xl border border-slate-700 shadow-xl overflow-hidden mt-6 p-6 relative">
+                                <!-- Background decoration -->
+                                <div class="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                                    <i data-lucide="microscope" class="w-32 h-32 text-white"></i>
+                                </div>
+                                
+                                <div class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-6 flex items-center gap-2 justify-center pb-3 border-b border-slate-700 relative z-10">
+                                    <i data-lucide="sliders-horizontal" class="w-4 h-4"></i> The Exponential-Logarithmic Bridge Sandbox
+                                </div>
+                                
+                                <div class="text-center text-slate-300 text-sm mb-6 max-w-md mx-auto leading-relaxed relative z-10">
+                                    Use the slider to change the Valuation v(x). Notice how the negative exponential transforms it into a physical distance, and vice-versa.
+                                </div>
+
+                                <div class="flex flex-col md:flex-row items-center justify-center gap-8 mb-6 relative z-10">
+                                    
+                                    <!-- Left Side: Valuation -->
+                                    <div class="flex-1 w-full bg-slate-800 rounded-xl p-5 border border-slate-700 flex flex-col items-center shadow-inner relative overflow-hidden">
+                                        <!-- Overlay -->
+                                        <div class="absolute top-2 left-2 text-[9px] uppercase tracking-widest text-slate-500 font-bold opacity-50">&minus;ln(|x|) = v</div>
+
+                                        <label class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-4 z-10">Valuation v(x)</label>
+                                        <div class="font-mono text-4xl text-emerald-400 font-bold mb-6 z-10" id="p36-v-display">0</div>
+                                        <input type="range" id="p36-slider" min="-3" max="5" step="0.1" value="0" class="w-full accent-emerald-500 cursor-pointer z-10">
+                                        <div class="flex justify-between w-full text-xs text-slate-500 font-mono mt-2 px-1 z-10">
+                                            <span>-3</span><span>0</span><span>+5</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- The Bridge Arrow -->
+                                    <div class="flex flex-col items-center justify-center text-slate-500 gap-2 shrink-0">
+                                        <div class="text-[10px] uppercase font-bold tracking-widest bg-slate-800 border border-slate-700 px-3 py-1.5 rounded shadow-sm text-emerald-200">e<sup>&minus;v(x)</sup></div>
+                                        <div class="flex items-center">
+                                            <i data-lucide="arrow-left" class="w-4 h-4 hidden md:block text-slate-600"></i>
+                                            <i data-lucide="arrow-right" class="w-6 h-6 hidden md:block text-emerald-500"></i>
+                                        </div>
+                                        <i data-lucide="arrow-down" class="w-6 h-6 md:hidden text-emerald-500"></i>
+                                    </div>
+
+                                    <!-- Right Side: Absolute Value -->
+                                    <div class="flex-1 w-full bg-slate-800 rounded-xl p-5 border border-slate-700 flex flex-col items-center shadow-inner relative overflow-hidden">
+                                        <label class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-4 mt-6">Absolute Value |x|<sub>v</sub></label>
+                                        <div class="font-mono text-4xl text-white font-bold" id="p36-abs-display">1.0000</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Dynamic Explanation -->
+                                <div id="p36-explanation" class="text-sm text-center p-3 rounded-lg border bg-slate-800/50 border-slate-700 text-slate-300 transition-colors relative z-10">
+                                    <!-- Populated via JS -->
+                                </div>
+
+                            </div>
+                            
+                            <!-- The Magic of e and log -->
+                            <div class="bg-emerald-50 rounded-2xl p-6 border border-emerald-200 shadow-sm mt-6">
+                                <h4 class="text-sm font-extrabold text-emerald-900 mb-4 flex items-center gap-2 uppercase tracking-widest">
+                                    <i data-lucide="sparkles" class="w-5 h-5 text-emerald-600"></i> The Magic of e and log
+                                </h4>
+                                <div class="grid md:grid-cols-3 gap-4">
+                                    <!-- Card 1 -->
+                                    <div class="bg-white rounded-xl p-4 shadow-sm border border-emerald-100 flex flex-col">
+                                        <h5 class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider mb-2 flex items-center gap-1.5"><i data-lucide="arrow-left-right" class="w-4 h-4"></i> The Ultimate Translators</h5>
+                                        <p class="text-xs text-slate-700 leading-relaxed mb-3"><strong>Valuations are additive</strong> (v(xy) = v(x)+v(y)), while <strong>Absolute Values are multiplicative</strong> (|xy| = |x||y|).</p>
+                                        <p class="text-xs text-slate-700 leading-relaxed mt-auto">The exponential function is math's master translator: <span class="font-mono bg-emerald-50 px-1 rounded text-emerald-800 whitespace-nowrap">e<sup>A+B</sup> = e<sup>A</sup> &middot; e<sup>B</sup></span>. It forces addition to behave exactly like multiplication!</p>
+                                    </div>
+                                    <!-- Card 2 -->
+                                    <div class="bg-white rounded-xl p-4 shadow-sm border border-emerald-100 flex flex-col">
+                                        <h5 class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider mb-2 flex items-center gap-1.5"><i data-lucide="minus-circle" class="w-4 h-4"></i> Why the Minus Sign?</h5>
+                                        <p class="text-xs text-slate-700 leading-relaxed mb-3">A valuation measures "how divisible" a number is. Highly divisible numbers have <strong>large</strong> positive valuations.</p>
+                                        <p class="text-xs text-slate-700 leading-relaxed mt-auto">But in <i>p</i>-adic geometry, highly divisible numbers must be <strong>microscopically close to zero</strong>. The negative exponent (<span class="font-mono text-emerald-800 bg-emerald-50 px-1 rounded whitespace-nowrap">e<sup>&minus;v</sup></span>) guarantees that as the valuation grows, the distance shrinks to 0.</p>
+                                    </div>
+                                    <!-- Card 3 -->
+                                    <div class="bg-white rounded-xl p-4 shadow-sm border border-emerald-100 flex flex-col">
+                                        <h5 class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider mb-2 flex items-center gap-1.5"><i data-lucide="help-circle" class="w-4 h-4"></i> Does it have to be e?</h5>
+                                        <p class="text-xs text-slate-700 leading-relaxed mb-3">Actually, no! Using <i>e</i> (Euler's number) and the natural log (ln) is just a standard abstract math convention.</p>
+                                        <p class="text-xs text-slate-700 leading-relaxed mt-auto">You could use any real number &gt; 1 as your base. In Def 2.1.4, we used the prime <i>p</i> itself (<span class="font-mono text-emerald-800 bg-emerald-50 px-1 rounded whitespace-nowrap">|x|<sub>p</sub> = p<sup>&minus;v</sup></span>) to make specific distance calculations cleaner.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    `
+                },
+                setupInteraction: () => {
+                    // --- TAB LOGIC ---
+                    const tabBtns = document.querySelectorAll('.p36-tab-btn');
+                    const tabContents = document.querySelectorAll('.p36-tab-content');
+
+                    tabBtns.forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            // Deactivate all buttons
+                            tabBtns.forEach(b => {
+                                b.classList.remove('bg-emerald-600', 'text-white', 'active');
+                                if(b.getAttribute('data-target') === 'tab-why') {
+                                    b.classList.add('bg-white', 'text-indigo-600');
+                                } else {
+                                    b.classList.add('bg-white', 'text-slate-600');
+                                }
+                            });
+                            
+                            // Hide all content
+                            tabContents.forEach(c => c.classList.add('hidden'));
+                            tabContents.forEach(c => c.classList.remove('block'));
+
+                            // Activate clicked button
+                            if(btn.getAttribute('data-target') === 'tab-why') {
+                                btn.classList.add('bg-indigo-600', 'text-white', 'active');
+                                btn.classList.remove('bg-white', 'text-indigo-600');
+                            } else {
+                                btn.classList.add('bg-emerald-600', 'text-white', 'active');
+                                btn.classList.remove('bg-white', 'text-slate-600');
+                            }
+
+                            // Show target content
+                            const targetId = btn.getAttribute('data-target');
+                            const targetContent = document.getElementById(targetId);
+                            targetContent.classList.remove('hidden');
+                            targetContent.classList.add('block');
+                        });
+                    });
+
+                    // --- SLIDER LOGIC ---
+                    const slider = document.getElementById('p36-slider');
+                    const vDisplay = document.getElementById('p36-v-display');
+                    const absDisplay = document.getElementById('p36-abs-display');
+                    const explanation = document.getElementById('p36-explanation');
+
+                    function updateBridge() {
+                        if(!slider) return;
+                        const v = parseFloat(slider.value);
+                        
+                        // Calculate absolute value using base e (as specified in problem)
+                        const absVal = Math.exp(-v);
+                        
+                        // Update displays
+                        vDisplay.innerText = v.toFixed(1);
+                        
+                        // Format absolute value nicely based on size
+                        if (absVal > 100) {
+                            absDisplay.innerText = absVal.toFixed(1);
+                        } else if (absVal < 0.01) {
+                            absDisplay.innerText = absVal.toExponential(2);
+                        } else {
+                            absDisplay.innerText = absVal.toFixed(4);
+                        }
+
+                        // Dynamic text
+                        if (v > 0) {
+                            explanation.innerHTML = `The valuation is <strong>positive</strong>. Because of the negative exponent, the element becomes <strong>microscopically small</strong> (physically close to zero).`;
+                            explanation.className = "text-sm text-center p-3 rounded-lg border bg-emerald-900/30 border-emerald-800 text-emerald-200 transition-colors relative z-10";
+                        } else if (v < 0) {
+                            explanation.innerHTML = `The valuation is <strong>negative</strong>. The negative signs cancel out, causing the element to become <strong>exponentially large</strong> (far from zero).`;
+                            explanation.className = "text-sm text-center p-3 rounded-lg border bg-amber-900/30 border-amber-800 text-amber-200 transition-colors relative z-10";
+                        } else {
+                            explanation.innerHTML = `The valuation is <strong>zero</strong>. \\( e^0 = 1 \\). This represents a "unit" element that sits exactly on the boundary.`;
+                            explanation.className = "text-sm text-center p-3 rounded-lg border bg-slate-800/50 border-slate-700 text-slate-300 transition-colors relative z-10";
+                            typesetMath(explanation); // render the math we just injected
+                        }
+                    }
+
+                    if (slider) {
+                        slider.addEventListener('input', updateBridge);
+                        updateBridge(); // Initialize
+                    }
+                },
+                steps: [
+                    { comment: "// PART 1: Given a valuation v(x), prove |x| = e^{-v(x)} is an absolute value.", text: "First, we check positivity. For any \\( x \\neq 0 \\), the exponential function \\( e^{-v(x)} \\) is always strictly greater than 0. By definition, \\( |0|_v = 0 \\).", math: "\\[ |x|_v \\ge 0 \\]" },
+                    { text: "Next, we check multiplicativity using the Product Rule of valuations (\\( v(xy) = v(x)+v(y) \\)) and standard exponent rules:", math: "\\[ |xy|_v = e^{-v(xy)} = e^{-(v(x) + v(y))} = e^{-v(x)}e^{-v(y)} = |x|_v|y|_v \\]" },
+                    { text: "Finally, we check the Strong Triangle Inequality using the Sum Rule of valuations (\\( v(x+y) \\ge \\min(v(x), v(y)) \\)). Because we are placing this in a negative exponent, the inequality flips and the minimum becomes a maximum:", math: "\\[ |x+y|_v = e^{-v(x+y)} \\le e^{-\\min(v(x), v(y))} = \\max(e^{-v(x)}, e^{-v(y)}) = \\max(|x|_v, |y|_v) \\]" },
+                    { comment: "// PART 2: Given an absolute value |x|, prove v(x) = -\\log|x| is a valuation.", text: "Conversely, assume we have an absolute value. Let's check the Product Rule using logarithmic properties:", math: "\\[ v(xy) = -\\log|xy| = -\\log(|x||y|) = -\\log|x| - \\log|y| = v(x) + v(y) \\]" },
+                    { text: "Finally, we check the Sum Rule. Since \\( -\\log(t) \\) is a strictly decreasing function, applying it to a maximum yields a minimum:", math: "\\[ v(x+y) = -\\log|x+y| \\ge -\\log(\\max(|x|, |y|)) = \\min(-\\log|x|, -\\log|y|) = \\min(v(x), v(y)) \\quad \\blacksquare \\]", final: true }
+                ]
+            }
+        ];
+
+        const selectorContainer = document.getElementById('problem-selector');
+        const deepDiveContainer = document.getElementById('deep-dive-container');
+        const deepDiveHeader = document.getElementById('deep-dive-header');
+        const proofFilename = document.getElementById('proof-filename');
+        const proofContainer = document.getElementById('proof-container');
+        const btnNextStep = document.getElementById('btn-next-step');
+
+        let currentProblem = null;
+        let currentStepIndex = 0;
+
+        function initHub() {
+            problemsData.forEach((prob, index) => {
+                const btn = document.createElement('button');
+                btn.className = `problem-tab w-full text-left px-3 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors flex flex-col mb-2`;
+                btn.innerHTML = `
+                    <span class="font-bold text-sm mb-0.5">${prob.title}</span>
+                    <span class="text-xs opacity-80 truncate w-full">${prob.shortDesc}</span>
+                `;
+                btn.onclick = () => loadProblem(index);
+                selectorContainer.appendChild(btn);
+            });
+
+            // Initialize button listener safely
+            btnNextStep.addEventListener('click', renderNextStep);
+
+            loadProblem(0); // Load Problem 34 by default
+        }
+
+        function loadProblem(index) {
+            currentProblem = problemsData[index];
+            currentStepIndex = 0;
+
+            // Update Sidebar UI
+            document.querySelectorAll('.problem-tab').forEach((btn, i) => {
+                if (i === index) {
+                    btn.classList.add('active');
+                    btn.classList.remove('hover:bg-slate-50', 'text-slate-700');
+                } else {
+                    btn.classList.remove('active');
+                    btn.classList.add('hover:bg-slate-50', 'text-slate-700');
+                }
+            });
+            
+            // Header Color override
+            if (currentProblem.headerColor) {
+                deepDiveHeader.className = `px-5 py-3 border-b font-bold flex items-center gap-2 shrink-0 ${currentProblem.headerColor}`;
+            } else {
+                deepDiveHeader.className = `bg-indigo-50 px-5 py-3 border-b border-indigo-100 font-bold text-indigo-900 flex items-center gap-2 shrink-0`;
+            }
+
+            // Handle Custom Layouts
+            if (currentProblem.deepDive.customHtml) {
+                deepDiveContainer.innerHTML = `
+                    <div class="flex items-center gap-3 mb-5 border-b border-slate-100 pb-4 shrink-0">
+                        <div class="p-2.5 rounded-xl shadow-sm border ${currentProblem.deepDive.color.replace('text-','border-')} ${currentProblem.deepDive.color}">
+                            <i data-lucide="${currentProblem.deepDive.icon}" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-2xl font-extrabold text-slate-800 leading-tight">${currentProblem.deepDive.title}</h3>
+                    </div>
+                    ${currentProblem.deepDive.customHtml}
+                `;
+            }
+
+            // Safely trigger MathJax rendering
+            typesetMath(deepDiveContainer);
+
+            // Reset Proof Area
+            proofFilename.innerText = currentProblem.filename;
+            proofContainer.innerHTML = '';
+            
+            // Reset Button states safely
+            btnNextStep.className = 'bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-1.5 rounded text-sm font-sans font-bold transition-colors flex items-center gap-2 shadow-sm';
+            btnNextStep.innerHTML = 'Next Step <i data-lucide="arrow-right" class="w-4 h-4"></i>';
+            btnNextStep.disabled = false;
+
+            renderNextStep();
+            
+            // Execute interactive logic specific to problem
+            if (currentProblem.setupInteraction) {
+                currentProblem.setupInteraction();
+            }
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function renderNextStep() {
+            if (!currentProblem || currentStepIndex >= currentProblem.steps.length) return;
+
+            const stepData = currentProblem.steps[currentStepIndex];
+            const stepDiv = document.createElement('div');
+            stepDiv.className = 'proof-step fade-in';
+            
+            let html = '';
+            if (stepData.comment) {
+                html += `<div class="text-indigo-400 mb-1.5 font-mono text-xs">${stepData.comment}</div>`;
+            }
+            if (stepData.text) {
+                html += `<div class="text-slate-400 italic mb-2.5 font-sans text-sm">${stepData.text}</div>`;
+            }
+            if (stepData.math) {
+                let boxClass = stepData.final 
+                    ? 'bg-emerald-900/40 p-3.5 rounded-xl border border-emerald-700/50 text-emerald-300 font-bold shadow-sm text-center block'
+                    : 'bg-slate-800/80 p-3 rounded-xl border border-slate-700 shadow-sm overflow-x-auto text-center block';
+                html += `<div class="${boxClass}">${stepData.math}</div>`;
+            }
+            
+            if(stepData.final) {
+                 html += `<div class="text-emerald-400 mt-5 font-sans text-center font-bold fade-in flex justify-center items-center gap-2"><i data-lucide="check-circle" class="w-5 h-5"></i> Proof Complete!</div>`;
+            }
+
+            stepDiv.innerHTML = html;
+            proofContainer.appendChild(stepDiv);
+            
+            proofContainer.scrollTo({
+                top: proofContainer.scrollHeight,
+                behavior: 'smooth'
+            });
+
+            // Safely render math inside the new step
+            typesetMath(stepDiv);
+
+            currentStepIndex++;
+
+            if (currentStepIndex >= currentProblem.steps.length) {
+                btnNextStep.className = 'bg-slate-600 text-slate-300 px-4 py-1.5 rounded text-sm font-sans font-bold flex items-center gap-2 shadow-sm cursor-not-allowed';
+                btnNextStep.innerHTML = 'Finished <i data-lucide="check" class="w-4 h-4"></i>';
+                btnNextStep.disabled = true;
+            }
+            
+            if (window.lucide) lucide.createIcons({ root: stepDiv });
+        }
+
+        window.addEventListener('DOMContentLoaded', initHub);
+
+    </script>
+</body>
+</html>
