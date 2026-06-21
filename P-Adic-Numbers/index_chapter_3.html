@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 3: The p-adic Numbers — Interactive p-adic Numbers</title>
+<style>
+/* ===== CSS RESET & BASE ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f8f9fa;--text:#1a1a2e;--text2:#555;--accent:#4361ee;
+  --def:#e3f2fd;--def-border:#1976d2;
+  --thm:#e8f5e9;--thm-border:#388e3c;
+  --lem:#fff9c4;--lem-border:#f9a825;
+  --proof:#f5f5f5;--proof-border:#9e9e9e;
+  --example:#e0f2f1;--example-border:#00897b;
+  --problem:#fff3e0;--problem-border:#ef6c00;
+  --sidebar-w:280px;--topbar-h:56px;
+  --card-radius:8px;--shadow:0 2px 8px rgba(0,0,0,.08);
+  --font-main:'Segoe UI',system-ui,-apple-system,sans-serif;
+  --font-mono:'Fira Code','Cascadia Code',monospace;
+  --transition:0.3s ease;
+}
+.dark{
+  --bg:#0f0f23;--bg2:#1a1a35;--text:#e0e0e0;--text2:#aaa;--accent:#7c8cf8;
+  --def:#1a2744;--def-border:#5c9ce6;
+  --thm:#1a3324;--thm-border:#66bb6a;
+  --lem:#332d1a;--lem-border:#fdd835;
+  --proof:#1e1e2f;--proof-border:#777;
+  --example:#1a302e;--example-border:#4db6ac;
+  --problem:#2e2114;--problem-border:#ffa726;
+  --shadow:0 2px 8px rgba(0,0,0,.3);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-height:1.7;transition:background var(--transition),color var(--transition)}
+
+/* ===== SIDEBAR ===== */
+#sidebar{position:fixed;left:0;top:0;width:var(--sidebar-w);height:100vh;background:var(--bg2);border-right:1px solid rgba(128,128,128,.2);overflow-y:auto;z-index:100;transition:transform var(--transition),background var(--transition);padding-top:16px}
+#sidebar.closed{transform:translateX(calc(-1 * var(--sidebar-w)))}
+#sidebar h2{font-size:1.1rem;padding:8px 20px;color:var(--accent)}
+#sidebar ul{list-style:none}
+#sidebar li{margin:0}
+#sidebar li a{display:block;padding:8px 20px 8px 28px;color:var(--text);text-decoration:none;font-size:.9rem;border-left:3px solid transparent;transition:all .2s}
+#sidebar li a:hover,#sidebar li a.active{background:rgba(67,97,238,.1);border-left-color:var(--accent);color:var(--accent)}
+#sidebar li.sub a{padding-left:44px;font-size:.82rem}
+.sidebar-toggle{position:fixed;left:8px;top:8px;z-index:200;background:var(--accent);color:#fff;border:none;width:40px;height:40px;border-radius:8px;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow)}
+.sidebar-toggle:hover{opacity:.85}
+
+/* ===== TOPBAR ===== */
+#topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:var(--bg2);border-bottom:1px solid rgba(128,128,128,.2);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:90;transition:left var(--transition),background var(--transition)}
+#topbar.full{left:0}
+#topbar .breadcrumb{font-size:.9rem;color:var(--text2)}
+#topbar .controls{display:flex;gap:12px;align-items:center}
+#topbar .controls button{background:none;border:1px solid rgba(128,128,128,.3);color:var(--text);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:.82rem;transition:all .2s}
+#topbar .controls button:hover{border-color:var(--accent);color:var(--accent)}
+.chapter-nav{background:var(--bg);border:1px solid rgba(128,128,128,.3);color:var(--text);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:.82rem;transition:all .2s;font-family:var(--font-main)}
+.chapter-nav:hover{border-color:var(--accent);color:var(--accent)}
+.dark-toggle{font-size:1.1rem!important;width:36px!important;padding:6px!important}
+.progress-bar{position:fixed;top:var(--topbar-h);left:var(--sidebar-w);right:0;height:3px;background:rgba(128,128,128,.15);z-index:89;transition:left var(--transition)}
+.progress-bar.full{left:0}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),#06d6a0);width:0;transition:width .4s}
+
+/* ===== MAIN CONTENT ===== */
+#main{margin-left:var(--sidebar-w);padding-top:calc(var(--topbar-h) + 16px);min-height:100vh;transition:margin-left var(--transition)}
+#main.full{margin-left:0}
+.section{display:none;padding:24px 32px 60px;max-width:900px;margin:0 auto}
+.section.active{display:block}
+.section h1{font-size:2rem;margin-bottom:8px;color:var(--accent)}
+.section h2{font-size:1.5rem;margin:32px 0 12px;border-bottom:2px solid var(--accent);padding-bottom:6px}
+.section h3{font-size:1.2rem;margin:24px 0 8px;color:var(--text)}
+.section p,.section li{margin-bottom:8px}
+
+/* ===== COLOR-CODED BLOCKS ===== */
+.block{border-left:4px solid;border-radius:var(--card-radius);padding:18px 22px;margin:18px 0;box-shadow:var(--shadow);transition:background var(--transition)}
+.block-def{background:var(--def);border-color:var(--def-border)}
+.block-thm{background:var(--thm);border-color:var(--thm-border)}
+.block-lem{background:var(--lem);border-color:var(--lem-border)}
+.block-proof{background:var(--proof);border-color:var(--proof-border);font-size:.92rem}
+.block-example{background:var(--example);border-color:var(--example-border)}
+.block-problem{background:var(--problem);border-color:var(--problem-border)}
+.block .label{font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.block-def .label{color:var(--def-border)}
+.block-thm .label{color:var(--thm-border)}
+.block-lem .label{color:var(--lem-border)}
+.block-proof .label{color:var(--proof-border)}
+.block-example .label{color:var(--example-border)}
+.block-problem .label{color:var(--problem-border)}
+
+/* ===== MATH ===== */
+.math{font-family:var(--font-mono);background:rgba(128,128,128,.08);padding:2px 6px;border-radius:4px;font-size:.9em}
+.math-block{display:block;text-align:center;margin:14px 0;padding:12px;background:rgba(128,128,128,.05);border-radius:6px;overflow-x:auto;font-family:var(--font-mono);font-size:.92em}
+
+/* ===== INTERACTIVE ===== */
+.interactive-box{border:2px dashed var(--accent);border-radius:var(--card-radius);padding:20px;margin:20px 0;background:rgba(67,97,238,.03)}
+.interactive-box h4{color:var(--accent);margin-bottom:12px}
+.slider-group{margin:10px 0;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.slider-group label{font-size:.9rem;min-width:120px}
+.slider-group input[type=range]{flex:1;min-width:150px;accent-color:var(--accent)}
+.slider-group .val{font-weight:700;min-width:60px;text-align:center;color:var(--accent)}
+.output-display{margin:12px 0;padding:14px;background:rgba(128,128,128,.06);border-radius:6px;font-family:var(--font-mono);font-size:.9rem;min-height:40px}
+
+/* ===== PROBLEMS ===== */
+.problem-set{margin:20px 0}
+.problem-card{background:var(--problem);border-left:4px solid var(--problem-border);border-radius:var(--card-radius);padding:18px;margin:14px 0;box-shadow:var(--shadow)}
+.problem-card .diff{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.75rem;font-weight:700;color:#fff;margin-bottom:10px}
+.diff-easy{background:#4caf50}.diff-medium{background:#ff9800}.diff-hard{background:#f44336}
+.problem-card .q{margin-bottom:12px;font-size:.95rem}
+.problem-card input[type=text]{width:200px;padding:8px 12px;border:2px solid rgba(128,128,128,.3);border-radius:6px;font-size:.9rem;background:var(--bg);color:var(--text);transition:border-color .2s}
+.problem-card input:focus{outline:none;border-color:var(--accent)}
+.problem-card button{padding:7px 16px;border:none;border-radius:6px;cursor:pointer;font-size:.82rem;margin:4px;transition:all .2s}
+.btn-check{background:var(--accent);color:#fff}.btn-check:hover{opacity:.85}
+.btn-rand{background:#9c27b0;color:#fff}.btn-rand:hover{opacity:.85}
+.btn-sol{background:#00897b;color:#fff}.btn-sol:hover{opacity:.85}
+.feedback{margin-top:8px;padding:8px 12px;border-radius:6px;font-size:.88rem;display:none}
+.feedback.correct{display:block;background:#c8e6c9;color:#2e7d32}
+.feedback.wrong{display:block;background:#ffcdd2;color:#c62828}
+.solution{display:none;margin-top:12px;padding:14px;background:rgba(0,137,123,.08);border-radius:6px;border-left:3px solid #00897b;font-size:.9rem}
+
+/* ===== QUIZ ===== */
+.quiz-container{margin:20px 0}
+.quiz-q{background:var(--bg2);border-radius:var(--card-radius);padding:18px;margin:14px 0;box-shadow:var(--shadow)}
+.quiz-q .q-text{font-weight:600;margin-bottom:12px}
+.quiz-q label{display:block;padding:8px 14px;margin:4px 0;border-radius:6px;cursor:pointer;transition:background .2s;font-size:.92rem}
+.quiz-q label:hover{background:rgba(67,97,238,.1)}
+.quiz-q input[type=radio]{margin-right:8px;accent-color:var(--accent)}
+.quiz-score{font-size:1.1rem;font-weight:700;padding:16px;background:var(--bg2);border-radius:var(--card-radius);margin:12px 0;text-align:center;box-shadow:var(--shadow)}
+.quiz-btn{padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:.95rem;margin:6px}
+.quiz-btn:hover{opacity:.85}
+.quiz-btn.secondary{background:#777}
+
+/* ===== EXAM ===== */
+.timer-display{font-size:1.3rem;font-weight:700;color:var(--accent);text-align:center;margin:12px 0;padding:12px;background:var(--bg2);border-radius:var(--card-radius)}
+.perf-breakdown{margin:20px 0}
+.perf-breakdown table{width:100%;border-collapse:collapse}
+.perf-breakdown th,.perf-breakdown td{padding:10px 14px;text-align:left;border-bottom:1px solid rgba(128,128,128,.2);font-size:.9rem}
+.perf-breakdown th{background:var(--accent);color:#fff}
+
+/* ===== SVG ===== */
+.svg-container{text-align:center;margin:20px 0}
+.svg-container svg{max-width:100%;height:auto}
+
+/* ===== NAV BUTTONS ===== */
+.nav-btns{display:flex;justify-content:space-between;margin-top:40px;padding-top:20px;border-top:1px solid rgba(128,128,128,.2)}
+.nav-btn{padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:.9rem;transition:all .2s}
+.nav-btn:hover{opacity:.85}
+.nav-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:800px){
+  #sidebar{transform:translateX(calc(-1 * var(--sidebar-w)))}
+  #sidebar.open{transform:translateX(0)}
+  #main{margin-left:0!important}
+  #topbar{left:0!important}
+  .progress-bar{left:0!important}
+  .section{padding:16px}
+  .sidebar-toggle{display:flex}
+  #topbar .breadcrumb{display:none}
+}
+@media(min-width:801px){
+  .sidebar-toggle{left:calc(var(--sidebar-w) + 8px)}
+  #sidebar.closed ~ .sidebar-toggle{left:8px}
+}
+/* collapsible */
+.collapsible-head{cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px}
+.collapsible-head::before{content:'▸';transition:transform .2s;display:inline-block;font-size:.8em}
+.collapsible-head.open::before{transform:rotate(90deg)}
+.collapsible-body{display:none;padding-left:12px;margin-top:6px}
+.collapsible-body.open{display:block}
+ul.compact li{margin-bottom:4px}
+.tag{display:inline-block;padding:1px 8px;border-radius:10px;font-size:.72rem;font-weight:600;color:#fff;vertical-align:middle;margin-left:4px}
+.tag-def{background:var(--def-border)}.tag-thm{background:var(--thm-border)}.tag-lem{background:var(--lem-border)}.tag-prop{background:#7b1fa2}
+/* step solution */
+.step{margin:6px 0;padding:6px 0 6px 16px;border-left:2px solid var(--accent);font-size:.9rem}
+.step strong{color:var(--accent)}
+/* exam explanation */
+.exam-explain{margin-top:10px;border-radius:6px;overflow:hidden;font-size:.88rem}
+.exam-explain-toggle{cursor:pointer;padding:8px 14px;background:rgba(0,137,123,.12);border:1px solid rgba(0,137,123,.25);border-radius:6px;color:#00897b;font-weight:600;font-size:.82rem;display:inline-block;margin-top:6px}
+.exam-explain-toggle:hover{background:rgba(0,137,123,.2)}
+.exam-explain-body{display:none;padding:12px 16px;margin-top:6px;background:rgba(128,128,128,.04);border:1px solid rgba(128,128,128,.15);border-radius:6px}
+.exam-explain-body.open{display:block}
+.exam-explain-item{padding:8px 10px;margin:4px 0;border-radius:4px;line-height:1.5}
+.exam-explain-item.opt-correct{background:rgba(76,175,80,.1);border-left:3px solid #4caf50}
+.exam-explain-item.opt-wrong{background:rgba(244,67,54,.05);border-left:3px solid #ef9a9a}
+/* interactive viz */
+.interactive-viz{border:2px solid var(--accent);border-radius:var(--card-radius);padding:20px;margin:20px 0;background:rgba(67,97,238,.03)}
+.interactive-viz h4{color:var(--accent);margin-bottom:12px}
+.interactive-viz .controls-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.interactive-viz label{font-size:.88rem;min-width:90px}
+.interactive-viz input[type=range]{flex:1;min-width:120px;accent-color:var(--accent)}
+.interactive-viz select{padding:5px 8px;border-radius:4px;font-size:.88rem;border:1px solid rgba(128,128,128,.3);background:var(--bg);color:var(--text)}
+.interactive-viz .val{font-weight:700;min-width:50px;text-align:center;color:var(--accent);font-size:.9rem}
+.interactive-viz .viz-output{margin:12px 0;padding:14px;background:rgba(128,128,128,.06);border-radius:6px;font-family:var(--font-mono);font-size:.88rem;line-height:1.6}
+.interactive-viz .viz-svg{text-align:center;margin:10px 0}
+.interactive-viz button{padding:6px 14px;border:none;border-radius:6px;cursor:pointer;font-size:.82rem;background:var(--accent);color:#fff;transition:opacity .2s}
+.interactive-viz button:hover{opacity:.85}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar">☰</button>
+<nav id="sidebar">
+  <h2>📖 Chapter 3</h2>
+  <ul>
+    <li><a href="#" onclick="goTo('intro')" data-sec="intro">Overview</a></li>
+    <li class="collapsible-head" onclick="toggleCollapse(this)">§3.1 Absolute Values on ℚ</li>
+    <li class="collapsible-body">
+      <ul>
+        <li class="sub"><a href="#" onclick="goTo('s31')" data-sec="s31">Concepts &amp; Explanations</a></li>
+        <li class="sub"><a href="#" onclick="goTo('s31prob')" data-sec="s31prob">Practice Problems</a></li>
+        <li class="sub"><a href="#" onclick="goTo('s31quiz')" data-sec="s31quiz">Section Quiz</a></li>
+      </ul>
+    </li>
+    <li class="collapsible-head" onclick="toggleCollapse(this)">§3.2 Completions</li>
+    <li class="collapsible-body">
+      <ul>
+        <li class="sub"><a href="#" onclick="goTo('s32')" data-sec="s32">Concepts &amp; Explanations</a></li>
+        <li class="sub"><a href="#" onclick="goTo('s32prob')" data-sec="s32prob">Practice Problems</a></li>
+        <li class="sub"><a href="#" onclick="goTo('s32quiz')" data-sec="s32quiz">Section Quiz</a></li>
+      </ul>
+    </li>
+    <li><a href="#" onclick="goTo('exam')" data-sec="exam">📝 Chapter Exam</a></li>
+  </ul>
+  <div style="padding:14px 20px;margin-top:10px;border-top:1px solid rgba(128,128,128,.2)">
+    <div style="font-size:.78rem;color:var(--text2);margin-bottom:6px">Jump to another chapter:</div>
+    <a href="index_chapter_2.html" style="display:block;padding:6px 0;font-size:.85rem;color:var(--accent);text-decoration:none">← Chapter 2: Foundations</a>
+  </div>
+</nav>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <span class="breadcrumb" id="breadcrumb">Chapter 3 › Overview</span>
+  <div class="controls">
+    <select class="chapter-nav" id="chapterNav" onchange="if(this.value)window.location.href=this.value" title="Switch chapter">
+      <option value="index_chapter_2.html">📘 Ch 2: Foundations</option>
+      <option value="index_chapter_3.html" selected>📗 Ch 3: The p-adic Numbers</option>
+    </select>
+    <button onclick="prevSection()">← Prev</button>
+    <button onclick="nextSection()">Next →</button>
+    <button class="dark-toggle" onclick="toggleDark()" title="Toggle dark mode">🌙</button>
+  </div>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<!-- MAIN -->
+<div id="main">
+
+<!-- ======== INTRO ======== -->
+<div class="section active" id="sec-intro">
+<h1>Chapter 3: The p-adic Numbers</h1>
+<p>Welcome to the interactive study platform for <strong>Chapter 3</strong> of <em>p-adic Numbers: An Introduction</em> by Fernando Gouvêa. Having built the general foundation in Chapter 2, we now apply the theory to the specific field <span class="math">ℚ</span> of rational numbers — and finally <em>construct</em> the p-adic numbers <span class="math">ℚ<sub>p</sub></span> themselves.</p>
+
+<div style="padding:12px 16px;margin:16px 0;background:rgba(67,97,238,.06);border-radius:8px;border-left:4px solid var(--accent)">
+  📘 <strong>Coming from Chapter 2?</strong> This chapter builds directly on absolute values, the non-archimedean property, and ultrametric topology. Use the chapter switcher in the top-right (or the link at the bottom of the sidebar) to flip between the two books — they work side-by-side when downloaded into the same folder.
+</div>
+
+<h2>What You'll Learn</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:16px 0">
+  <div style="padding:16px;background:var(--def);border-radius:8px;border-left:4px solid var(--def-border)">
+    <strong>§3.1</strong> Absolute Values on ℚ<br><small>Equivalence, Ostrowski's theorem, the product formula</small>
+  </div>
+  <div style="padding:16px;background:var(--thm);border-radius:8px;border-left:4px solid var(--thm-border)">
+    <strong>§3.2</strong> Completions<br><small>Cauchy sequences, the ring 𝒞, and the construction of ℚ<sub>p</sub> = 𝒞/𝒩</small>
+  </div>
+</div>
+
+<h2>The Big Picture</h2>
+<p>In Chapter 2 we studied absolute values abstractly. Now we ask two concrete questions about <span class="math">ℚ</span>:</p>
+<ol style="margin:8px 0 8px 24px">
+  <li><strong>How many absolute values does ℚ have?</strong> Ostrowski's theorem gives a stunning answer: up to equivalence, exactly one for each prime <span class="math">p</span>, plus the "usual" one at infinity. Nothing else exists.</li>
+  <li><strong>ℚ has holes — how do we fill them?</strong> Just as the real numbers ℝ complete ℚ with respect to the usual absolute value, we build a brand-new field ℚ<sub>p</sub> that completes ℚ with respect to |·|<sub>p</sub>.</li>
+</ol>
+<p>By the end you'll understand the famous slogan: <em>"ℝ is just one of infinitely many completions of ℚ — one for every prime."</em></p>
+
+<div class="nav-btns">
+  <span></span>
+  <button class="nav-btn" onclick="nextSection()">Begin §3.1 →</button>
+</div>
+</div>
+
+
+<!-- ======== SECTION 3.1 CONCEPTS ======== -->
+<div class="section" id="sec-s31">
+<h1>§3.1 Absolute Values on ℚ</h1>
+
+<p>We already know three kinds of absolute value on ℚ: the <strong>trivial</strong> one, the <strong>usual</strong> one <span class="math">|·|<sub>∞</sub></span> (from ℝ), and for each prime <span class="math">p</span> the <strong>p-adic</strong> one <span class="math">|·|<sub>p</sub></span>. It is convenient to treat <span class="math">∞</span> as an "infinite prime" so we can write <span class="math">|·|<sub>p</sub></span> for all primes <span class="math">p ≤ ∞</span>. The goal of this section: prove these are <em>all</em> of them (up to equivalence) and discover how they fit together via the product formula.</p>
+
+<div class="block block-def">
+  <div class="label">📘 Definition 3.1.1 — Equivalent Absolute Values</div>
+  <p><strong>Formal:</strong> Two absolute values <span class="math">|·|<sub>1</sub></span> and <span class="math">|·|<sub>2</sub></span> on a field <span class="math">k</span> are <em>equivalent</em> if they define the same topology on <span class="math">k</span> — i.e., every set that is open with respect to one is also open with respect to the other.</p>
+  <hr style="margin:12px 0;border:none;border-top:1px dashed rgba(128,128,128,.3)">
+  <p><strong>Plain-language:</strong> Two "rulers" are equivalent if they can't be told apart by topology. They might assign different <em>numbers</em> as sizes, but they agree on which points are "near" which — same open sets, same convergent sequences, same notion of limit. Think of measuring in inches vs. centimeters: the numbers differ, but "close" means the same thing.</p>
+</div>
+
+<div class="block block-lem">
+  <div class="label">📒 Lemma 3.1.2 — Convergence via Open Sets <span class="tag tag-lem">Lemma</span></div>
+  <p><strong>Statement:</strong> For a field <span class="math">k</span> with absolute value <span class="math">|·|</span>, the following are equivalent:</p>
+  <p>(i) <span class="math">lim<sub>n→∞</sub> x<sub>n</sub> = a</span>; &nbsp;(ii) any open set containing <span class="math">a</span> contains all but finitely many of the <span class="math">x<sub>n</sub></span>.</p>
+  <p><strong>Plain-language:</strong> Convergence can be described <em>purely in terms of open sets</em>, without ever mentioning specific distances. That's the key trick: if two absolute values have the same open sets, they automatically agree on every limit too.</p>
+  <div class="block block-proof" style="margin-top:10px">
+    <div class="label">Proof Idea</div>
+    <p>(ii)⇒(i): the open ball <span class="math">B(a,ε)</span> is itself an open set, so all but finitely many <span class="math">x<sub>n</sub></span> land in it — that's exactly the ε-definition of a limit. (i)⇒(ii): given an open set <span class="math">U ∋ a</span>, fit a ball <span class="math">B(a,r) ⊂ U</span>; convergence pushes the tail of the sequence into that ball, hence into <span class="math">U</span>.</p>
+  </div>
+</div>
+
+<div class="block block-thm" style="border-color:#7b1fa2;background:rgba(123,31,162,.07)">
+  <div class="label" style="color:#7b1fa2">📐 Proposition 3.1.3 — Four Faces of Equivalence <span class="tag tag-prop">Prop</span></div>
+  <p><strong>Statement:</strong> For absolute values <span class="math">|·|<sub>1</sub></span>, <span class="math">|·|<sub>2</sub></span> on <span class="math">k</span>, TFAE:</p>
+  <ol style="margin-left:22px">
+    <li>they are equivalent (same topology);</li>
+    <li>same convergent sequences: <span class="math">x<sub>n</sub> → a</span> in one ⟺ in the other;</li>
+    <li>same "small" elements: <span class="math">|x|<sub>1</sub> &lt; 1 ⟺ |x|<sub>2</sub> &lt; 1</span>;</li>
+    <li>there is a real <span class="math">α &gt; 0</span> with <span class="math">|x|<sub>1</sub> = |x|<sub>2</sub><sup>α</sup></span> for all <span class="math">x</span>.</li>
+  </ol>
+  <p><strong>Plain-language:</strong> "Same topology" sounds abstract, but it secretly means something very concrete: <em>one ruler is just a fixed power of the other</em> (condition iv). Raising every size to the power α reshapes the numbers but preserves which ones are below 1 — and that's enough to keep all the topology identical. The hardest step is (iii)⇒(iv), worked out in Appendix B / Problem 72.</p>
+</div>
+
+<div class="block block-example">
+  <div class="label">🔍 Real-World Example — "Same map, different scale"</div>
+  <p><strong>Currency exchange / log scales:</strong> Suppose one stock tracker reports volatility as <span class="math">v</span> and another reports it as <span class="math">v<sup>1.5</sup></span>. The raw numbers differ, but every statement of the form "this asset is more volatile than that one" or "volatility is shrinking toward zero" is identical in both systems. Raising to a positive power never changes the <em>ordering</em> or what tends to 0 — exactly condition (iv) of equivalence.</p>
+  <p><strong>Richter vs. raw amplitude:</strong> Earthquake size in raw seismic amplitude vs. the (logarithmic) Richter scale are different numbers, yet "bigger quake" and "sequence of quakes dying down" mean the same in both. Equivalent absolute values are the algebraic version of this idea.</p>
+</div>
+
+<div class="interactive-viz">
+  <h4>🎚️ Interactive: The Equivalence Exponent α</h4>
+  <p>Proposition 3.1.3(iv) says equivalent absolute values satisfy <span class="math">|x|<sub>1</sub> = |x|<sub>2</sub><sup>α</sup></span>. Drag α and watch how the <em>sizes</em> change but the boundary "is it &lt; 1?" never moves — which is why the topology is preserved.</p>
+  <div class="controls-row">
+    <label>Exponent α:</label>
+    <input type="range" id="eqAlpha" min="0.25" max="3" step="0.05" value="1" oninput="calcEquiv()">
+    <span class="val" id="eqAlphaVal">1.00</span>
+  </div>
+  <div class="controls-row">
+    <label>Prime p:</label>
+    <select id="eqP" onchange="calcEquiv()">
+      <option value="2">2</option><option value="3" selected>3</option><option value="5">5</option><option value="7">7</option>
+    </select>
+  </div>
+  <div class="viz-svg" id="eqViz"></div>
+  <div class="viz-output" id="eqOut"></div>
+</div>
+
+<div class="block block-thm">
+  <div class="label">🟢 Theorem 3.1.4 — Ostrowski's Theorem <span class="tag tag-thm">Theorem</span></div>
+  <p><strong>Statement:</strong> Every non-trivial absolute value on ℚ is equivalent to one of the <span class="math">|·|<sub>p</sub></span>, where <span class="math">p</span> is either a prime number or <span class="math">p = ∞</span>.</p>
+  <p><strong>Why it's stunning:</strong> There is <em>no exotic, undiscovered</em> way to measure size on ℚ. Every possibility collapses onto our familiar list. The primes — and the single point at infinity — completely account for all of ℚ's geometry.</p>
+  <div class="block block-proof" style="margin-top:10px">
+    <div class="label">Proof Skeleton (two cases)</div>
+    <p><strong>Case A — archimedean.</strong> Let <span class="math">n<sub>0</sub></span> be the smallest positive integer with <span class="math">|n<sub>0</sub>| &gt; 1</span>; pick <span class="math">α</span> with <span class="math">|n<sub>0</sub>| = n<sub>0</sub><sup>α</sup></span>. Writing any integer in base <span class="math">n<sub>0</sub></span> and applying a clever "take N-th roots, let N→∞" trick squeezes <span class="math">|n|</span> between <span class="math">n<sup>α</sup></span> from both sides, giving <span class="math">|n| = n<sup>α</sup></span>. So <span class="math">|·| ∼ |·|<sub>∞</sub></span>.</p>
+    <p><strong>Case B — non-archimedean.</strong> Now <span class="math">|n| ≤ 1</span> for all integers. Let <span class="math">n<sub>0</sub></span> be the smallest integer with <span class="math">|n<sub>0</sub>| &lt; 1</span>. It <em>must be prime</em> (if <span class="math">n<sub>0</sub> = ab</span> with both factors smaller, both would have size 1, contradiction). Call it <span class="math">p</span>. One checks <span class="math">|n| = 1</span> whenever <span class="math">p∤n</span>, so writing <span class="math">n = p<sup>v</sup>n′</span> gives <span class="math">|n| = |p|<sup>v</sup> = c<sup>−v</sup></span> — equivalent to <span class="math">|·|<sub>p</sub></span>.</p>
+  </div>
+</div>
+
+<div class="block block-example">
+  <div class="label">🔍 Real-World Example — A "fingerprint" classifier</div>
+  <p>Ostrowski is like proving that <em>every</em> possible fingerprint scanner, no matter how it's engineered, can only ever report one of a known finite catalog of fingerprints. In data terms: there's a complete <strong>classification</strong>. If someone hands you a mystery absolute value on ℚ, you don't need to invent new theory — you just run the two-case test (archimedean? find the smallest "big" integer; non-archimedean? find the smallest "shrinking" integer, and it'll be a prime) and read off the answer.</p>
+</div>
+
+<div class="interactive-viz">
+  <h4>🧪 Interactive: Ostrowski Classifier</h4>
+  <p>An absolute value is decided by how it acts on integers. Pick a "type" and the tool walks the proof: it finds the critical integer <span class="math">n<sub>0</sub></span> and tells you which <span class="math">|·|<sub>p</sub></span> you've got.</p>
+  <div class="controls-row">
+    <label>Behavior:</label>
+    <select id="ostType" onchange="calcOst()">
+      <option value="arch">Archimedean (some |n| &gt; 1)</option>
+      <option value="nonarch" selected>Non-archimedean (all |n| ≤ 1)</option>
+    </select>
+  </div>
+  <div class="controls-row" id="ostPrimeRow">
+    <label>Smallest n with |n|&lt;1:</label>
+    <select id="ostN0" onchange="calcOst()">
+      <option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="9">9</option>
+    </select>
+  </div>
+  <div class="viz-output" id="ostOut"></div>
+</div>
+
+<div class="block block-thm" style="border-color:#7b1fa2;background:rgba(123,31,162,.07)">
+  <div class="label" style="color:#7b1fa2">📐 Proposition 3.1.5 — The Product Formula <span class="tag tag-prop">Prop</span></div>
+  <p><strong>Statement:</strong> For any <span class="math">x ∈ ℚ<sup>×</sup></span>,</p>
+  <div class="math-block">∏<sub>p ≤ ∞</sub> |x|<sub>p</sub> = 1,</div>
+  <p>where the product runs over all primes <span class="math">p</span> together with the infinite prime <span class="math">∞</span>.</p>
+  <p><strong>Plain-language:</strong> Each prime's absolute value sees only <em>its own</em> piece of the factorization; the absolute value at infinity sees the overall magnitude. Multiply them all and everything cancels perfectly to <span class="math">1</span>. It's a conservation law: the "information" in a rational number is shared among the primes, and the books always balance.</p>
+  <div class="block block-proof" style="margin-top:10px">
+    <div class="label">Proof Idea</div>
+    <p>Reduce to a positive integer <span class="math">x = p<sub>1</sub><sup>a<sub>1</sub></sup>···p<sub>k</sub><sup>a<sub>k</sub></sup></span>. Then <span class="math">|x|<sub>q</sub> = 1</span> for primes <span class="math">q</span> not in the factorization, <span class="math">|x|<sub>p<sub>i</sub></sub> = p<sub>i</sub><sup>−a<sub>i</sub></sup></span>, and <span class="math">|x|<sub>∞</sub> = p<sub>1</sub><sup>a<sub>1</sub></sup>···p<sub>k</sub><sup>a<sub>k</sub></sup></span>. The finite factors exactly cancel the infinite one.</p>
+  </div>
+</div>
+
+<div class="block block-example">
+  <div class="label">🔍 Real-World Example — Conservation &amp; "fill in the missing reading"</div>
+  <p><strong>Mass/energy balance:</strong> Like a conservation law in physics, the product formula says nothing is lost — the contributions from every prime and from infinity always multiply to exactly 1.</p>
+  <p><strong>Error-correction / redundancy:</strong> Because the product is forced to be 1, <em>if you know all the absolute values of x except one, you can recover the missing one.</em> This redundancy is the backbone of the theory of heights used in modern Diophantine geometry (and conceptually similar to a checksum).</p>
+</div>
+
+<div class="interactive-viz">
+  <h4>⚖️ Interactive: Product Formula Balance</h4>
+  <p>Enter a rational number. The tool computes <span class="math">|x|<sub>p</sub></span> at every relevant prime and at <span class="math">∞</span>, draws each as a bar (log-scale), and confirms the product is exactly 1.</p>
+  <div class="controls-row">
+    <label>Numerator:</label>
+    <input type="range" id="pfNum" min="1" max="200" value="12" oninput="calcPF()">
+    <span class="val" id="pfNumVal">12</span>
+  </div>
+  <div class="controls-row">
+    <label>Denominator:</label>
+    <input type="range" id="pfDen" min="1" max="200" value="35" oninput="calcPF()">
+    <span class="val" id="pfDenVal">35</span>
+  </div>
+  <div class="viz-svg" id="pfViz"></div>
+  <div class="viz-output" id="pfOut"></div>
+</div>
+
+<div class="nav-btns">
+  <button class="nav-btn" onclick="goTo('intro')">← Overview</button>
+  <button class="nav-btn" onclick="nextSection()">Practice Problems →</button>
+</div>
+</div>
+
+<!-- ======== SECTION 3.1 PROBLEMS ======== -->
+<div class="section" id="sec-s31prob">
+<h1>§3.1 Practice Problems</h1>
+<p>Each problem can be re-randomized for fresh practice, checked instantly, and fully worked out step-by-step.</p>
+<div id="s31problems"></div>
+<div class="nav-btns">
+  <button class="nav-btn" onclick="prevSection()">← §3.1 Concepts</button>
+  <button class="nav-btn" onclick="nextSection()">§3.1 Quiz →</button>
+</div>
+</div>
+
+<!-- ======== SECTION 3.1 QUIZ ======== -->
+<div class="section" id="sec-s31quiz">
+<h1>§3.1 Section Quiz</h1>
+<p>5 questions drawn from a larger pool. Randomize for a fresh set anytime.</p>
+<div id="quiz31"></div>
+<div class="nav-btns">
+  <button class="nav-btn" onclick="prevSection()">← §3.1 Problems</button>
+  <button class="nav-btn" onclick="nextSection()">Begin §3.2 →</button>
+</div>
+</div>
+
+
+<!-- ======== SECTION 3.2 CONCEPTS ======== -->
+<div class="section" id="sec-s32">
+<h1>§3.2 Completions</h1>
+
+<p>We now build, for each prime <span class="math">p</span>, the field <span class="math">ℚ<sub>p</sub></span>. The idea mirrors how ℝ is built from ℚ: <em>fill in the missing limits of Cauchy sequences</em>. The twist is that "missing limits" are added by a clever algebraic trick — taking a quotient of the ring of all Cauchy sequences.</p>
+
+<div class="block block-def">
+  <div class="label">📘 Definition 3.2.1 — Cauchy, Complete, Dense</div>
+  <p><strong>(i) Cauchy sequence:</strong> <span class="math">(x<sub>n</sub>)</span> is Cauchy if for every <span class="math">ε &gt; 0</span> there is an <span class="math">M</span> with <span class="math">|x<sub>n</sub> − x<sub>m</sub>| &lt; ε</span> whenever <span class="math">m,n ≥ M</span>.</p>
+  <p><strong>(ii) Complete:</strong> <span class="math">k</span> is complete if every Cauchy sequence in <span class="math">k</span> has a limit <em>in</em> <span class="math">k</span>.</p>
+  <p><strong>(iii) Dense:</strong> <span class="math">S ⊂ k</span> is dense if every open ball around every point of <span class="math">k</span> contains a point of <span class="math">S</span>.</p>
+  <hr style="margin:12px 0;border:none;border-top:1px dashed rgba(128,128,128,.3)">
+  <p><strong>Plain-language:</strong> A Cauchy sequence is one whose terms "bunch up" — they <em>ought</em> to converge because they're crowding into smaller and smaller balls. A field is <em>complete</em> if every sequence that ought to converge actually does. <em>Dense</em> means you can approximate anything in the big field arbitrarily well by something from the small subset (like approximating any real by a decimal).</p>
+</div>
+
+<div class="block block-lem">
+  <div class="label">📒 Lemma 3.2.2 — The Non-archimedean Cauchy Shortcut <span class="tag tag-lem">Lemma</span></div>
+  <p><strong>Statement:</strong> In a non-archimedean field, <span class="math">(x<sub>n</sub>)</span> is Cauchy <em>if and only if</em> <span class="math">lim<sub>n→∞</sub> |x<sub>n+1</sub> − x<sub>n</sub>| = 0</span>.</p>
+  <p><strong>Plain-language:</strong> Normally "consecutive terms get close" is <em>weaker</em> than Cauchy (the harmonic series partial sums are a classic counterexample). But the ultrametric inequality is so strong that here the two conditions <em>coincide</em>. This makes p-adic analysis dramatically simpler: to check convergence of a series, you just check that its terms go to 0!</p>
+  <div class="block block-proof" style="margin-top:10px">
+    <div class="label">Proof Idea</div>
+    <p>For <span class="math">m = n+r</span>, write <span class="math">x<sub>m</sub> − x<sub>n</sub></span> as a telescoping sum of consecutive differences. The ultrametric inequality bounds the whole sum by the <em>maximum</em> consecutive difference. If consecutive differences → 0, that maximum → 0 too.</p>
+  </div>
+</div>
+
+<div class="block block-example">
+  <div class="label">🔍 Real-World Example — "Settling down" signals</div>
+  <p><strong>GPS / iterative solvers:</strong> A numerical method (Newton's method, gradient descent) produces a sequence of estimates. It "ought to converge" when successive estimates barely change. In ordinary arithmetic that's not quite enough — but in the p-adic world, "successive estimates stop changing" is <em>exactly</em> convergence. This is why p-adic Hensel lifting (next chapter) is so clean.</p>
+</div>
+
+<div class="interactive-viz">
+  <h4>📉 Interactive: Cauchy in the p-adic World</h4>
+  <p>Compare two sequences. The "harmonic-like" one has consecutive differences → 0 but is <em>not</em> Cauchy in the real sense; the p-adic one is. Watch the consecutive gap <span class="math">|x<sub>n+1</sub> − x<sub>n</sub>|<sub>p</sub></span> collapse.</p>
+  <div class="controls-row">
+    <label>Prime p:</label>
+    <select id="cauP" onchange="calcCauchy()">
+      <option value="2">2</option><option value="3" selected>3</option><option value="5">5</option><option value="7">7</option>
+    </select>
+  </div>
+  <div class="controls-row">
+    <label>Terms shown:</label>
+    <input type="range" id="cauN" min="2" max="8" value="6" oninput="calcCauchy()">
+    <span class="val" id="cauNVal">6</span>
+  </div>
+  <div class="viz-svg" id="cauViz"></div>
+  <div class="viz-output" id="cauOut"></div>
+</div>
+
+<div class="block block-lem">
+  <div class="label">📒 Lemma 3.2.3 — ℚ Has Holes <span class="tag tag-lem">Lemma</span></div>
+  <p><strong>Statement:</strong> ℚ is <em>not</em> complete with respect to any of its non-trivial absolute values.</p>
+  <p><strong>Plain-language:</strong> Everyone knows ℚ has a hole where <span class="math">√2</span> should be (the usual absolute value). The lemma says the p-adic worlds have holes too. For an odd prime <span class="math">p</span>, pick <span class="math">a</span> that is a square mod <span class="math">p</span> but not a perfect square in ℚ; you can build a Cauchy sequence of better and better approximate square roots of <span class="math">a</span> — but its "limit" <span class="math">√a</span> doesn't live in ℚ. So a completion is genuinely needed.</p>
+  <div class="block block-proof" style="margin-top:10px">
+    <div class="label">Proof Idea (odd p)</div>
+    <p>Choose <span class="math">x<sub>0</sub></span> with <span class="math">x<sub>0</sub><sup>2</sup> ≡ a (mod p)</span>, then lift to <span class="math">x<sub>n</sub></span> with <span class="math">x<sub>n</sub> ≡ x<sub>n−1</sub> (mod p<sup>n</sup>)</span> and <span class="math">x<sub>n</sub><sup>2</sup> ≡ a (mod p<sup>n+1</sup>)</span>. Then <span class="math">|x<sub>n+1</sub> − x<sub>n</sub>|<sub>p</sub> ≤ p<sup>−(n+1)</sup> → 0</span> (Cauchy), and <span class="math">|x<sub>n</sub><sup>2</sup> − a|<sub>p</sub> → 0</span>, so any limit would be a square root of <span class="math">a</span> — impossible in ℚ.</p>
+  </div>
+</div>
+
+<div class="interactive-viz">
+  <h4>🔁 Interactive: Building √a in ℚ<sub>p</sub> (a hole in ℚ)</h4>
+  <p>Pick a prime and a target <span class="math">a</span>. The tool lifts an approximate square root step by step (this is Hensel lifting!) and shows that <span class="math">x<sub>n</sub><sup>2</sup> → a</span> p-adically, even though no rational <span class="math">√a</span> exists.</p>
+  <div class="controls-row">
+    <label>Prime p:</label>
+    <select id="sqP" onchange="calcSqrt()">
+      <option value="5" selected>5</option><option value="7">7</option><option value="11">11</option><option value="13">13</option>
+    </select>
+  </div>
+  <div class="controls-row">
+    <label>Target a:</label>
+    <select id="sqA" onchange="calcSqrt()">
+      <option value="6" selected>6</option><option value="11">11</option><option value="14">14</option><option value="21">21</option>
+    </select>
+  </div>
+  <div class="controls-row">
+    <label>Steps:</label>
+    <input type="range" id="sqSteps" min="1" max="6" value="4" oninput="calcSqrt()">
+    <span class="val" id="sqStepsVal">4</span>
+  </div>
+  <div class="viz-svg" id="sqViz"></div>
+  <div class="viz-output" id="sqOut"></div>
+</div>
+
+<h2>Constructing ℚ<sub>p</sub>: The Algebraic Machine</h2>
+<p>The construction has four moving parts. Here's the assembly line:</p>
+
+<div class="svg-container" id="constructFlow"></div>
+
+<div class="block block-def">
+  <div class="label">📘 Definition 3.2.4 — The Ring 𝒞 of Cauchy Sequences</div>
+  <p><span class="math">𝒞 = 𝒞<sub>p</sub>(ℚ)</span> is the set of <em>all</em> Cauchy sequences of rationals (w.r.t. <span class="math">|·|<sub>p</sub></span>).</p>
+  <p><strong>Plain-language:</strong> Instead of magically conjuring the missing limits, we keep the <em>sequences</em> themselves as our raw material. The limit we don't have will be represented by the sequence we do have.</p>
+</div>
+
+<div class="block block-thm" style="border-color:#7b1fa2;background:rgba(123,31,162,.07)">
+  <div class="label" style="color:#7b1fa2">📐 Proposition 3.2.5 — 𝒞 is a Ring <span class="tag tag-prop">Prop</span></div>
+  <p>Termwise addition <span class="math">(x<sub>n</sub>)+(y<sub>n</sub>) = (x<sub>n</sub>+y<sub>n</sub>)</span> and multiplication <span class="math">(x<sub>n</sub>)·(y<sub>n</sub>) = (x<sub>n</sub>y<sub>n</sub>)</span> make <span class="math">𝒞</span> a commutative ring with unity. (The only real check: sums/products of Cauchy sequences are Cauchy.)</p>
+</div>
+
+<div class="block block-lem">
+  <div class="label">📒 Lemma 3.2.6 — ℚ Sits Inside 𝒞 <span class="tag tag-lem">Lemma</span></div>
+  <p>The map <span class="math">x ↦ x̃</span> (the constant sequence <span class="math">x, x, x, …</span>) is an injective ring homomorphism <span class="math">ℚ → 𝒞</span>. So our raw material already contains a faithful copy of ℚ.</p>
+</div>
+
+<div class="block block-def">
+  <div class="label">📘 Definition 3.2.7 — The Ideal 𝒩 of Null Sequences</div>
+  <p><span class="math">𝒩 = {(x<sub>n</sub>) : x<sub>n</sub> → 0} = {(x<sub>n</sub>) : lim |x<sub>n</sub>|<sub>p</sub> = 0}</span>, an ideal of <span class="math">𝒞</span>.</p>
+  <p><strong>Plain-language:</strong> Two Cauchy sequences "ought" to have the same limit precisely when their difference dies out to 0. Those die-out sequences form <span class="math">𝒩</span>. Quotienting by <span class="math">𝒩</span> is how we glue together sequences that should share a limit.</p>
+</div>
+
+<div class="block block-lem">
+  <div class="label">📒 Lemma 3.2.8 — 𝒩 is Maximal <span class="tag tag-lem">Lemma</span></div>
+  <p><strong>Statement:</strong> <span class="math">𝒩</span> is a maximal ideal of <span class="math">𝒞</span>.</p>
+  <p><strong>Why we care:</strong> Quotienting a commutative ring by a <em>maximal</em> ideal yields a <strong>field</strong>. That's how <span class="math">ℚ<sub>p</sub></span> ends up being a field and not just a ring.</p>
+  <div class="block block-proof" style="margin-top:10px">
+    <div class="label">Proof Idea</div>
+    <p>Take a Cauchy <span class="math">(x<sub>n</sub>) ∉ 𝒩</span>. It is eventually bounded away from 0, so define <span class="math">y<sub>n</sub> = 1/x<sub>n</sub></span> past that point. Then <span class="math">(y<sub>n</sub>)</span> is Cauchy and <span class="math">(x<sub>n</sub>)(y<sub>n</sub>)</span> is "0…0,1,1,1,…", which differs from the constant <span class="math">1̃</span> by a null sequence. Hence the ideal generated by <span class="math">(x<sub>n</sub>)</span> and <span class="math">𝒩</span> contains <span class="math">1̃</span> — so it's all of <span class="math">𝒞</span>, proving maximality.</p>
+  </div>
+</div>
+
+<div class="block block-def">
+  <div class="label">📘 Definition 3.2.9 — The Field ℚ<sub>p</sub></div>
+  <div class="math-block">ℚ<sub>p</sub> = 𝒞 / 𝒩</div>
+  <p>The <em>field of p-adic numbers</em> is the quotient of the ring of Cauchy sequences by the maximal ideal of null sequences. ℚ still embeds via <span class="math">x ↦ [x̃]</span>.</p>
+</div>
+
+<div class="block block-lem">
+  <div class="label">📒 Lemma 3.2.10 — Absolute Value Stabilizes <span class="tag tag-lem">Lemma</span></div>
+  <p>If <span class="math">(x<sub>n</sub>) ∈ 𝒞</span> is not null, the real numbers <span class="math">|x<sub>n</sub>|<sub>p</sub></span> are <em>eventually constant</em>. (Proof: once terms are bounded below by <span class="math">c</span> and within <span class="math">c</span> of each other, "all triangles are isosceles" forces <span class="math">|x<sub>n</sub>| = |x<sub>m</sub>|</span>.) This makes the next definition well-posed.</p>
+</div>
+
+<div class="block block-def">
+  <div class="label">📘 Definition 3.2.11 — Absolute Value on ℚ<sub>p</sub></div>
+  <p>For <span class="math">λ ∈ ℚ<sub>p</sub></span> represented by a Cauchy sequence <span class="math">(x<sub>n</sub>)</span>, define <span class="math">|λ|<sub>p</sub> = lim<sub>n→∞</sub> |x<sub>n</sub>|<sub>p</sub></span>. Because of Lemma 3.2.10 this limit exists and doesn't depend on the chosen representative. Its image is still <span class="math">{p<sup>n</sup> : n ∈ ℤ} ∪ {0}</span>.</p>
+</div>
+
+<div class="block block-thm" style="border-color:#7b1fa2;background:rgba(123,31,162,.07)">
+  <div class="label" style="color:#7b1fa2">📐 Proposition 3.2.12 — ℚ is Dense in ℚ<sub>p</sub> <span class="tag tag-prop">Prop</span></div>
+  <p>Every p-adic number can be approximated as closely as you like by an ordinary rational. (Proof: represent <span class="math">λ</span> by Cauchy <span class="math">(x<sub>n</sub>)</span>; the constant sequence <span class="math">x̃<sub>N</sub></span> for large <span class="math">N</span> lands inside <span class="math">B(λ, ε)</span>.)</p>
+</div>
+
+<div class="block block-thm">
+  <div class="label">🟢 Theorem 3.2.13 — ℚ<sub>p</sub> is Complete <span class="tag tag-thm">Theorem</span></div>
+  <p><strong>Statement:</strong> Every Cauchy sequence in <span class="math">ℚ<sub>p</sub></span> converges to an element of <span class="math">ℚ<sub>p</sub></span>.</p>
+  <p><strong>The subtlety:</strong> a Cauchy sequence in <span class="math">ℚ<sub>p</sub></span> is a "sequence of (equivalence classes of) sequences." The trick is density: replace each <span class="math">λ<sub>i</sub></span> by a nearby rational <span class="math">y<sub>i</sub></span>, show <span class="math">(y<sub>n</sub>)</span> is itself Cauchy in ℚ (hence defines some <span class="math">λ ∈ ℚ<sub>p</sub></span>), and prove <span class="math">λ<sub>n</sub> → λ</span>.</p>
+</div>
+
+<div class="block block-thm">
+  <div class="label">🟢 Theorem 3.2.14 — Existence &amp; Uniqueness of ℚ<sub>p</sub> <span class="tag tag-thm">Theorem</span></div>
+  <p>For each prime <span class="math">p</span> there is a field <span class="math">ℚ<sub>p</sub></span> with a non-archimedean <span class="math">|·|<sub>p</sub></span> such that: (i) <span class="math">ℚ ↪ ℚ<sub>p</sub></span> induces the p-adic absolute value; (ii) ℚ is dense in <span class="math">ℚ<sub>p</sub></span>; (iii) <span class="math">ℚ<sub>p</sub></span> is complete. Moreover <span class="math">ℚ<sub>p</sub></span> is <strong>unique up to unique isomorphism</strong> preserving absolute values.</p>
+  <p><strong>Why this matters:</strong> the strong uniqueness lets us <em>forget</em> the messy Cauchy-sequence construction forever. From now on we work only with the three defining properties — just as we use ℝ without ever recalling Dedekind cuts.</p>
+</div>
+
+<div class="block block-example">
+  <div class="label">🔍 Real-World Example — "Defined by its specs, not its wiring"</div>
+  <p><strong>Engineering interfaces:</strong> Once a chip is "unique up to unique isomorphism" for a spec, any two implementations are interchangeable — you program against the <em>interface</em> (the three properties), never the internal wiring (Cauchy sequences). The reals work the same way: you use ℝ via completeness/density, not Dedekind cuts.</p>
+  <p><strong>The punchline picture:</strong> ℝ "fills the number line." ℚ<sub>p</sub> instead fills a <em>totally disconnected</em>, tree-like space — there's no line to picture, which is exactly why the p-adic world feels so different.</p>
+</div>
+
+<div class="interactive-viz">
+  <h4>🌐 Interactive: Completion — Filling the Holes</h4>
+  <p>Watch a sequence of rationals (constant sequences <span class="math">ỹ<sub>n</sub></span>) home in on a p-adic number <span class="math">λ</span> via nested shrinking balls — the visual proof that ℚ is dense in its completion.</p>
+  <div class="controls-row">
+    <label>Prime p:</label>
+    <select id="compP" onchange="calcComp()">
+      <option value="2">2</option><option value="3" selected>3</option><option value="5">5</option>
+    </select>
+  </div>
+  <div class="controls-row">
+    <label>Depth:</label>
+    <input type="range" id="compDepth" min="1" max="5" value="3" oninput="calcComp()">
+    <span class="val" id="compDepthVal">3</span>
+  </div>
+  <div class="viz-svg" id="compViz"></div>
+  <div class="viz-output" id="compOut"></div>
+</div>
+
+<div class="nav-btns">
+  <button class="nav-btn" onclick="prevSection()">← §3.1 Quiz</button>
+  <button class="nav-btn" onclick="nextSection()">Practice Problems →</button>
+</div>
+</div>
+
+<!-- ======== SECTION 3.2 PROBLEMS ======== -->
+<div class="section" id="sec-s32prob">
+<h1>§3.2 Practice Problems</h1>
+<p>Each problem can be re-randomized, checked instantly, and fully worked out step-by-step.</p>
+<div id="s32problems"></div>
+<div class="nav-btns">
+  <button class="nav-btn" onclick="prevSection()">← §3.2 Concepts</button>
+  <button class="nav-btn" onclick="nextSection()">§3.2 Quiz →</button>
+</div>
+</div>
+
+<!-- ======== SECTION 3.2 QUIZ ======== -->
+<div class="section" id="sec-s32quiz">
+<h1>§3.2 Section Quiz</h1>
+<p>5 questions drawn from a larger pool. Randomize for a fresh set anytime.</p>
+<div id="quiz32"></div>
+<div class="nav-btns">
+  <button class="nav-btn" onclick="prevSection()">← §3.2 Problems</button>
+  <button class="nav-btn" onclick="nextSection()">Chapter Exam →</button>
+</div>
+</div>
+
+<!-- ======== CHAPTER EXAM ======== -->
+<div class="section" id="sec-exam">
+<h1>📝 Chapter 3 — Comprehensive Exam</h1>
+<p>Test your understanding of both sections. 10 questions, randomized from a pool. Every question comes with a full <strong>per-option</strong> breakdown explaining why each choice is right or wrong.</p>
+<div style="margin:16px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+  <label><input type="checkbox" id="timedMode"> ⏱ Timed Mode (20 minutes)</label>
+  <button class="quiz-btn" onclick="startExam()">Start Exam</button>
+  <button class="quiz-btn secondary" onclick="resetExam()">Reset</button>
+</div>
+<div class="timer-display" id="examTimer" style="display:none">20:00</div>
+<div id="examContent"><p>Click "Start Exam" to begin.</p></div>
+<div class="nav-btns">
+  <button class="nav-btn" onclick="prevSection()">← §3.2 Quiz</button>
+  <span></span>
+</div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ===== STATE =====
+const sections=['intro','s31','s31prob','s31quiz','s32','s32prob','s32quiz','exam'];
+const sectionNames={'intro':'Overview','s31':'§3.1 Absolute Values on ℚ','s31prob':'§3.1 Problems','s31quiz':'§3.1 Quiz','s32':'§3.2 Completions','s32prob':'§3.2 Problems','s32quiz':'§3.2 Quiz','exam':'Chapter Exam'};
+let currentIdx=0;
+let visited=new Set(['intro']);
+
+// ===== NAVIGATION =====
+function goTo(id){
+  const idx=sections.indexOf(id);
+  if(idx>=0){currentIdx=idx;showSection();}
+  if(window.innerWidth<801)document.getElementById('sidebar').classList.remove('open');
+}
+function nextSection(){if(currentIdx<sections.length-1){currentIdx++;showSection();}}
+function prevSection(){if(currentIdx>0){currentIdx--;showSection();}}
+function showSection(){
+  const id=sections[currentIdx];
+  visited.add(id);
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  document.getElementById('breadcrumb').textContent='Chapter 3 › '+sectionNames[id];
+  document.querySelectorAll('#sidebar a').forEach(a=>{a.classList.toggle('active',a.dataset.sec===id);});
+  document.getElementById('progressFill').style.width=((visited.size/sections.length)*100)+'%';
+  window.scrollTo(0,0);
+}
+function toggleSidebar(){
+  const sb=document.getElementById('sidebar');
+  if(window.innerWidth<801){sb.classList.toggle('open');}
+  else{
+    sb.classList.toggle('closed');
+    document.getElementById('main').classList.toggle('full');
+    document.getElementById('topbar').classList.toggle('full');
+    document.querySelector('.progress-bar').classList.toggle('full');
+  }
+}
+function toggleDark(){document.body.classList.toggle('dark');}
+function toggleCollapse(el){
+  el.classList.toggle('open');
+  const body=el.nextElementSibling;
+  if(body&&body.classList.contains('collapsible-body'))body.classList.toggle('open');
+}
+
+// ===== MATH HELPERS =====
+function vp(n,p){if(n===0)return Infinity;n=Math.abs(n);let c=0;while(n%p===0){c++;n/=p;}return c;}
+function vpQ(a,b,p){return vp(a,p)-vp(b,p);}
+function padic(a,b,p){const v=vpQ(a,b,p);return Math.pow(p,-v);}
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a;}
+function frac(a,b){const g=gcd(a,b)||1;return[a/g,b/g];}
+function randInt(lo,hi){return lo+Math.floor(Math.random()*(hi-lo+1));}
+function randPrime(){return[2,3,5,7,11,13][randInt(0,5)];}
+function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=randInt(0,i);[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+function primesUpTo(n){const ps=[];for(let k=2;k<=n;k++){let pr=true;for(let d=2;d*d<=k;d++){if(k%d===0){pr=false;break;}}if(pr)ps.push(k);}return ps;}
+function primeFactors(n){n=Math.abs(n);const f={};for(let d=2;d*d<=n;d++){while(n%d===0){f[d]=(f[d]||0)+1;n/=d;}}if(n>1)f[n]=(f[n]||0)+1;return f;}
+
+// ===== INTERACTIVE VISUALIZATIONS =====
+
+// §3.1 — Equivalence exponent α
+function calcEquiv(){
+  const alpha=+document.getElementById('eqAlpha').value;
+  const p=+document.getElementById('eqP').value;
+  document.getElementById('eqAlphaVal').textContent=alpha.toFixed(2);
+  // sample x = p^k for k = -2..2 ; |x|_p = p^{-k}; raised to alpha
+  const ks=[-2,-1,0,1,2];
+  let svg='<svg width="100%" height="170" viewBox="0 0 500 170">';
+  svg+='<text x="250" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="currentColor">|x|<tspan font-size="8" dy="3">2</tspan><tspan dy="-3"> (blue) vs |x|<tspan font-size="8" dy="3">2</tspan><tspan dy="-3"><tspan font-size="9" dy="-4">α</tspan> (orange) — boundary |x|=1 (red line)</tspan></tspan></text>';
+  // baseline for |x|=1 at y=110, log scale
+  const y1=110, colW=500/ks.length;
+  svg+=`<line x1="0" y1="${y1}" x2="500" y2="${y1}" stroke="#e53935" stroke-width="1.5" stroke-dasharray="4 3"/>`;
+  svg+=`<text x="496" y="${y1-4}" text-anchor="end" font-size="8" fill="#e53935">|x| = 1</text>`;
+  const scale=22; // pixels per unit log_p
+  ks.forEach((k,i)=>{
+    const base=-k;            // log_p |x|_2  (since |x|=p^{-k})
+    const raised=-k*alpha;    // log_p |x|_1
+    const x=i*colW+colW/2;
+    // base bar (blue)
+    svg+=`<rect x="${x-18}" y="${base>=0?y1-base*scale:y1}" width="16" height="${Math.abs(base*scale)||1}" fill="#1976d2" opacity=".75" rx="2"/>`;
+    // raised bar (orange)
+    svg+=`<rect x="${x+2}" y="${raised>=0?y1-raised*scale:y1}" width="16" height="${Math.abs(raised*scale)||1}" fill="#f57c00" opacity=".8" rx="2"/>`;
+    svg+=`<text x="${x}" y="160" text-anchor="middle" font-size="8" fill="currentColor">${p}<tspan font-size="6" dy="-4">${k}</tspan></text>`;
+  });
+  svg+='</svg>';
+  document.getElementById('eqViz').innerHTML=svg;
+  document.getElementById('eqOut').innerHTML=`<strong>p = ${p}, α = ${alpha.toFixed(2)}</strong>\nFor x = ${p}<sup>k</sup>: |x|<sub>2</sub> = ${p}<sup>−k</sup>, and |x|<sub>1</sub> = |x|<sub>2</sub><sup>α</sup> = ${p}<sup>−kα</sup>.\n\n<strong>Key point:</strong> raising to the power α = ${alpha.toFixed(2)} > 0 stretches/compresses every size, but the question "is |x| < 1?" has the SAME answer in both systems — it only depends on the sign of k, never on α.\n${alpha.toFixed(2)==='1.00'?'At α = 1 the two absolute values are identical.':'The two absolute values are EQUIVALENT (same topology), even though the raw numbers differ.'}`;
+}
+
+// §3.1 — Ostrowski classifier
+function calcOst(){
+  const type=document.getElementById('ostType').value;
+  const row=document.getElementById('ostPrimeRow');
+  row.style.display = type==='nonarch' ? 'flex' : 'none';
+  if(type==='arch'){
+    document.getElementById('ostOut').innerHTML=`<strong>Behavior: Archimedean</strong> (some |n| &gt; 1).\n\nFollow the proof: let n<sub>0</sub> be the smallest integer with |n<sub>0</sub>| &gt; 1, and write |n<sub>0</sub>| = n<sub>0</sub><sup>α</sup>. The base-n<sub>0</sub> "take N-th roots" squeeze forces |n| = n<sup>α</sup> for every n.\n\n<strong>Conclusion:</strong> |·| ∼ |·|<sub>∞</sub> — equivalent to the usual (real) absolute value. ✓`;
+    return;
+  }
+  const n0=+document.getElementById('ostN0').value;
+  const f=primeFactors(n0);
+  const primes=Object.keys(f).map(Number);
+  const isPrime=primes.length===1&&f[primes[0]]===1;
+  let msg=`<strong>Behavior: Non-archimedean</strong> (all |n| ≤ 1). Smallest n with |n| &lt; 1 is n<sub>0</sub> = ${n0}.\n\n`;
+  if(isPrime){
+    msg+=`${n0} is PRIME. ✓ The proof shows |n| = 1 for every n not divisible by ${n0}, and |${n0}| = c &lt; 1. Writing n = ${n0}<sup>v</sup>·n′ gives |n| = c<sup>v</sup>.\n\n<strong>Conclusion:</strong> |·| ∼ |·|<sub>${n0}</sub> — the ${n0}-adic absolute value. ✓`;
+  }else{
+    const a=primes[0], b=n0/primes[0];
+    msg+=`${n0} is NOT prime: ${n0} = ${a} × ${b}, with both factors smaller than ${n0}.\nBy minimality of n<sub>0</sub>, |${a}| = 1 and |${b}| = 1, so |${n0}| = |${a}|·|${b}| = 1.\nBut we assumed |${n0}| &lt; 1 — <strong>contradiction!</strong>\n\n<strong>Conclusion:</strong> the critical n<sub>0</sub> can NEVER be composite. It is forced to be the prime ${a}, and the absolute value is equivalent to |·|<sub>${a}</sub>.`;
+  }
+  document.getElementById('ostOut').innerHTML=msg;
+}
+
+// §3.1 — Product formula balance
+function calcPF(){
+  let num=+document.getElementById('pfNum').value;
+  let den=+document.getElementById('pfDen').value;
+  document.getElementById('pfNumVal').textContent=num;
+  document.getElementById('pfDenVal').textContent=den;
+  const [a,b]=frac(num,den);
+  // collect all relevant primes
+  const fa=primeFactors(a), fb=primeFactors(b);
+  const primes=[...new Set([...Object.keys(fa),...Object.keys(fb)].map(Number))].sort((x,y)=>x-y);
+  const entries=primes.map(p=>{const v=vp(a,p)-vp(b,p);return{p,v,val:Math.pow(p,-v)};});
+  const infVal=a/b; // |x|_∞
+  // product
+  let prod=infVal; entries.forEach(e=>prod*=e.val);
+  // bars: log scale, bar value = log of |x|_p
+  let svg='<svg width="100%" height="170" viewBox="0 0 500 170">';
+  svg+='<text x="250" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="currentColor">log |x|<tspan font-size="8" dy="3">v</tspan><tspan dy="-3"> at each place (bars above/below sum to 0)</tspan></text>';
+  const allBars=[...entries.map(e=>({label:''+e.p,lv:Math.log(e.val),color:'#7b1fa2'})),{label:'∞',lv:Math.log(infVal),color:'#388e3c'}];
+  const y0=95, colW=500/Math.max(allBars.length,1), maxAbs=Math.max(...allBars.map(b=>Math.abs(b.lv)),0.5);
+  const scale=60/maxAbs;
+  svg+=`<line x1="0" y1="${y0}" x2="500" y2="${y0}" stroke="rgba(128,128,128,.5)" stroke-width="1"/>`;
+  allBars.forEach((bar,i)=>{
+    const x=i*colW+colW/2, h=bar.lv*scale;
+    svg+=`<rect x="${x-14}" y="${h>=0?y0-h:y0}" width="28" height="${Math.abs(h)||1}" fill="${bar.color}" opacity=".8" rx="2"/>`;
+    svg+=`<text x="${x}" y="${h>=0?y0-h-4:y0+12}" text-anchor="middle" font-size="8" fill="currentColor">${bar.label}</text>`;
+    svg+=`<text x="${x}" y="160" text-anchor="middle" font-size="7" fill="var(--text2)">|x|=${bar.label==='∞'?infVal.toFixed(2):entries[i].val.toFixed(3)}</text>`;
+  });
+  svg+='</svg>';
+  document.getElementById('pfViz').innerHTML=svg;
+  let lines=entries.map(e=>`|x|<sub>${e.p}</sub> = ${e.p}<sup>−(${e.v})</sup> = ${e.val.toFixed(4)}`).join('\n');
+  document.getElementById('pfOut').innerHTML=`<strong>x = ${num}/${den} = ${a}/${b}</strong> (reduced)\n${lines||'(no finite primes involved)'}\n|x|<sub>∞</sub> = ${infVal.toFixed(4)}\n\n<strong>Product over all places:</strong> ${[...entries.map(e=>e.val.toFixed(3)),infVal.toFixed(3)].join(' × ')} = ${prod.toFixed(4)} ≈ <strong>1</strong> ✓\nThe finite primes exactly cancel the infinite place — a perfect conservation law.`;
+}
+
+// §3.2 — Cauchy in the p-adic world
+function calcCauchy(){
+  const p=+document.getElementById('cauP').value;
+  const N=+document.getElementById('cauN').value;
+  document.getElementById('cauNVal').textContent=N;
+  // p-adic sequence x_n = 1 + p + p^2 + ... + p^{n}  (partial sums)
+  // consecutive gap |x_{n+1}-x_n|_p = |p^{n+1}|_p = p^{-(n+1)}
+  let svg='<svg width="100%" height="170" viewBox="0 0 500 170">';
+  svg+='<text x="250" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="currentColor">Consecutive gap |x<tspan font-size="8" dy="3">n+1</tspan><tspan dy="-3">−x</tspan><tspan font-size="8" dy="3">n</tspan><tspan dy="-3">|</tspan><tspan font-size="8" dy="3">p</tspan><tspan dy="-3"> collapses to 0</tspan></text>';
+  const colW=500/N, y0=130, scale=110;
+  for(let n=0;n<N;n++){
+    const gap=Math.pow(p,-(n+1));
+    const h=gap*scale;
+    const x=n*colW+colW/2;
+    svg+=`<rect x="${x-colW/2+4}" y="${y0-h}" width="${colW-8}" height="${h||1}" fill="#1565c0" opacity=".8" rx="2"/>`;
+    svg+=`<text x="${x}" y="${y0-h-4}" text-anchor="middle" font-size="8" fill="currentColor">${p}<tspan font-size="6" dy="-3">−${n+1}</tspan></text>`;
+    svg+=`<text x="${x}" y="148" text-anchor="middle" font-size="8" fill="var(--text2)">n=${n}</text>`;
+  }
+  svg+=`<line x1="0" y1="${y0}" x2="500" y2="${y0}" stroke="rgba(128,128,128,.5)" stroke-width="1"/>`;
+  svg+='</svg>';
+  document.getElementById('cauViz').innerHTML=svg;
+  let terms=[]; let s=0;
+  for(let n=0;n<=N;n++){s+=Math.pow(p,n);terms.push(s);}
+  document.getElementById('cauOut').innerHTML=`<strong>p = ${p}.</strong> Sequence x<sub>n</sub> = 1 + ${p} + ${p}² + … + ${p}<sup>n</sup>: ${terms.join(', ')}, …\n\n<strong>p-adic gap:</strong> |x<sub>n+1</sub> − x<sub>n</sub>|<sub>${p}</sub> = |${p}<sup>n+1</sup>|<sub>${p}</sub> = ${p}<sup>−(n+1)</sup> → 0. ✓ <em>Cauchy in ℚ<sub>${p}</sub>!</em>\n\n<strong>Contrast (real world):</strong> the same partial sums blow up to ∞ in the usual metric — NOT Cauchy in ℝ. By Lemma 3.2.2, "consecutive differences → 0" is enough for Cauchy in the p-adic (ultrametric) world, but not in ℝ.`;
+}
+
+// §3.2 — Building √a in ℚ_p (Hensel lifting)
+function calcSqrt(){
+  const p=+document.getElementById('sqP').value;
+  const a=+document.getElementById('sqA').value;
+  const steps=+document.getElementById('sqSteps').value;
+  document.getElementById('sqStepsVal').textContent=steps;
+  // find x0 with x0^2 ≡ a mod p
+  let x0=-1;
+  for(let i=1;i<p;i++){if(((i*i)%p)===((a%p)+p)%p){x0=i;break;}}
+  if(x0<0){
+    document.getElementById('sqViz').innerHTML='';
+    document.getElementById('sqOut').innerHTML=`<strong>a = ${a} is not a square mod ${p}</strong>, so √${a} does not exist in ℚ<sub>${p}</sub>. (Pick another target a.)`;
+    return;
+  }
+  const rows=[{n:1,mod:p,x:x0}];
+  let x=x0;
+  for(let k=1;k<=steps;k++){
+    const mod=Math.pow(p,k), nextmod=Math.pow(p,k+1);
+    const c=Math.round((a-x*x)/mod);            // (a - x^2)/p^k is an integer
+    const twox=(((2*x)%p)+p)%p;
+    let inv2x=1;for(let i=1;i<p;i++){if((twox*i)%p===1){inv2x=i;break;}}
+    let t=(((c%p)*inv2x)%p+p)%p;
+    x=(((x+t*mod)%nextmod)+nextmod)%nextmod;
+    rows.push({n:k+1,mod:nextmod,x:x});
+  }
+  // viz: shrinking error |x_n^2 - a|_p = p^{-n}
+  let svg='<svg width="100%" height="160" viewBox="0 0 500 160">';
+  svg+='<text x="250" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="currentColor">Error |x<tspan font-size="8" dy="3">n</tspan><tspan dy="-3">²−a|</tspan><tspan font-size="8" dy="3">p</tspan><tspan dy="-3"> = p<tspan font-size="7" dy="-4">−n</tspan> → 0 (Hensel lifting)</tspan></text>';
+  const colW=500/rows.length, y0=120, scale=100;
+  rows.forEach((r,i)=>{
+    const err=Math.pow(p,-r.n), h=err*scale, xx=i*colW+colW/2;
+    svg+=`<rect x="${xx-colW/2+5}" y="${y0-h}" width="${colW-10}" height="${h||1}" fill="#2e7d32" opacity=".8" rx="2"/>`;
+    svg+=`<text x="${xx}" y="${y0-h-4}" text-anchor="middle" font-size="8" fill="currentColor">${p}<tspan font-size="6" dy="-3">−${r.n}</tspan></text>`;
+    svg+=`<text x="${xx}" y="138" text-anchor="middle" font-size="8" fill="var(--text2)">x<tspan font-size="6" dy="2">${r.n}</tspan><tspan dy="-2">=${r.x}</tspan></text>`;
+  });
+  svg+=`<line x1="0" y1="${y0}" x2="500" y2="${y0}" stroke="rgba(128,128,128,.5)" stroke-width="1"/>`;
+  svg+='</svg>';
+  document.getElementById('sqViz').innerHTML=svg;
+  const last=rows[rows.length-1];
+  let tbl=rows.map(r=>`x<sub>${r.n}</sub> = ${r.x} (mod ${p}<sup>${r.n}</sup>=${r.mod}), x² = ${(r.x*r.x)%r.mod} ≡ ${a%r.mod} = a (mod ${r.mod})`).join('\n');
+  document.getElementById('sqOut').innerHTML=`<strong>Building √${a} in ℚ<sub>${p}</sub>:</strong>\n${tbl}\n\nEach step lifts the solution one more power of ${p}: |x<sub>n+1</sub> − x<sub>n</sub>|<sub>${p}</sub> ≤ ${p}<sup>−(n+1)</sup> → 0, so (x<sub>n</sub>) is Cauchy. Its limit squares to ${a}, yet no rational √${a} exists — proof that ℚ has p-adic <em>holes</em> (Lemma 3.2.3).`;
+}
+
+// §3.2 — Completion: nested shrinking balls
+function calcComp(){
+  const p=+document.getElementById('compP').value;
+  const depth=+document.getElementById('compDepth').value;
+  document.getElementById('compDepthVal').textContent=depth;
+  // nested balls of radius p^{-k}, k=0..depth, converging to a point
+  let svg='<svg width="100%" height="220" viewBox="0 0 360 220">';
+  svg+='<text x="180" y="16" text-anchor="middle" font-size="11" font-weight="bold" fill="currentColor">Nested balls B(λ, p<tspan font-size="7" dy="-4">−k</tspan>) shrinking to λ</text>';
+  const cx=170, cy=120;
+  const colors=['#bbdefb','#90caf9','#64b5f6','#42a5f5','#1e88e5','#1565c0'];
+  for(let k=0;k<=depth;k++){
+    const r=95*Math.pow(0.62,k);
+    svg+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${colors[Math.min(k,colors.length-1)]}" stroke-width="2"/>`;
+    svg+=`<text x="${cx+r-2}" y="${cy-r+12}" font-size="8" fill="${colors[Math.min(k,colors.length-1)]}">${p}<tspan font-size="6" dy="-3">−${k}</tspan></text>`;
+    // a rational approximation y_k sitting inside ball k
+    const ang=-Math.PI/2+k*1.1;
+    const yx=cx+(r*0.55)*Math.cos(ang), yy=cy+(r*0.55)*Math.sin(ang);
+    svg+=`<circle cx="${yx}" cy="${yy}" r="3" fill="#e53935"/>`;
+    svg+=`<text x="${yx+5}" y="${yy+3}" font-size="7" fill="#e53935">ỹ<tspan font-size="5" dy="2">${k}</tspan></text>`;
+  }
+  svg+=`<circle cx="${cx}" cy="${cy}" r="3.5" fill="#000" stroke="#fff"/>`;
+  svg+=`<text x="${cx+6}" y="${cy+4}" font-size="9" font-weight="bold" fill="currentColor">λ</text>`;
+  svg+='</svg>';
+  document.getElementById('compViz').innerHTML=svg;
+  let radii=[];for(let k=0;k<=depth;k++)radii.push(`${p}<sup>−${k}</sup>`);
+  document.getElementById('compOut').innerHTML=`<strong>p = ${p}, depth = ${depth}.</strong>\nThe rational approximations ỹ<sub>0</sub>, ỹ<sub>1</sub>, … (constant sequences) lie in ever-smaller balls of radius ${radii.join(' ⊃ ')} around the p-adic number λ.\n\nSince |ỹ<sub>k</sub> − λ|<sub>${p}</sub> ≤ ${p}<sup>−k</sup> → 0, the rationals get arbitrarily close to λ — this is exactly <strong>Prop 3.2.12: ℚ is dense in ℚ<sub>${p}</sub></strong>. The completion fills every hole by gluing in these limit points.`;
+}
+
+// constructFlow diagram: ℚ → 𝒞 → /𝒩 → ℚ_p
+function drawConstructFlow(){
+  const boxes=[
+    {x:10,label:'ℚ',sub:'rationals + |·|ₚ',color:'#1976d2'},
+    {x:135,label:'𝒞',sub:'Cauchy sequences',color:'#7b1fa2'},
+    {x:260,label:'𝒞 / 𝒩',sub:'quotient by null seqs',color:'#f57c00'},
+    {x:385,label:'ℚₚ',sub:'complete field',color:'#388e3c'}
+  ];
+  const arrows=['embed x↦x̃','build ring','𝒩 maximal ⇒ field'];
+  let svg='<svg width="100%" height="130" viewBox="0 0 500 130">';
+  boxes.forEach((b,i)=>{
+    svg+=`<rect x="${b.x}" y="40" width="105" height="50" rx="8" fill="${b.color}" opacity=".12" stroke="${b.color}" stroke-width="1.5"/>`;
+    svg+=`<text x="${b.x+52}" y="65" text-anchor="middle" font-size="16" font-weight="bold" fill="${b.color}">${b.label}</text>`;
+    svg+=`<text x="${b.x+52}" y="82" text-anchor="middle" font-size="7.5" fill="currentColor">${b.sub}</text>`;
+    if(i<boxes.length-1){
+      const ax=b.x+105, ax2=boxes[i+1].x;
+      svg+=`<line x1="${ax+2}" y1="65" x2="${ax2-2}" y2="65" stroke="var(--text2)" stroke-width="1.5" marker-end="url(#cfArrow)"/>`;
+      svg+=`<text x="${(ax+ax2)/2}" y="34" text-anchor="middle" font-size="7" fill="var(--text2)">${arrows[i]}</text>`;
+    }
+  });
+  svg+=`<defs><marker id="cfArrow" markerWidth="7" markerHeight="6" refX="6" refY="3" orient="auto"><polygon points="0 0, 7 3, 0 6" fill="var(--text2)"/></marker></defs>`;
+  svg+=`<text x="250" y="115" text-anchor="middle" font-size="9" fill="var(--text2)">The completion: package the missing limits as the very Cauchy sequences that approach them.</text>`;
+  svg+='</svg>';
+  document.getElementById('constructFlow').innerHTML=svg;
+}
+
+// ===== PROBLEM GENERATION =====
+function genProblems31(){
+  const c=document.getElementById('s31problems');c.innerHTML='';
+  const probs=[
+    {diff:'easy',gen:()=>{const p=randPrime();const x=randInt(2,40);const v=vp(x,p);return{q:`As part of the product formula, compute |${x}|<sub>${p}</sub>.`,ans:+(Math.pow(p,-v).toFixed(6)),sol:`v<sub>${p}</sub>(${x}) = ${v}, so |${x}|<sub>${p}</sub> = ${p}<sup>−${v}</sup> = ${Math.pow(p,-v).toFixed(6)}.${v===0?' (Since '+p+' ∤ '+x+', this place contributes 1 to the product.)':''}`};}},
+    {diff:'medium',gen:()=>{const p=[2,3,5,7][randInt(0,3)];const k=randInt(1,3);const base=Math.pow(p,-k);const alpha=[0.5,2,1.5,3][randInt(0,3)];const v1=Math.pow(base,alpha);return{q:`Equivalent absolute values satisfy |x|<sub>1</sub> = |x|<sub>2</sub><sup>α</sup>. If |x|<sub>2</sub> = ${p}<sup>−${k}</sup> = ${base.toFixed(4)} and α = ${alpha}, compute |x|<sub>1</sub>.`,ans:+(v1.toFixed(6)),sol:`|x|<sub>1</sub> = |x|<sub>2</sub><sup>α</sup> = (${base.toFixed(4)})<sup>${alpha}</sup> = ${v1.toFixed(6)}.\nNote |x|<sub>1</sub> &lt; 1 ⟺ |x|<sub>2</sub> &lt; 1 regardless of α — the topology is unchanged.`};}},
+    {diff:'hard',gen:()=>{const num=[12,18,20,45,50,24][randInt(0,5)];const den=[35,7,11,14,21,13][randInt(0,5)];const [a,b]=frac(num,den);return{q:`Verify the product formula for x = ${num}/${den}: multiply |x|<sub>p</sub> over all finite primes and |x|<sub>∞</sub>. Enter the product.`,ans:1,sol:(()=>{const fa=primeFactors(a),fb=primeFactors(b);const primes=[...new Set([...Object.keys(fa),...Object.keys(fb)].map(Number))].sort((x,y)=>x-y);const parts=primes.map(p=>{const v=vp(a,p)-vp(b,p);return`|x|<sub>${p}</sub> = ${p}<sup>−(${v})</sup> = ${Math.pow(p,-v).toFixed(4)}`;});return `x = ${a}/${b} (reduced).\n${parts.join('\n')}\n|x|<sub>∞</sub> = ${(a/b).toFixed(4)}.\nProduct = 1 ✓ — the finite places cancel the infinite place exactly (Prop 3.1.5).`;})()};}}
+  ];
+  renderProblems(c,'s31',probs);
+}
+function genProblems32(){
+  const c=document.getElementById('s32problems');c.innerHTML='';
+  const probs=[
+    {diff:'easy',gen:()=>{const p=[2,3,5,7][randInt(0,3)];const n=randInt(1,4);return{q:`For the p-adic sequence x<sub>n</sub> = 1 + ${p} + … + ${p}<sup>n</sup>, compute the gap |x<sub>${n+1}</sub> − x<sub>${n}</sub>|<sub>${p}</sub>.`,ans:+(Math.pow(p,-(n+1)).toFixed(6)),sol:`x<sub>${n+1}</sub> − x<sub>${n}</sub> = ${p}<sup>${n+1}</sup>, so |x<sub>${n+1}</sub> − x<sub>${n}</sub>|<sub>${p}</sub> = ${p}<sup>−${n+1}</sup> = ${Math.pow(p,-(n+1)).toFixed(6)}. The gaps → 0, so the sequence is Cauchy in ℚ<sub>${p}</sub> (Lemma 3.2.2).`};}},
+    {diff:'medium',gen:()=>{const opts=[[5,6],[7,11],[11,14],[13,3]];const [p,a]=opts[randInt(0,3)];let x0=-1;for(let i=1;i<p;i++){if((i*i)%p===a%p){x0=i;break;}}return{q:`First Hensel step for √${a} in ℚ<sub>${p}</sub>: find x<sub>0</sub> ∈ {1,…,${p-1}} with x<sub>0</sub>² ≡ ${a} (mod ${p}). Enter x<sub>0</sub> (smaller root).`,ans:x0,sol:`We need x² ≡ ${a%p} (mod ${p}). Testing values: x<sub>0</sub> = ${x0} works since ${x0}² = ${x0*x0} ≡ ${(x0*x0)%p} ≡ ${a%p} (mod ${p}). (The other root is ${p-x0}.) This seeds the lifting that builds √${a} ∈ ℚ<sub>${p}</sub>.`};}},
+    {diff:'hard',gen:()=>{const p=[5,7][randInt(0,1)];const a=p===5?6:11;let x0=-1;for(let i=1;i<p;i++){if((i*i)%p===a%p){x0=i;break;}}const mod=p,nextmod=p*p;const cc=Math.round((a-x0*x0)/mod);const twox=((2*x0)%p+p)%p;let inv=1;for(let i=1;i<p;i++){if((twox*i)%p===1){inv=i;break;}}let t=(((cc%p)*inv)%p+p)%p;let x1=(((x0+t*mod)%nextmod)+nextmod)%nextmod;return{q:`Lift the root of √${a} in ℚ<sub>${p}</sub> from x<sub>0</sub> = ${x0} (mod ${p}) to x<sub>1</sub> (mod ${p}² = ${nextmod}), so that x<sub>1</sub>² ≡ ${a} (mod ${nextmod}). Enter x<sub>1</sub>.`,ans:x1,sol:`Write x<sub>1</sub> = x<sub>0</sub> + t·${p}. Need 2·x<sub>0</sub>·t ≡ (${a} − x<sub>0</sub>²)/${p} (mod ${p}), i.e. ${twox}·t ≡ ${((cc%p)+p)%p} (mod ${p}). Inverse of ${twox} is ${inv}, so t = ${t}.\nThen x<sub>1</sub> = ${x0} + ${t}·${p} = ${x1}. Check: ${x1}² = ${x1*x1} ≡ ${(x1*x1)%nextmod} ≡ ${a%nextmod} = ${a} (mod ${nextmod}). ✓`};}}
+  ];
+  renderProblems(c,'s32',probs);
+}
+
+function renderProblems(container,prefix,probs){
+  probs.forEach((pObj,i)=>{
+    const data=pObj.gen();
+    const id=prefix+'_p'+i;
+    const diffLabel=pObj.diff.charAt(0).toUpperCase()+pObj.diff.slice(1);
+    const html=`<div class="problem-card" id="${id}">
+      <span class="diff diff-${pObj.diff}">${diffLabel}</span>
+      <div class="q">${data.q}</div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <input type="text" id="${id}_input" placeholder="Your answer">
+        <button class="btn-check" onclick="checkProblem('${id}',${typeof data.ans==='string'?'null':data.ans},'${pObj.diff}')">Check Answer</button>
+        <button class="btn-rand" onclick="randomizeProblem('${prefix}',${i})">🔀 Randomize</button>
+        <button class="btn-sol" onclick="toggleSol('${id}')">📖 Solution</button>
+      </div>
+      <div class="feedback" id="${id}_fb"></div>
+      <div class="solution" id="${id}_sol">${data.sol.replace(/\n/g,'<br>')}</div>
+    </div>`;
+    container.insertAdjacentHTML('beforeend',html);
+  });
+  container._probs=probs;container._prefix=prefix;
+}
+function checkProblem(id,expected,diff){
+  const inp=document.getElementById(id+'_input').value.trim();
+  const fb=document.getElementById(id+'_fb');
+  if(expected===null){fb.className='feedback correct';fb.textContent='Free-response accepted! Check the step-by-step solution.';return;}
+  const userVal=parseFloat(inp);
+  if(Math.abs(userVal-expected)<0.01){fb.className='feedback correct';fb.textContent='✅ Correct!';}
+  else{fb.className='feedback wrong';fb.textContent=`❌ Not quite. Expected ≈ ${expected}. Try again or check the solution.`;}
+}
+function toggleSol(id){const s=document.getElementById(id+'_sol');s.style.display=s.style.display==='block'?'none':'block';}
+function randomizeProblem(prefix,idx){
+  const c=document.getElementById(prefix+'problems');
+  const probs=c._probs;
+  const data=probs[idx].gen();
+  const id=prefix+'_p'+idx;
+  const card=document.getElementById(id);
+  card.querySelector('.q').innerHTML=data.q;
+  card.querySelector('input').value='';
+  const fb=card.querySelector('.feedback');fb.className='feedback';fb.textContent='';
+  const sol=card.querySelector('.solution');sol.innerHTML=data.sol.replace(/\n/g,'<br>');sol.style.display='none';
+  const btn=card.querySelector('.btn-check');
+  btn.onclick=()=>checkProblem(id,typeof data.ans==='string'?null:data.ans,probs[idx].diff);
+}
+
+// ===== QUIZ GENERATION =====
+const quizData={
+  s31:[
+    {q:'Ostrowski\'s Theorem says every non-trivial absolute value on ℚ is equivalent to:',opts:['Only the usual |·|₍∞₎','Some |·|ₚ (p prime) or |·|₍∞₎','A brand-new exotic absolute value','The trivial absolute value'],ans:1},
+    {q:'The product formula ∏ₚ≤∞ |x|ₚ equals:',opts:['0','1','∞','p'],ans:1},
+    {q:'Equivalent absolute values induce the same:',opts:['Numerical values','Topology (open sets)','Prime p','Cardinality'],ans:1},
+    {q:'In Ostrowski\'s non-archimedean case, the smallest n₀ with |n₀| < 1 must be:',opts:['Composite','A perfect square','Prime','Equal to 1'],ans:2},
+    {q:'In |x|₁ = |x|₂^α, the exponent α must be:',opts:['Any real number','Negative','Strictly positive','An integer'],ans:2},
+    {q:'|·|₍∞₎ (the "infinite prime") is:',opts:['Non-archimedean','The usual archimedean absolute value','The trivial one','Undefined'],ans:1},
+    {q:'Why is the product formula like a conservation law?',opts:['Values grow without bound','Contributions from all places multiply to exactly 1','It only works for primes','It depends on the chosen α'],ans:1}
+  ],
+  s32:[
+    {q:'The field ℚₚ is constructed as:',opts:['ℤ / pℤ','𝒞 / 𝒩 (Cauchy seqs mod null seqs)','ℝ × ℝ','The set of all primes'],ans:1},
+    {q:'𝒩 is the ideal of:',opts:['Bounded sequences','Null sequences (xₙ → 0)','Constant sequences','Prime sequences'],ans:1},
+    {q:'𝒩 is a MAXIMAL ideal, which guarantees that the quotient is a:',opts:['Group','Ring with zero divisors','Field','Vector space'],ans:2},
+    {q:'Proposition 3.2.12 states that ℚ is ___ in ℚₚ:',opts:['Closed','Dense','Open','Disconnected'],ans:1},
+    {q:'In the p-adic (ultrametric) world, a sequence is Cauchy iff:',opts:['It is bounded','Consecutive differences → 0','It is monotonic','It is finite'],ans:1},
+    {q:'Theorem 3.2.13 establishes that ℚₚ is:',opts:['Finite','Complete','Archimedean','Countable'],ans:1},
+    {q:'ℚₚ is unique up to:',opts:['Set equality','Unique isomorphism preserving |·|','Choice of prime','Cardinality only'],ans:1}
+  ]
+};
+function genQuiz(secKey){
+  const container=document.getElementById('quiz'+secKey.replace('s',''));
+  container.innerHTML='';
+  const pool=quizData[secKey];
+  const selected=shuffle([...pool]).slice(0,5);
+  const qid='quiz_'+secKey;
+  selected.forEach((q,i)=>{
+    const opts=q.opts.map((o,j)=>`<label><input type="radio" name="${qid}_${i}" value="${j}">${o}</label>`).join('');
+    container.insertAdjacentHTML('beforeend',`<div class="quiz-q"><div class="q-text">${i+1}. ${q.q}</div>${opts}<div class="feedback" id="${qid}_${i}_fb"></div></div>`);
+  });
+  container.insertAdjacentHTML('beforeend',`<div style="margin:16px 0"><button class="quiz-btn" onclick="gradeQuiz('${secKey}',${JSON.stringify(selected.map(q=>q.ans)).replace(/"/g,"'")})">Submit Quiz</button><button class="quiz-btn secondary" onclick="genQuiz('${secKey}')">🔀 Randomize</button></div><div class="quiz-score" id="${qid}_score" style="display:none"></div>`);
+}
+function gradeQuiz(secKey,answers){
+  const qid='quiz_'+secKey;
+  let score=0;
+  answers.forEach((correct,i)=>{
+    const selected=document.querySelector(`input[name="${qid}_${i}"]:checked`);
+    const fb=document.getElementById(`${qid}_${i}_fb`);
+    if(selected&&parseInt(selected.value)===correct){score++;fb.className='feedback correct';fb.textContent='✅ Correct!';}
+    else{fb.className='feedback wrong';fb.textContent='❌ Incorrect.';}
+  });
+  const sc=document.getElementById(qid+'_score');
+  sc.style.display='block';
+  sc.textContent=`Score: ${score}/${answers.length} (${Math.round(score/answers.length*100)}%)`;
+}
+
+// ===== EXAM =====
+const examPool=[
+  {q:'Ostrowski\'s Theorem classifies all non-trivial absolute values on ℚ as equivalent to:',opts:['Only |·|₍∞₎','Some |·|ₚ or |·|₍∞₎','A new exotic value','The trivial value'],ans:1,sec:'3.1',
+   explain:[
+    '❌ <strong>Only |·|₍∞₎</strong> — This misses the entire family of p-adic absolute values. The usual absolute value is just ONE point (the "infinite prime") in a list that also includes one |·|ₚ for every prime.',
+    '✅ <strong>Some |·|ₚ or |·|₍∞₎</strong> — Correct! Ostrowski proves the complete list: every non-trivial absolute value on ℚ is equivalent to the p-adic one for some prime p, or to the usual archimedean one (p = ∞).',
+    '❌ <strong>A new exotic value</strong> — The whole point of Ostrowski is that NO exotic absolute values exist on ℚ. Every possibility collapses onto the known list.',
+    '❌ <strong>The trivial value</strong> — The theorem is explicitly about NON-trivial absolute values; the trivial one is excluded by hypothesis.'
+  ]},
+  {q:'The product formula states ∏ₚ≤∞ |x|ₚ = ?',opts:['0','1','∞','x'],ans:1,sec:'3.1',
+   explain:[
+    '❌ <strong>0</strong> — A product of strictly positive numbers (for x ≠ 0) can never be 0. Each |x|ₚ > 0.',
+    '✅ <strong>1</strong> — Correct! The finite primes contribute pᵢ^(−aᵢ) and the infinite place contributes the magnitude ∏pᵢ^(aᵢ); they cancel exactly, giving 1. It is a conservation law.',
+    '❌ <strong>∞</strong> — Only finitely many factors differ from 1, and their product is finite (in fact exactly 1), never infinite.',
+    '❌ <strong>x</strong> — The product is a single fixed number (1) independent of x, not x itself.'
+  ]},
+  {q:'Two absolute values are equivalent if and only if they induce the same:',opts:['Numerical values','Topology','Prime','Field'],ans:1,sec:'3.1',
+   explain:[
+    '❌ <strong>Numerical values</strong> — Equivalent absolute values generally give DIFFERENT numbers (|x|₁ = |x|₂^α). Equality of values is far too strong.',
+    '✅ <strong>Topology</strong> — Correct! Equivalence means the same open sets / the same notion of convergence. Proposition 3.1.3 gives several equivalent characterizations, all amounting to "same topology".',
+    '❌ <strong>Prime</strong> — Equivalence is about topology, not about sharing a prime; |·|ₚ and |·|ₚ^α use the same p but that is a consequence, not the definition.',
+    '❌ <strong>Field</strong> — All these absolute values live on the same field ℚ already; that is not what distinguishes equivalence.'
+  ]},
+  {q:'In Ostrowski\'s proof, the non-archimedean case forces the critical integer n₀ (smallest with |n₀|<1) to be:',opts:['Composite','Prime','A square','Even'],ans:1,sec:'3.1',
+   explain:[
+    '❌ <strong>Composite</strong> — If n₀ = ab with a,b < n₀, then by minimality |a| = |b| = 1, so |n₀| = 1 — contradicting |n₀| < 1. So it cannot be composite.',
+    '✅ <strong>Prime</strong> — Correct! The minimality argument rules out any non-trivial factorization, so n₀ must be prime. That prime IS the p of the resulting |·|ₚ.',
+    '❌ <strong>A square</strong> — A perfect square is composite, hence excluded by the same minimality contradiction.',
+    '❌ <strong>Even</strong> — There is no parity constraint; n₀ can be any prime (2, 3, 5, …). Being even would only single out p = 2.'
+  ]},
+  {q:'Equivalent absolute values satisfy |x|₁ = |x|₂^α where α is:',opts:['Any real','Strictly positive','Negative','Exactly 1'],ans:1,sec:'3.1',
+   explain:[
+    '❌ <strong>Any real</strong> — α = 0 would make |x|₁ ≡ 1 (the trivial value), and negative α would invert the ordering. Neither preserves the absolute-value axioms.',
+    '✅ <strong>Strictly positive</strong> — Correct! A positive exponent rescales sizes while preserving "< 1 vs > 1", hence the topology. This is condition (iv) of Proposition 3.1.3.',
+    '❌ <strong>Negative</strong> — A negative α would swap "large" and "small", reversing convergence — not an equivalence.',
+    '❌ <strong>Exactly 1</strong> — α = 1 gives literally equal absolute values, a special case. Equivalence allows any α > 0.'
+  ]},
+  {q:'The field of p-adic numbers ℚₚ is constructed as the quotient:',opts:['ℤ/pℤ','𝒞/𝒩','ℝ/ℚ','𝒪/𝒫'],ans:1,sec:'3.2',
+   explain:[
+    '❌ <strong>ℤ/pℤ</strong> — That is the finite field 𝔽ₚ with p elements, NOT the infinite field ℚₚ.',
+    '✅ <strong>𝒞/𝒩</strong> — Correct! ℚₚ = (ring of Cauchy sequences 𝒞) modulo (ideal of null sequences 𝒩). Definition 3.2.9.',
+    '❌ <strong>ℝ/ℚ</strong> — This is not even a ring quotient in the relevant sense and has nothing to do with the p-adic construction.',
+    '❌ <strong>𝒪/𝒫</strong> — That quotient is the residue field 𝔽ₚ (from Chapter 2), not ℚₚ.'
+  ]},
+  {q:'𝒩, the set of null sequences, is what kind of ideal of 𝒞?',opts:['Principal','Maximal','Prime but not maximal','Not an ideal'],ans:1,sec:'3.2',
+   explain:[
+    '❌ <strong>Principal</strong> — Whether it is principal is irrelevant; the key structural fact proved (Lemma 3.2.8) is maximality.',
+    '✅ <strong>Maximal</strong> — Correct! Lemma 3.2.8 shows 𝒩 is maximal: any Cauchy sequence not in 𝒩 is eventually invertible, so the ideal it generates together with 𝒩 is all of 𝒞.',
+    '❌ <strong>Prime but not maximal</strong> — It is maximal (and maximal ⇒ prime). "Not maximal" is false, which is exactly why the quotient is a field.',
+    '❌ <strong>Not an ideal</strong> — 𝒩 is closed under addition and absorbs multiplication by Cauchy sequences, so it is genuinely an ideal.'
+  ]},
+  {q:'Because 𝒩 is maximal, the quotient 𝒞/𝒩 is automatically a:',opts:['Group','Field','Ring with zero divisors','Module'],ans:1,sec:'3.2',
+   explain:[
+    '❌ <strong>Group</strong> — It is a group under addition, but the strong conclusion from maximality is much more: it is a field.',
+    '✅ <strong>Field</strong> — Correct! A commutative ring modulo a maximal ideal is always a field. That is precisely why ℚₚ is a field, not merely a ring.',
+    '❌ <strong>Ring with zero divisors</strong> — Fields have NO zero divisors. Maximality of 𝒩 is exactly what kills them.',
+    '❌ <strong>Module</strong> — "Module" is not the structural upgrade maximality provides; the point is the field property.'
+  ]},
+  {q:'Proposition 3.2.12 asserts that ℚ is ___ inside ℚₚ:',opts:['Closed','Dense','Open','Finite-index'],ans:1,sec:'3.2',
+   explain:[
+    '❌ <strong>Closed</strong> — If ℚ were closed in ℚₚ it would equal its completion, i.e. already be complete — false (Lemma 3.2.3).',
+    '✅ <strong>Dense</strong> — Correct! Every p-adic number is a limit of rationals: represent it by a Cauchy sequence and use the constant sequence x̃_N for large N to get within ε.',
+    '❌ <strong>Open</strong> — ℚ is not open in ℚₚ; every neighborhood of a rational also contains irrational p-adics.',
+    '❌ <strong>Finite-index</strong> — ℚ is an infinite-index subfield/subgroup; density, not index, is the relevant property.'
+  ]},
+  {q:'A sequence in a non-archimedean field is Cauchy if and only if:',opts:['It is bounded','|xₙ₊₁ − xₙ| → 0','It is increasing','It has a rational limit'],ans:1,sec:'3.2',
+   explain:[
+    '❌ <strong>It is bounded</strong> — Boundedness is necessary but nowhere near sufficient for Cauchy, even in the p-adic world.',
+    '✅ <strong>|xₙ₊₁ − xₙ| → 0</strong> — Correct! This is Lemma 3.2.2: the ultrametric inequality makes "consecutive differences vanish" equivalent to Cauchy — a property that FAILS in ℝ.',
+    '❌ <strong>It is increasing</strong> — Monotonicity is not even well-defined for p-adic numbers (no compatible order).',
+    '❌ <strong>It has a rational limit</strong> — Cauchy sequences often fail to have rational limits (that is the whole motivation for completing ℚ).'
+  ]},
+  {q:'Theorem 3.2.13 establishes that ℚₚ is:',opts:['Complete','Algebraically closed','Finite','Archimedean'],ans:0,sec:'3.2',
+   explain:[
+    '✅ <strong>Complete</strong> — Correct! Every Cauchy sequence in ℚₚ converges within ℚₚ. The proof uses density of ℚ to replace classes by nearby rationals.',
+    '❌ <strong>Algebraically closed</strong> — ℚₚ is NOT algebraically closed (e.g. it lacks some roots); its algebraic closure is a further, infinite extension.',
+    '❌ <strong>Finite</strong> — ℚₚ is uncountably infinite, like ℝ.',
+    '❌ <strong>Archimedean</strong> — ℚₚ is the prototypical NON-archimedean field; its absolute value satisfies the ultrametric inequality.'
+  ]},
+  {q:'Theorem 3.2.14 says ℚₚ is unique up to:',opts:['Set equality','Unique isomorphism preserving |·|','Choice of Cauchy sequences','Relabeling primes'],ans:1,sec:'3.2',
+   explain:[
+    '❌ <strong>Set equality</strong> — Different constructions give literally different sets; uniqueness is up to isomorphism, not equality.',
+    '✅ <strong>Unique isomorphism preserving |·|</strong> — Correct! Any two fields satisfying (embeds ℚ, dense, complete) are isomorphic by a unique absolute-value-preserving map — so we can forget the messy construction and use only the three properties.',
+    '❌ <strong>Choice of Cauchy sequences</strong> — The quotient by 𝒩 already washes out the choice of representative sequence; that is internal, not the uniqueness statement.',
+    '❌ <strong>Relabeling primes</strong> — Each prime p gives its OWN ℚₚ; uniqueness is for a fixed p, not across different primes.'
+  ]}
+];
+let examTimer=null,examTimeLeft=1200;
+function startExam(){
+  const content=document.getElementById('examContent');
+  content.innerHTML='';
+  const qs=shuffle([...examPool]).slice(0,10);
+  window._examQs=qs;
+  qs.forEach((q,i)=>{
+    const opts=q.opts.map((o,j)=>`<label><input type="radio" name="exam_${i}" value="${j}">${o}</label>`).join('');
+    content.insertAdjacentHTML('beforeend',`<div class="quiz-q"><div class="q-text">${i+1}. [§${q.sec}] ${q.q}</div>${opts}<div class="feedback" id="exam_${i}_fb"></div></div>`);
+  });
+  content.insertAdjacentHTML('beforeend',`<div style="margin:16px 0"><button class="quiz-btn" onclick="gradeExam()">Submit Exam</button></div><div class="quiz-score" id="exam_score" style="display:none"></div><div class="perf-breakdown" id="exam_perf" style="display:none"></div>`);
+  if(document.getElementById('timedMode').checked){
+    examTimeLeft=1200;
+    document.getElementById('examTimer').style.display='block';
+    updateTimer();
+    examTimer=setInterval(()=>{examTimeLeft--;updateTimer();if(examTimeLeft<=0){clearInterval(examTimer);gradeExam();}},1000);
+  }else{document.getElementById('examTimer').style.display='none';}
+}
+function updateTimer(){
+  const m=Math.floor(examTimeLeft/60),s=examTimeLeft%60;
+  document.getElementById('examTimer').textContent=`${m}:${s.toString().padStart(2,'0')}`;
+  if(examTimeLeft<60)document.getElementById('examTimer').style.color='#e53935';
+}
+function gradeExam(){
+  if(examTimer)clearInterval(examTimer);
+  const qs=window._examQs;
+  let score=0;const secScores={};
+  qs.forEach((q,i)=>{
+    const sel=document.querySelector(`input[name="exam_${i}"]:checked`);
+    const fb=document.getElementById(`exam_${i}_fb`);
+    const correct=sel&&parseInt(sel.value)===q.ans;
+    if(correct){score++;fb.className='feedback correct';fb.textContent='✅ Correct!';}
+    else{fb.className='feedback wrong';fb.textContent=`❌ Incorrect. The correct answer is: ${q.opts[q.ans]}`;}
+    if(!secScores[q.sec])secScores[q.sec]={total:0,correct:0};
+    secScores[q.sec].total++;
+    if(correct)secScores[q.sec].correct++;
+    if(q.explain){
+      const explainId='exam_explain_'+i;
+      const explainItems=q.explain.map((ex,j)=>{
+        const isCorrect=j===q.ans;
+        return `<div class="exam-explain-item ${isCorrect?'opt-correct':'opt-wrong'}">${ex}</div>`;
+      }).join('');
+      fb.insertAdjacentHTML('afterend',`<div class="exam-explain"><span class="exam-explain-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.nextElementSibling.classList.contains('open')?'Hide Explanation ▲':'📖 Show Solution & Explanation ▼'">📖 Show Solution & Explanation ▼</span><div class="exam-explain-body" id="${explainId}">${explainItems}</div></div>`);
+    }
+  });
+  const sc=document.getElementById('exam_score');
+  sc.style.display='block';
+  sc.innerHTML=`Score: ${score}/10 (${score*10}%) — ${score>=9?'🌟 Excellent!':score>=7?'👍 Good job!':score>=5?'📚 Keep studying!':'💪 Review the material and try again!'}`;
+  const perf=document.getElementById('exam_perf');
+  perf.style.display='block';
+  let rows='';
+  for(const[sec,data]of Object.entries(secScores)){rows+=`<tr><td>§${sec}</td><td>${data.correct}/${data.total}</td><td>${Math.round(data.correct/data.total*100)}%</td></tr>`;}
+  perf.innerHTML=`<table><tr><th>Section</th><th>Score</th><th>%</th></tr>${rows}</table>`;
+}
+function resetExam(){
+  if(examTimer)clearInterval(examTimer);
+  document.getElementById('examContent').innerHTML='<p>Click "Start Exam" to begin.</p>';
+  document.getElementById('examTimer').style.display='none';
+  document.getElementById('examTimer').style.color='var(--accent)';
+}
+
+// ===== INIT =====
+function initAll(){
+  genProblems31();genProblems32();
+  genQuiz('s31');genQuiz('s32');
+  drawConstructFlow();
+  calcEquiv();calcOst();calcPF();calcCauchy();calcSqrt();calcComp();
+  document.querySelectorAll('.collapsible-head').forEach(el=>{el.classList.add('open');if(el.nextElementSibling)el.nextElementSibling.classList.add('open');});
+}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',initAll);}else{initAll();}
+</script>
+</body>
+</html>
