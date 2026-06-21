@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 7 — Analysis in ℂₚ | Interactive Platform</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f8f9fa;--text:#1a1a2e;--text2:#555;--accent:#4361ee;
+  --def:#e3f2fd;--def-border:#1976d2;
+  --thm:#e8f5e9;--thm-border:#388e3c;
+  --lem:#fff9c4;--lem-border:#f9a825;
+  --proof:#f5f5f5;--proof-border:#9e9e9e;
+  --example:#e0f2f1;--example-border:#00897b;
+  --problem:#fff3e0;--problem-border:#ef6c00;
+  --sidebar-w:280px;--topbar-h:56px;
+  --card-radius:8px;--shadow:0 2px 8px rgba(0,0,0,.08);
+  --font-main:'Segoe UI',system-ui,-apple-system,sans-serif;
+  --font-mono:'Fira Code','Cascadia Code',monospace;
+  --transition:0.3s ease;
+}
+.dark{
+  --bg:#0f0f23;--bg2:#1a1a35;--text:#e0e0e0;--text2:#aaa;--accent:#7c8cf8;
+  --def:#1a2744;--def-border:#5c9ce6;
+  --thm:#1a3324;--thm-border:#66bb6a;
+  --lem:#332d1a;--lem-border:#fdd835;
+  --proof:#1e1e2f;--proof-border:#777;
+  --example:#1a302e;--example-border:#4db6ac;
+  --problem:#2e2114;--problem-border:#ffa726;
+  --shadow:0 2px 8px rgba(0,0,0,.3);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-height:1.7;transition:background var(--transition),color var(--transition)}
+#sidebar{position:fixed;left:0;top:0;width:var(--sidebar-w);height:100vh;background:var(--bg2);border-right:1px solid rgba(128,128,128,.2);overflow-y:auto;z-index:100;transition:transform var(--transition),background var(--transition);padding-top:16px}
+#sidebar.closed{transform:translateX(calc(-1 * var(--sidebar-w)))}
+#sidebar h2{font-size:1.1rem;padding:8px 20px;color:var(--accent)}
+#sidebar ul{list-style:none}
+#sidebar li{margin:0}
+#sidebar li a{display:block;padding:8px 20px 8px 28px;color:var(--text);text-decoration:none;font-size:.9rem;border-left:3px solid transparent;transition:all .2s}
+#sidebar li a:hover,#sidebar li a.active{background:rgba(67,97,238,.1);border-left-color:var(--accent);color:var(--accent)}
+#sidebar li.sub a{padding-left:44px;font-size:.82rem}
+.sidebar-toggle{position:fixed;left:8px;top:8px;z-index:200;background:var(--accent);color:#fff;border:none;width:40px;height:40px;border-radius:8px;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow)}
+.sidebar-toggle:hover{opacity:.85}
+#topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:var(--bg2);border-bottom:1px solid rgba(128,128,128,.2);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:90;transition:left var(--transition),background var(--transition)}
+#topbar.full{left:0}
+#topbar .breadcrumb{font-size:.9rem;color:var(--text2)}
+#topbar .controls{display:flex;gap:12px;align-items:center}
+#topbar .controls button{background:none;border:1px solid rgba(128,128,128,.3);color:var(--text);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:.82rem;transition:all .2s}
+#topbar .controls button:hover{border-color:var(--accent);color:var(--accent)}
+.chapter-nav{background:var(--bg);border:1px solid rgba(128,128,128,.3);color:var(--text);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:.82rem;transition:all .2s;font-family:var(--font-main)}
+.chapter-nav:hover{border-color:var(--accent);color:var(--accent)}
+.dark-toggle{font-size:1.1rem!important;width:36px!important;padding:6px!important}
+.progress-bar{position:fixed;top:var(--topbar-h);left:var(--sidebar-w);right:0;height:3px;background:rgba(128,128,128,.15);z-index:89;transition:left var(--transition)}
+.progress-bar.full{left:0}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),#06d6a0);width:0;transition:width .4s}
+#main{margin-left:var(--sidebar-w);padding-top:calc(var(--topbar-h) + 16px);min-height:100vh;transition:margin-left var(--transition)}
+#main.full{margin-left:0}
+.section{display:none;padding:24px 32px 60px;max-width:900px;margin:0 auto}
+.section.active{display:block}
+.section h1{font-size:2rem;margin-bottom:8px;color:var(--accent)}
+.section h2{font-size:1.5rem;margin:32px 0 12px;border-bottom:2px solid var(--accent);padding-bottom:6px}
+.section h3{font-size:1.2rem;margin:24px 0 8px;color:var(--text)}
+.section p,.section li{margin-bottom:8px}
+.block{border-left:4px solid;border-radius:var(--card-radius);padding:18px 22px;margin:18px 0;box-shadow:var(--shadow);transition:background var(--transition)}
+.block-def{background:var(--def);border-color:var(--def-border)}
+.block-thm{background:var(--thm);border-color:var(--thm-border)}
+.block-lem{background:var(--lem);border-color:var(--lem-border)}
+.block-proof{background:var(--proof);border-color:var(--proof-border);font-size:.92rem}
+.block-example{background:var(--example);border-color:var(--example-border)}
+.block-problem{background:var(--problem);border-color:var(--problem-border)}
+.block .label{font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.block-def .label{color:var(--def-border)}
+.block-thm .label{color:var(--thm-border)}
+.block-lem .label{color:var(--lem-border)}
+.block-proof .label{color:var(--proof-border)}
+.block-example .label{color:var(--example-border)}
+.block-problem .label{color:var(--problem-border)}
+.math{font-family:var(--font-mono);background:rgba(128,128,128,.08);padding:2px 6px;border-radius:4px;font-size:.9em}
+.math-block{display:block;text-align:center;margin:14px 0;padding:12px;background:rgba(128,128,128,.05);border-radius:6px;overflow-x:auto;font-family:var(--font-mono);font-size:.92em}
+.interactive-viz{border:2px solid var(--accent);border-radius:var(--card-radius);padding:20px;margin:20px 0;background:rgba(67,97,238,.03)}
+.interactive-viz h4{color:var(--accent);margin-bottom:12px}
+.interactive-viz .controls-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.interactive-viz label{font-size:.88rem;min-width:90px}
+.interactive-viz input[type=range]{flex:1;min-width:120px;accent-color:var(--accent)}
+.interactive-viz select{padding:5px 8px;border-radius:4px;font-size:.88rem;border:1px solid rgba(128,128,128,.3);background:var(--bg);color:var(--text)}
+.interactive-viz input[type=text]{padding:5px 8px;border-radius:4px;font-size:.88rem;border:1px solid rgba(128,128,128,.3);background:var(--bg);color:var(--text);width:100px}
+.interactive-viz .val{font-weight:700;min-width:50px;text-align:center;color:var(--accent);font-size:.9rem}
+.interactive-viz .viz-output{margin:12px 0;padding:14px;background:rgba(128,128,128,.06);border-radius:6px;font-family:var(--font-mono);font-size:.88rem;line-height:1.6}
+.interactive-viz .viz-svg{text-align:center;margin:10px 0}
+.interactive-viz button{padding:6px 14px;border:none;border-radius:6px;cursor:pointer;font-size:.82rem;background:var(--accent);color:#fff;transition:opacity .2s;margin:4px}
+.interactive-viz button:hover{opacity:.85}
+.problem-set{margin:20px 0}
+.problem-card{background:var(--problem);border-left:4px solid var(--problem-border);border-radius:var(--card-radius);padding:18px;margin:14px 0;box-shadow:var(--shadow)}
+.problem-card .diff{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.75rem;font-weight:700;color:#fff;margin-bottom:10px}
+.diff-easy{background:#4caf50}.diff-medium{background:#ff9800}.diff-hard{background:#f44336}
+.problem-card .q{margin-bottom:12px;font-size:.95rem}
+.problem-card input[type=text]{width:200px;padding:8px 12px;border:2px solid rgba(128,128,128,.3);border-radius:6px;font-size:.9rem;background:var(--bg);color:var(--text);transition:border-color .2s}
+.problem-card input:focus{outline:none;border-color:var(--accent)}
+.problem-card button{padding:7px 16px;border:none;border-radius:6px;cursor:pointer;font-size:.82rem;margin:4px;transition:all .2s}
+.btn-check{background:var(--accent);color:#fff}.btn-check:hover{opacity:.85}
+.btn-rand{background:#9c27b0;color:#fff}.btn-rand:hover{opacity:.85}
+.btn-sol{background:#00897b;color:#fff}.btn-sol:hover{opacity:.85}
+.feedback{margin-top:8px;padding:8px 12px;border-radius:6px;font-size:.88rem;display:none}
+.feedback.correct{display:block;background:#c8e6c9;color:#2e7d32}
+.feedback.wrong{display:block;background:#ffcdd2;color:#c62828}
+.solution{display:none;margin-top:12px;padding:14px;background:rgba(0,137,123,.08);border-radius:6px;border-left:3px solid #00897b;font-size:.9rem}
+.quiz-container{margin:20px 0}
+.quiz-q{background:var(--bg2);border-radius:var(--card-radius);padding:18px;margin:14px 0;box-shadow:var(--shadow)}
+.quiz-q .q-text{font-weight:600;margin-bottom:12px}
+.quiz-q label{display:block;padding:8px 14px;margin:4px 0;border-radius:6px;cursor:pointer;transition:background .2s;font-size:.92rem}
+.quiz-q label:hover{background:rgba(67,97,238,.1)}
+.quiz-q input[type=radio]{margin-right:8px;accent-color:var(--accent)}
+.quiz-score{font-size:1.1rem;font-weight:700;padding:16px;background:var(--bg2);border-radius:var(--card-radius);margin:12px 0;text-align:center;box-shadow:var(--shadow)}
+.quiz-btn{padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:.95rem;margin:6px}
+.quiz-btn:hover{opacity:.85}
+.quiz-btn.secondary{background:#777}
+.timer-display{font-size:1.3rem;font-weight:700;color:var(--accent);text-align:center;margin:12px 0;padding:12px;background:var(--bg2);border-radius:var(--card-radius)}
+.perf-breakdown{margin:20px 0}
+.perf-breakdown table{width:100%;border-collapse:collapse}
+.perf-breakdown th,.perf-breakdown td{padding:10px 14px;text-align:left;border-bottom:1px solid rgba(128,128,128,.2);font-size:.9rem}
+.perf-breakdown th{background:var(--accent);color:#fff}
+.nav-btns{display:flex;justify-content:space-between;margin-top:40px;padding-top:20px;border-top:1px solid rgba(128,128,128,.2)}
+.nav-btn{padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:.9rem;transition:all .2s}
+.nav-btn:hover{opacity:.85}
+.nav-btn:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:800px){
+  #sidebar{transform:translateX(calc(-1 * var(--sidebar-w)))}
+  #sidebar.open{transform:translateX(0)}
+  #main{margin-left:0!important}
+  #topbar{left:0!important}
+  .progress-bar{left:0!important}
+  .section{padding:16px}
+  .sidebar-toggle{display:flex}
+  #topbar .breadcrumb{display:none}
+}
+@media(min-width:801px){
+  .sidebar-toggle{left:calc(var(--sidebar-w) + 8px)}
+  #sidebar.closed ~ .sidebar-toggle{left:8px}
+}
+.step{margin:6px 0;padding:6px 0 6px 16px;border-left:2px solid var(--accent);font-size:.9rem}
+.step strong{color:var(--accent)}
+.exam-explain{margin-top:10px;border-radius:6px;overflow:hidden;font-size:.88rem}
+.exam-explain-toggle{cursor:pointer;padding:8px 14px;background:rgba(0,137,123,.12);border:1px solid rgba(0,137,123,.25);border-radius:6px;color:#00897b;font-weight:600;font-size:.82rem;display:inline-block;margin-top:6px}
+.exam-explain-toggle:hover{background:rgba(0,137,123,.2)}
+.exam-explain-body{display:none;padding:12px 16px;margin-top:6px;background:rgba(128,128,128,.04);border:1px solid rgba(128,128,128,.15);border-radius:6px}
+.exam-explain-body.open{display:block}
+.exam-explain-item{padding:8px 10px;margin:4px 0;border-radius:4px;line-height:1.5}
+.exam-explain-item.opt-correct{background:rgba(76,175,80,.1);border-left:3px solid #4caf50}
+.exam-explain-item.opt-wrong{background:rgba(244,67,54,.05);border-left:3px solid #ef9a9a}
+</style>
+</head>
+
+
+<body>
+
+<nav id="sidebar">
+  <h2>Chapter 7 — Analysis in ℂₚ</h2>
+  <ul>
+    <li><a href="#intro" class="nav-link active" data-section="intro">Introduction</a></li>
+    <li><a href="#s71" class="nav-link" data-section="s71">7.1 — Almost Everything Extends</a></li>
+    <li><a href="#s72" class="nav-link" data-section="s72">7.2 — Polynomials &amp; Power Series</a></li>
+    <li><a href="#s73" class="nav-link" data-section="s73">7.3 — Entire Functions</a></li>
+    <li><a href="#s74" class="nav-link" data-section="s74">7.4 — Newton Polygons</a></li>
+    <li><a href="#exam" class="nav-link" data-section="exam">Chapter Exam</a></li>
+    <li style="margin-top:14px;border-top:1px solid rgba(128,128,128,.2);padding-top:10px">
+      <a href="index_chapter_6.html">← Jump to another chapter</a>
+    </li>
+  </ul>
+</nav>
+
+<header id="topbar">
+  <div class="breadcrumb" id="breadcrumb">Introduction</div>
+  <div class="controls">
+    <select class="chapter-nav" onchange="if(this.value)window.location.href=this.value">
+      <option value="">Switch chapter...</option>
+      <option value="index_chapter_2.html">Chapter 2</option>
+      <option value="index_chapter_3.html">Chapter 3</option>
+      <option value="index_chapter_4.html">Chapter 4</option>
+      <option value="index_chapter_5.html">Chapter 5</option>
+      <option value="index_chapter_6.html">Chapter 6</option>
+      <option value="index_chapter_7.html" selected>Chapter 7</option>
+    </select>
+    <button class="dark-toggle" onclick="toggleDark()" title="Toggle dark mode">◐</button>
+    <button onclick="prevSection()">← Prev</button>
+    <button onclick="nextSection()">Next →</button>
+  </div>
+</header>
+<button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<main id="main">
+
+<section class="section active" id="intro">
+  <h1>Chapter 7 — Analysis in ℂₚ</h1>
+  <p>Having built <span class="math">ℂₚ</span> — the completion of the algebraic closure <span class="math">ℚ̄ₚ</span>, which is both <strong>complete</strong> and <strong>algebraically closed</strong> — we can finally do honest analysis. This chapter gives a taste of what p-adic analysis looks like, building toward three highlights: the <strong>p-adic Weierstrass Preparation Theorem</strong>, the <strong>description of entire functions</strong>, and the beautiful combinatorial theory of <strong>Newton polygons</strong>.</p>
+  <p>Recall the notation: <span class="math">O = {x ∈ ℂₚ : |x| ≤ 1}</span> is the valuation ring, <span class="math">P = {x : |x| &lt; 1}</span> is its (non-principal!) maximal ideal, and the residue field <span class="math">F̄ = O/P</span> is an algebraic closure of 𝔽ₚ. Crucially, <strong>ℂₚ has no uniformizer</strong>: there are elements of absolute value <span class="math">pʳ</span> for <em>every</em> rational r, so there is no largest absolute value below 1.</p>
+  <div class="block block-def"><div class="label">Roadmap</div>
+    <ul style="list-style:none;padding-left:0">
+      <li><strong>§7.1</strong> — Almost everything extends: series, power series, exp/log, Strassman, Hensel — all carry over to ℂₚ, but now <span class="math">logₚ</span> maps <em>onto</em> all of ℂₚ.</li>
+      <li><strong>§7.2</strong> — The Gauss norm <span class="math">‖f‖_c = maxᵢ |aᵢ|cⁱ</span> on polynomials and power series, leading to the <strong>Weierstrass Preparation Theorem</strong>: <span class="math">f = g·h</span> with g a polynomial, h a unit.</li>
+      <li><strong>§7.3</strong> — Entire functions (<span class="math">vₚ(aₙ)/n → ∞</span>) factor as infinite products <span class="math">∏(1 − λᵢX)</span> with <span class="math">λᵢ → 0</span>.</li>
+      <li><strong>§7.4</strong> — Newton polygons: the lower convex hull of <span class="math">(i, vₚ(aᵢ))</span> reads off the absolute values of all the roots from its slopes and lengths.</li>
+    </ul>
+  </div>
+  <div class="block block-example"><div class="label">Why ℂₚ matters</div>
+    <p>ℂₚ is the p-adic analogue of ℂ — the natural home for p-adic analysis. But it is exotic: closed balls are <em>not compact</em>, the value group is dense in ℝ⁺, and there is no uniformizer. The tools below (Gauss norms, Weierstrass factorization, Newton polygons) are exactly what let us tame this strange but powerful field.</p>
+  </div>
+  <div class="nav-btns"><button class="nav-btn" disabled>← Prev</button><button class="nav-btn" onclick="goSection('s71')">Next →</button></div>
+</section>
+
+<section class="section" id="s71">
+  <h1>7.1 — Almost Everything Extends</h1>
+  <p>Most results from Chapter 5 never really used the fact that we worked over ℚₚ — they hold over any complete non-archimedean valued field. So we re-appropriate them wholesale for ℂₚ, with one striking new feature concerning the image of the logarithm.</p>
+
+  <div class="block block-def"><div class="label">Things that extend to ℂₚ</div>
+    <ul>
+      <li>A series <span class="math">Σaₙ</span> converges ⟺ <span class="math">aₙ → 0</span> (general term test).</li>
+      <li>A power series <span class="math">ΣaₙXⁿ</span> has radius <span class="math">ρ = 1/limsup|aₙ|^(1/n)</span>; over ℂₚ it converges for <span class="math">|x| &lt; ρ</span> and diverges for <span class="math">|x| &gt; ρ</span> (a clean dichotomy unavailable in ℚₚ).</li>
+      <li>Strassman's Theorem and its corollaries hold verbatim (replace ℚₚ→ℂₚ, ℤₚ→O).</li>
+      <li>Power series functions are differentiable, term by term.</li>
+      <li>Hensel's Lemma holds — but stated with <strong>absolute values</strong> or "mod P", since there is no uniformizer.</li>
+    </ul>
+  </div>
+
+  <div class="block block-thm"><div class="label">The exp and log functions on ℂₚ</div>
+    <p>The logarithm <span class="math">logₚ : U₁ → ℂₚ</span> is defined on <span class="math">U₁ = 1 + P = B(1,1)</span>, and the exponential on the disk</p>
+    <span class="math-block">D = {x ∈ O : |x| &lt; p^(−1/(p−1))} = B(0, p^(−1/(p−1))).</span>
+    <p>They are mutually inverse isometries between <span class="math">1 + D</span> and <span class="math">D</span>, satisfying the usual functional equations.</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">The new phenomenon: logₚ is surjective</div>
+    <p>In ℚₚ the image of logₚ lands in <span class="math">pℤₚ</span>; in a finite extension it is bounded. <strong>In ℂₚ the logarithm maps U₁ = 1 + P <em>onto all of</em> ℂₚ.</strong></p>
+  </div>
+
+  <div class="block block-proof"><div class="label">Proof of surjectivity</div>
+    <p>Take any <span class="math">a ∈ ℂₚ</span>. Since <span class="math">pⁿa → 0</span>, pick n with <span class="math">|pⁿa| &lt; p^(−1/(p−1))</span>, so <span class="math">pⁿa ∈ D</span>. Let <span class="math">y = exp(pⁿa) ∈ 1+D</span>. As ℂₚ is algebraically closed, choose <span class="math">x</span> with <span class="math">x^(pⁿ) = y</span>. One checks <span class="math">|x| = 1</span> and (reducing mod P, where <span class="math">tᵖ - 1=(t-1)ᵖ</span>) that <span class="math">x ∈ 1+P = U₁</span>. Then <span class="math">pⁿa = logₚ(y) = logₚ(x^(pⁿ)) = pⁿ logₚ(x)</span>, so <span class="math">logₚ(x) = a</span>. ∎</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: exp / log Convergence Domains in ℂₚ</h4>
+    <p>Pick p and the valuation <span class="math">v = vₚ(x)</span> of an element. We check whether x lies in the exp-domain D and in the log-domain 1+P, and report the key radii.</p>
+    <div class="controls-row">
+      <label for="s71p">p =</label>
+      <select id="s71p" onchange="calcCpExtend()"><option>2</option><option selected>3</option><option>5</option><option>7</option></select>
+      <label for="s71v">v = vₚ(x) =</label>
+      <input type="range" id="s71v" min="-2" max="3" value="1" step="1" oninput="calcCpExtend()">
+      <span class="val" id="s71vVal">1</span>
+    </div>
+    <button onclick="calcCpExtend()">Check Domains</button>
+    <div class="viz-output" id="s71out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s71problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz71"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('intro')">← Prev</button><button class="nav-btn" onclick="goSection('s72')">Next →</button></div>
+</section>
+
+<section class="section" id="s72">
+  <h1>7.2 — Deeper Results on Polynomials and Power Series</h1>
+  <p>The main goal is the <strong>p-adic Weierstrass Preparation Theorem</strong>. The key tool is a family of absolute values — the <em>Gauss norms</em> <span class="math">‖·‖_c</span> — on polynomials and on the rings <span class="math">A_c</span> of convergent power series.</p>
+
+  <div class="block block-def"><div class="label">Definition 7.2.1 (Gauss norm ‖·‖_c)</div>
+    <p>For <span class="math">c &gt; 0</span> and <span class="math">f(X) = a₀ + a₁X + ⋯ + aₙXⁿ</span>, set</p>
+    <span class="math-block">‖f‖_c = maxᵢ |aᵢ| cⁱ.</span>
+    <p>It measures the size of <span class="math">|f(x)|</span> on the closed ball <span class="math">B(0,c)</span>: indeed <span class="math">|x| ≤ c ⟹ |f(x)| ≤ ‖f‖_c</span>.</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Theorem 7.2.1 (Properties of ‖·‖_c)</div>
+    <ul>
+      <li>(i) <span class="math">‖f‖_c = 0 ⟺ f ≡ 0</span>;</li>
+      <li>(ii) <span class="math">‖f + g‖_c ≤ max{‖f‖_c, ‖g‖_c}</span> (ultrametric);</li>
+      <li>(iii) <span class="math">‖fg‖_c = ‖f‖_c ‖g‖_c</span> (multiplicative!);</li>
+      <li>(iv) it induces <span class="math">|·|ₚ</span> on constants and extends to a non-archimedean absolute value on <span class="math">K(X)</span>.</li>
+    </ul>
+    <p>Property (iii) is the deep one — its proof uses "the strongest wins": in the product, the coefficient of <span class="math">X^(I+J)</span> has a unique dominant term.</p>
+  </div>
+
+  <div class="block block-lem"><div class="label">Definition 7.2.4 (Convergent power series A_c)</div>
+    <p><span class="math">A_c</span> is the ring of power series <span class="math">ΣaₙXⁿ</span> with <span class="math">|aₙ|cⁿ → 0</span> — exactly those converging on the closed ball <span class="math">B(0,c)</span>. The same formula <span class="math">‖f‖_c = maxₙ|aₙ|cⁿ</span> defines a norm; <span class="math">A₁</span> is <strong>complete</strong> and the polynomials are <strong>dense</strong> in it.</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Theorem 7.2.6 (p-adic Weierstrass Preparation)</div>
+    <p>Let <span class="math">f(X) = ΣaₙXⁿ ∈ A₁</span> (so <span class="math">aₙ → 0</span>), and let <span class="math">N</span> be defined by</p>
+    <span class="math-block">|a_N| = max|aₙ|  and  |aₙ| &lt; |a_N| for all n &gt; N.</span>
+    <p>Then <span class="math">f = g·h</span> where <span class="math">g</span> is a polynomial of degree N with <span class="math">‖g‖₁ = |b_N|</span>, and <span class="math">h = 1 + c₁X + ⋯ ∈ A₁</span> with <span class="math">‖h − 1‖₁ &lt; 1</span>. In particular <strong>h has no zeros in O</strong>.</p>
+  </div>
+
+  <div class="block block-proof"><div class="label">Consequence: a sharper Strassman</div>
+    <p>Since h is a unit (no zeros in O), the zeros of f in O are exactly those of the degree-N polynomial g. Counting multiplicities in ℂₚ, <strong>f has exactly N zeros in O</strong>. This refines Strassman's "at most N" to "exactly N".</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: Gauss Norm &amp; the Distinguished Index N</h4>
+    <p>Enter coefficients <span class="math">a₀, a₁, …</span> (comma-separated integers) and a radius exponent so that <span class="math">c = p^k</span>. We compute <span class="math">‖f‖_c</span>, locate the Weierstrass index N, and report the factorization degrees.</p>
+    <div class="controls-row">
+      <label for="s72p">p =</label>
+      <select id="s72p" onchange="calcGaussNorm()"><option>2</option><option selected>3</option><option>5</option></select>
+      <label for="s72coeffs">coeffs aᵢ =</label>
+      <input type="text" id="s72coeffs" value="1, 3, 9, 1, 27" oninput="calcGaussNorm()" style="width:160px">
+      <label for="s72k">c = p^</label>
+      <input type="range" id="s72k" min="-2" max="2" value="0" step="1" oninput="calcGaussNorm()">
+      <span class="val" id="s72kVal">0</span>
+    </div>
+    <button onclick="calcGaussNorm()">Compute Norm</button>
+    <div class="viz-output" id="s72out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s72problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz72"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s71')">← Prev</button><button class="nav-btn" onclick="goSection('s73')">Next →</button></div>
+</section>
+
+<section class="section" id="s73">
+  <h1>7.3 — Entire Functions</h1>
+  <p>An <strong>entire</strong> p-adic function is one whose power series converges on <em>all</em> of ℂₚ. The Weierstrass Preparation Theorem, applied on larger and larger balls, gives a clean product description — the p-adic analogue of the Hadamard/Weierstrass product for complex entire functions.</p>
+
+  <div class="block block-lem"><div class="label">Lemma 7.3.1 (Entire criterion)</div>
+    <p><span class="math">f(X) = ΣaₙXⁿ</span> is entire ⟺</p>
+    <span class="math-block">limₙ→∞ vₚ(aₙ)/n = +∞.</span>
+    <p>In words: <span class="math">vₚ(aₙ)</span> must grow <em>faster than linearly</em> — the coefficients must become p-adically small very quickly.</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Proposition 7.3.2 (Product expansion)</div>
+    <p>Let <span class="math">f(X) = 1 + a₁X + a₂X² + ⋯</span> be entire. Then f has finitely many zeros in any closed ball, countably many in ℂₚ, and the reciprocals <span class="math">λᵢ</span> of the zeros tend to 0, with</p>
+    <span class="math-block">f(X) = ∏ᵢ₌₁^∞ (1 − λᵢX),</span>
+    <p>converging in every <span class="math">‖·‖_c</span> metric.</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Corollary 7.3.3 (General entire function)</div>
+    <p>Any entire <span class="math">f</span> factors as</p>
+    <span class="math-block">f(X) = a Xʳ ∏ᵢ (1 − λᵢX),</span>
+    <p>with <span class="math">a ∈ ℂₚ</span>, <span class="math">r ≥ 0</span> the order of the zero at 0, and <span class="math">λᵢ</span> the reciprocals of the nonzero roots (tending to 0).</p>
+  </div>
+
+  <div class="block block-example"><div class="label">Why "reciprocals of roots"?</div>
+    <p>Writing factors as <span class="math">(1 − λᵢX)</span> (rather than <span class="math">(X − αᵢ)</span>) keeps the constant term equal to 1, and as the balls grow, the roots get <em>larger</em>, so the <span class="math">λᵢ = 1/αᵢ</span> get <em>smaller</em> — exactly what makes the infinite product converge.</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: Is the Series Entire?</h4>
+    <p>We model coefficients by their valuations <span class="math">vₚ(aₙ)</span>. Choose a growth law and watch <span class="math">vₚ(aₙ)/n</span> — it must tend to +∞ for an entire function.</p>
+    <div class="controls-row">
+      <label for="s73p">p =</label>
+      <select id="s73p" onchange="calcEntire()"><option>2</option><option selected>3</option><option>5</option></select>
+      <label for="s73law">vₚ(aₙ) law:</label>
+      <select id="s73law" onchange="calcEntire()">
+        <option value="n2">n²  (entire)</option>
+        <option value="nlogn">n·⌊log₂n⌋  (entire)</option>
+        <option value="linear">2n  (radius p², NOT entire)</option>
+        <option value="const">5  (radius 1, NOT entire)</option>
+      </select>
+      <label for="s73N">terms N =</label>
+      <input type="range" id="s73N" min="4" max="12" value="8" step="1" oninput="calcEntire()">
+      <span class="val" id="s73NVal">8</span>
+    </div>
+    <button onclick="calcEntire()">Test Convergence</button>
+    <div class="viz-output" id="s73out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s73problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz73"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s72')">← Prev</button><button class="nav-btn" onclick="goSection('s74')">Next →</button></div>
+</section>
+
+<section class="section" id="s74">
+  <h1>7.4 — Newton Polygons</h1>
+  <p>The <strong>Newton polygon</strong> is a single picture that encodes the absolute values of all the roots of a polynomial (or power series). It is the lower boundary of the convex hull of the points <span class="math">(i, vₚ(aᵢ))</span>.</p>
+
+  <div class="block block-def"><div class="label">Definition 7.4 (Newton polygon)</div>
+    <p>For <span class="math">f(X) = 1 + a₁X + ⋯ + aₙXⁿ</span> (normalize so <span class="math">f(0)=1</span>), plot <span class="math">(0,0)</span> and each <span class="math">(i, vₚ(aᵢ))</span> (ignore <span class="math">aᵢ = 0</span>, "infinitely high"). The Newton polygon is the <strong>lower convex hull</strong>: start from the downward y-axis and rotate counter-clockwise, breaking at each vertex. Its key data:</p>
+    <ul>
+      <li><strong>slopes</strong> <span class="math">m₁ &lt; m₂ &lt; ⋯</span> (the "Newton slopes"),</li>
+      <li><strong>lengths</strong> = horizontal projection of each segment,</li>
+      <li><strong>breaks</strong> = the vertices.</li>
+    </ul>
+  </div>
+
+  <div class="block block-thm"><div class="label">Theorem 7.4.7 (Roots from slopes)</div>
+    <p>If the Newton polygon has slopes <span class="math">m₁, …, m_r</span> with lengths <span class="math">i₁, …, i_r</span>, then for each k, f has <strong>exactly <span class="math">i_k</span> roots</strong> (in ℂₚ, with multiplicity) of absolute value <span class="math">p^(m_k)</span> — equivalently, valuation <span class="math">−m_k</span>.</p>
+    <p>The lengths sum to <span class="math">deg f</span>, so this accounts for <em>all</em> roots.</p>
+  </div>
+
+  <div class="block block-def"><div class="label">Definition 7.4.1 + Prop 7.4.2 (Pure polynomials)</div>
+    <p>A polynomial is <strong>pure of slope m</strong> if its Newton polygon has a single slope m — equivalently, all its roots have the same absolute value <span class="math">pᵐ</span>. <strong>Irreducible polynomials are pure.</strong> (A break at an interior vertex forces a factorization.)</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Lemma 7.4.8 (Power series: radius of convergence)</div>
+    <p>For a power series, let <span class="math">m = sup</span> of the slopes of the Newton polygon. Then the radius of convergence is <span class="math">ρ = pᵐ</span> (with <span class="math">ρ = ∞</span> iff <span class="math">m = +∞</span>, i.e. the function is entire). The polygon's three end-behaviours encode open-ball, closed-ball, and infinite-slope-sequence convergence.</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: Draw the Newton Polygon</h4>
+    <p>Enter the coefficients <span class="math">a₀, a₁, …, aₙ</span> (comma-separated; use <code>0</code> for a missing term). We plot <span class="math">(i, vₚ(aᵢ))</span>, compute the lower convex hull, and read off the slopes, lengths, and the absolute values of all roots.</p>
+    <div class="controls-row">
+      <label for="s74p">p =</label>
+      <select id="s74p" onchange="calcNewton()"><option>2</option><option selected>5</option><option>3</option><option>7</option></select>
+      <label for="s74coeffs">coeffs aᵢ =</label>
+      <input type="text" id="s74coeffs" value="1, 5, 1/5, 35, 0, 25, 625" oninput="calcNewton()" style="width:220px">
+    </div>
+    <button onclick="calcNewton()">Build Polygon</button>
+    <div id="s74svgwrap" style="overflow-x:auto;margin-top:12px"></div>
+    <div class="viz-output" id="s74out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s74problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz74"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s73')">← Prev</button><button class="nav-btn" onclick="goSection('exam')">Next →</button></div>
+</section>
+
+<section class="section" id="exam">
+  <h1>Chapter 7 Exam</h1>
+  <p>Comprehensive assessment of analysis in ℂₚ: what extends from ℚₚ, the surjectivity of logₚ, Gauss norms, the Weierstrass Preparation Theorem, entire functions, and Newton polygons. Each question has expandable per-option explanations.</p>
+  <div style="margin:16px 0">
+    <label><input type="checkbox" id="timedMode"> Timed mode (20 min)</label>
+  </div>
+  <div class="timer-display" id="timer" style="display:none">20:00</div>
+  <button class="quiz-btn" onclick="startExam()">Start Exam</button>
+  <div id="examBody"></div>
+</section>
+
+</main>
+
+
+<script>
+const SECTIONS = ['intro','s71','s72','s73','s74','exam'];
+function goSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id); if(!el)return;
+  el.classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(a=>a.classList.toggle('active',a.dataset.section===id));
+  const bc=document.getElementById('breadcrumb');
+  const link=document.querySelector('.nav-link[data-section="'+id+'"]');
+  if(bc&&link)bc.textContent=link.textContent;
+  updateProgress(id);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function curIndex(){const a=document.querySelector('.section.active');return a?SECTIONS.indexOf(a.id):0;}
+function nextSection(){const i=curIndex();if(i<SECTIONS.length-1)goSection(SECTIONS[i+1]);}
+function prevSection(){const i=curIndex();if(i>0)goSection(SECTIONS[i-1]);}
+function updateProgress(id){const i=SECTIONS.indexOf(id);const pct=((i+1)/SECTIONS.length)*100;const f=document.getElementById('progressFill');if(f)f.style.width=pct+'%';}
+function toggleSidebar(){
+  const sb=document.getElementById('sidebar'),mn=document.getElementById('main'),tb=document.getElementById('topbar'),pb=document.querySelector('.progress-bar');
+  const wide=window.innerWidth>800;
+  if(wide){sb.classList.toggle('closed');mn.classList.toggle('full');tb.classList.toggle('full');pb.classList.toggle('full');}
+  else{sb.classList.toggle('open');}
+}
+function toggleDark(){document.body.classList.toggle('dark');}
+
+function vp(n,p){if(n===0)return Infinity;let v=0;n=Math.abs(n);while(n%p===0){n/=p;v++;}return v;}
+function padicAbs(n,p){const v=vp(n,p);return v===Infinity?0:Math.pow(p,-v);}
+function factorial(n){let r=1;for(let i=2;i<=n;i++)r*=i;return r;}
+/* fraction-aware valuation: accepts "a", "a/b", "-a/b" */
+function vpFrac(str,p){
+  str=(''+str).trim();
+  if(str===''||str==='0')return Infinity;
+  let num,den;
+  if(str.indexOf('/')>=0){const parts=str.split('/');num=parseInt(parts[0],10);den=parseInt(parts[1],10);}
+  else{num=parseInt(str,10);den=1;}
+  if(num===0)return Infinity;
+  return vp(num,p)-vp(den,p);
+}
+
+/* ---------- 7.1 Almost everything extends: exp / log domains over C_p ---------- */
+function calcCpExtend(){
+  const p=+document.getElementById('s71p').value;
+  const v=+document.getElementById('s71v').value;
+  document.getElementById('s71vVal').textContent=v;
+  const expBound=1/(p-1);                 // exp converges iff v(x) > 1/(p-1)
+  const expConv = v>expBound;
+  const inP = v>0;                        // x in maximal ideal P = B(0,1)^-
+  document.getElementById('s71out').innerHTML=
+    'Working in ℂ<sub>'+p+'</sub>, take an element x with v<sub>'+p+'</sub>(x) = '+v+'.<br>'+
+    'The same series as over ℚ<sub>'+p+'</sub> still define exp, log, etc. — <em>almost everything extends</em>.<br>'+
+    '<strong>exp(x)</strong> converges ⟺ v(x) &gt; 1/(p−1) = '+expBound.toFixed(4)+'. Here v(x) = '+v+' '+(expConv?'&gt;':'≤')+' '+expBound.toFixed(4)+' ⟹ <strong>'+(expConv?'converges ✓':'need NOT converge ✗')+'</strong><br>'+
+    '<strong>log(1+x)</strong> converges ⟺ v(x) &gt; 0, i.e. x ∈ P. Here '+(inP?'x ∈ P ✓ so log(1+x) converges':'x ∉ P ✗')+'.<br>'+
+    'On D = B(0, p<sup>−1/(p−1)</sup>) the maps exp and log are mutually inverse isometries between 1+D and D.<br>'+
+    '<strong>Key new fact (7.1):</strong> the logarithm log<sub>'+p+'</sub> : U₁ = 1+P → ℂ<sub>'+p+'</sub> is <strong>surjective</strong> — every element of ℂ<sub>'+p+'</sub> is a logarithm. (Contrast with ℝ/ℂ where log has a restricted image.)';
+}
+
+/* ---------- 7.2 Gauss norm and Weierstrass preparation ---------- */
+function calcGaussNorm(){
+  const p=+document.getElementById('s72p').value;
+  const raw=document.getElementById('s72coeffs').value;
+  const k=+document.getElementById('s72k').value;
+  document.getElementById('s72kVal').textContent=k;
+  const c=Math.pow(p,k);                  // radius c = p^k
+  const coeffs=raw.split(',').map(s=>s.trim()).filter(s=>s!=='').map(s=>parseInt(s,10));
+  let rows='', maxVal=-Infinity, N=0;
+  coeffs.forEach((a,i)=>{
+    const term=padicAbs(a,p)*Math.pow(c,i);
+    rows+='<tr><td>'+i+'</td><td>'+a+'</td><td>'+padicAbs(a,p).toFixed(4)+'</td><td>'+term.toFixed(4)+'</td></tr>';
+  });
+  // determine max and largest index achieving it
+  maxVal=-Infinity;
+  coeffs.forEach((a,i)=>{const term=padicAbs(a,p)*Math.pow(c,i);if(term>maxVal+1e-12)maxVal=term;});
+  N=0;
+  coeffs.forEach((a,i)=>{const term=padicAbs(a,p)*Math.pow(c,i);if(Math.abs(term-maxVal)<1e-9)N=i;});
+  document.getElementById('s72out').innerHTML=
+    'f(X) = Σ aᵢXⁱ over ℂ<sub>'+p+'</sub>, with coefficients ['+coeffs.join(', ')+'].<br>'+
+    'Radius c = p<sup>'+k+'</sup> = '+c+'. <strong>Gauss norm</strong> ‖f‖<sub>c</sub> = maxᵢ |aᵢ|·cⁱ.<br>'+
+    '<table style="margin:8px 0;border-collapse:collapse"><tr><th>i</th><th>aᵢ</th><th>|aᵢ|<sub>'+p+'</sub></th><th>|aᵢ|cⁱ</th></tr>'+rows+'</table>'+
+    '<strong>‖f‖<sub>c</sub> = '+maxVal.toFixed(4)+'</strong>, attained last at index <strong>N = '+N+'</strong>.<br>'+
+    'The Gauss norm is multiplicative: ‖fg‖<sub>c</sub> = ‖f‖<sub>c</sub>·‖g‖<sub>c</sub>.<br>'+
+    '<strong>Weierstrass Preparation (7.2):</strong> f = g·h where deg g = N = '+N+' (a distinguished polynomial) and h is a unit in the Tate algebra. Hence f has exactly <strong>'+N+'</strong> zero'+(N===1?'':'s')+' (with multiplicity) in the closed ball B(0, c).';
+}
+
+/* ---------- 7.3 Entire functions: v_p(a_n)/n -> infinity ---------- */
+function calcEntire(){
+  const p=+document.getElementById('s73p').value;
+  const law=document.getElementById('s73law').value;
+  const N=+document.getElementById('s73N').value;
+  document.getElementById('s73NVal').textContent=N;
+  function vAt(n){
+    if(law==='n2')return n*n;
+    if(law==='nlogn')return n*Math.floor(Math.log2(n)+ (n>1?0:0));
+    if(law==='linear')return 2*n;
+    return 5; // const
+  }
+  let rows='', lastRatio=0;
+  for(let n=1;n<=N;n++){
+    const vn=vAt(n);
+    const ratio=vn/n;
+    lastRatio=ratio;
+    rows+='<tr><td>'+n+'</td><td>'+vn+'</td><td>'+ratio.toFixed(3)+'</td></tr>';
+  }
+  let verdict, radius;
+  if(law==='n2'||law==='nlogn'){verdict='v<sub>'+p+'</sub>(aₙ)/n → +∞ ⟹ <strong>f is ENTIRE</strong> (converges on all of ℂ<sub>'+p+'</sub>).';radius='∞';}
+  else if(law==='linear'){const r=Math.pow(p,2);verdict='v<sub>'+p+'</sub>(aₙ)/n → 2 (finite) ⟹ <strong>NOT entire</strong>; finite radius of convergence.';radius='p² = '+r;}
+  else{verdict='v<sub>'+p+'</sub>(aₙ)/n → 0 ⟹ <strong>NOT entire</strong>; radius of convergence ρ = 1.';radius='p⁰ = 1';}
+  document.getElementById('s73out').innerHTML=
+    'Power series f(X) = Σ aₙXⁿ over ℂ<sub>'+p+'</sub> with prescribed valuations v<sub>'+p+'</sub>(aₙ).<br>'+
+    '<strong>Criterion (7.3):</strong> f is <em>entire</em> ⟺ lim<sub>n→∞</sub> v<sub>'+p+'</sub>(aₙ)/n = +∞. The radius of convergence is ρ = p<sup>(lim v(aₙ)/n)</sup>.<br>'+
+    '<table style="margin:8px 0;border-collapse:collapse"><tr><th>n</th><th>v<sub>'+p+'</sub>(aₙ)</th><th>v(aₙ)/n</th></tr>'+rows+'</table>'+
+    'Latest ratio at n = '+N+': '+lastRatio.toFixed(3)+'. Radius of convergence ρ = '+radius+'.<br>'+
+    verdict+'<br>'+
+    'An entire function has a (possibly infinite) product expansion f(X) = a·∏(1 − X/λᵢ) over its zeros λᵢ.';
+}
+
+/* ---------- 7.4 Newton polygons ---------- */
+function lowerHull(pts){
+  // pts: array of {x,y} sorted by x ascending (x unique). Returns indices forming lower convex hull.
+  const hull=[];
+  for(let i=0;i<pts.length;i++){
+    while(hull.length>=2){
+      const a=pts[hull[hull.length-2]], b=pts[hull[hull.length-1]], c=pts[i];
+      // cross product (b-a) x (c-a); for lower hull we remove if cross <= 0 (right turn / collinear)
+      const cross=(b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x);
+      if(cross<=0)hull.pop();else break;
+    }
+    hull.push(i);
+  }
+  return hull;
+}
+function calcNewton(){
+  const p=+document.getElementById('s74p').value;
+  const raw=document.getElementById('s74coeffs').value;
+  const toks=raw.split(',').map(s=>s.trim());
+  // points (i, v_p(a_i)) skipping a_i = 0 (infinite valuation)
+  const pts=[];
+  toks.forEach((t,i)=>{const v=vpFrac(t,p);if(v!==Infinity)pts.push({x:i,y:v});});
+  if(pts.length<2){document.getElementById('s74out').innerHTML='Need at least two non-zero coefficients to build a Newton polygon.';document.getElementById('s74svgwrap').innerHTML='';return;}
+  const hullIdx=lowerHull(pts);
+  // build SVG
+  const xs=pts.map(q=>q.x), ys=pts.map(q=>q.y);
+  const minX=Math.min(...xs), maxX=Math.max(...xs);
+  const minY=Math.min(...ys,0), maxY=Math.max(...ys);
+  const W=460,H=300,padL=44,padR=20,padT=20,padB=36;
+  const sx=x=>padL+(maxX===minX?0:(x-minX)/(maxX-minX))*(W-padL-padR);
+  const sy=y=>H-padB-(maxY===minY?0:(y-minY)/(maxY-minY))*(H-padT-padB);
+  let svg='<svg width="'+W+'" height="'+H+'" style="background:var(--card);border:1px solid var(--border);border-radius:8px">';
+  // axes
+  svg+='<line x1="'+padL+'" y1="'+sy(minY)+'" x2="'+(W-padR)+'" y2="'+sy(minY)+'" stroke="var(--muted)" stroke-width="1"/>';
+  svg+='<line x1="'+padL+'" y1="'+padT+'" x2="'+padL+'" y2="'+(H-padB)+'" stroke="var(--muted)" stroke-width="1"/>';
+  svg+='<text x="'+(W-padR)+'" y="'+(H-padB+24)+'" fill="var(--muted)" font-size="12" text-anchor="end">i (degree)</text>';
+  svg+='<text x="'+(padL-6)+'" y="'+(padT+4)+'" fill="var(--muted)" font-size="12" text-anchor="end">v(aᵢ)</text>';
+  // all points
+  pts.forEach(q=>{svg+='<circle cx="'+sx(q.x)+'" cy="'+sy(q.y)+'" r="4" fill="var(--muted)"/>';});
+  // hull polyline
+  let hullPath=hullIdx.map(idx=>sx(pts[idx].x)+','+sy(pts[idx].y)).join(' ');
+  svg+='<polyline points="'+hullPath+'" fill="none" stroke="var(--accent)" stroke-width="2.5"/>';
+  hullIdx.forEach(idx=>{svg+='<circle cx="'+sx(pts[idx].x)+'" cy="'+sy(pts[idx].y)+'" r="5" fill="var(--accent)"/>';});
+  svg+='</svg>';
+  document.getElementById('s74svgwrap').innerHTML=svg;
+  // slopes & lengths per segment
+  let segRows='';
+  for(let s=0;s<hullIdx.length-1;s++){
+    const A=pts[hullIdx[s]], B=pts[hullIdx[s+1]];
+    const slope=(B.y-A.y)/(B.x-A.x);
+    const len=B.x-A.x;
+    const rootVal=Math.pow(p,slope);  // |root| = p^(slope) since v(root) = -slope
+    segRows+='<tr><td>['+A.x+', '+B.x+']</td><td>'+slope.toFixed(3)+'</td><td>'+len+'</td><td>p<sup>'+slope.toFixed(3)+'</sup> = '+rootVal.toFixed(4)+'</td></tr>';
+  }
+  const deg=pts[pts.length-1].x;
+  document.getElementById('s74out').innerHTML=
+    'f(X) = Σ aᵢXⁱ over ℂ<sub>'+p+'</sub>, coefficients ['+toks.join(', ')+'] (fractions like 1/'+p+' allowed).<br>'+
+    'Plot the points (i, v<sub>'+p+'</sub>(aᵢ)); the <strong>Newton polygon</strong> is their lower convex hull (highlighted).<br>'+
+    '<table style="margin:8px 0;border-collapse:collapse"><tr><th>segment i-range</th><th>slope m</th><th>length ℓ</th><th>|root| = p<sup>m</sup></th></tr>'+segRows+'</table>'+
+    '<strong>Reading the polygon (7.4):</strong> a segment of slope m and horizontal length ℓ means f has exactly ℓ roots (in ℂ<sub>'+p+'</sub>) of valuation −m, i.e. absolute value p<sup>m</sup>. The lengths sum to deg f = '+deg+'.';
+}
+
+/* ---------- Problem banks ---------- */
+function genProblems71(){return{
+  easy:[
+    {q:'log_p : U₁ = 1+P → ℂ_p is surjective. (yes/no)',ans:'yes',sol:'<div class="step">Yes — every element of ℂ_p is a logarithm (Section 7.1).</div>'},
+    {q:'exp(x) converges over ℂ_p iff v_p(x) > 1/(p−?). Fill the blank.',ans:'1',sol:'<div class="step">v_p(x) > 1/(p−1).</div>'}
+  ],
+  medium:[
+    {q:'For p=2, the exp-convergence bound 1/(p−1) equals what number?',ans:'1',sol:'<div class="step">1/(2−1)=1, so need v_2(x)>1.</div>'},
+    {q:'On the disc D, exp and log are mutually inverse ? (write isometries)',ans:'isometries',sol:'<div class="step">They are mutually inverse isometries between 1+D and D.</div>'}
+  ],
+  hard:[
+    {q:'log(1+x) converges over ℂ_p exactly when v_p(x) is strictly greater than what? (write 0)',ans:'0',sol:'<div class="step">v_p(x) > 0, i.e. x lies in the maximal ideal P.</div>'}
+  ]
+};}
+function genProblems72(){return{
+  easy:[
+    {q:'The Gauss norm ‖f‖_c = max_i |a_i|·c^? Fill the exponent.',ans:'i',sol:'<div class="step">‖f‖_c = max_i |a_i| c^i.</div>'},
+    {q:'Is the Gauss norm multiplicative, ‖fg‖=‖f‖·‖g‖? (yes/no)',ans:'yes',sol:'<div class="step">Yes, it is multiplicative.</div>'}
+  ],
+  medium:[
+    {q:'For f=1+pX with p=3, c=1: ‖f‖_1 = max(1, 1/3) = ? (decimal or 1)',ans:'1',sol:'<div class="step">max(|1|,|p|)=max(1,1/3)=1.</div>'},
+    {q:'In Weierstrass preparation f=g·h, the factor h is a ? (write unit)',ans:'unit',sol:'<div class="step">h is a unit in the Tate algebra; g is a distinguished polynomial.</div>'}
+  ],
+  hard:[
+    {q:'If the Gauss norm max is attained last at index N, how many zeros does f have in B(0,c)? (write N)',ans:'n',sol:'<div class="step">Exactly N zeros (with multiplicity), = deg of the distinguished polynomial g.</div>'}
+  ]
+};}
+function genProblems73(){return{
+  easy:[
+    {q:'A power series is entire over ℂ_p iff v_p(a_n)/n → ? (write infinity)',ans:'infinity',sol:'<div class="step">v_p(a_n)/n → +∞.</div>'},
+    {q:'An entire function converges on all of ℂ_p. (yes/no)',ans:'yes',sol:'<div class="step">Yes — infinite radius of convergence.</div>'}
+  ],
+  medium:[
+    {q:'If v_p(a_n)=2n, the radius of convergence is p^? Fill exponent.',ans:'2',sol:'<div class="step">ρ = p^(lim v(a_n)/n) = p^2; finite, so NOT entire.</div>'},
+    {q:'If v_p(a_n)=n^2, is f entire? (yes/no)',ans:'yes',sol:'<div class="step">n^2/n = n → ∞, so yes, entire.</div>'}
+  ],
+  hard:[
+    {q:'An entire function factors as a (possibly infinite) ? over its zeros (write product)',ans:'product',sol:'<div class="step">f(X)=a·∏(1−X/λ_i), an infinite product over the zeros.</div>'}
+  ]
+};}
+function genProblems74(){return{
+  easy:[
+    {q:'The Newton polygon is the lower convex ? of the points (i, v_p(a_i)). (write hull)',ans:'hull',sol:'<div class="step">Lower convex hull.</div>'},
+    {q:'A coefficient a_i = 0 is plotted at height +∞ (skipped). (yes/no)',ans:'yes',sol:'<div class="step">Yes — zero coefficients give v=∞ and are omitted.</div>'}
+  ],
+  medium:[
+    {q:'A segment of slope m corresponds to roots of valuation ? (write -m)',ans:'-m',sol:'<div class="step">Roots have valuation −m, i.e. absolute value p^m.</div>'},
+    {q:'The horizontal length of a segment equals the number of ? of that valuation (write roots)',ans:'roots',sol:'<div class="step">The number of roots (with that absolute value).</div>'}
+  ],
+  hard:[
+    {q:'For p=5, f=1+5X+(1/5)X²: v_5(a_0),v_5(a_1),v_5(a_2) = 0,1,? Fill the last (write -1)',ans:'-1',sol:'<div class="step">v_5(1/5)=−1, giving point (2,−1).</div>'}
+  ]
+};}
+
+function renderProblems(containerId,bank){
+  const c=document.getElementById(containerId);if(!c)return;
+  c.innerHTML='';
+  ['easy','medium','hard'].forEach(diff=>{
+    (bank[diff]||[]).forEach((p,i)=>{
+      const id=containerId+'_'+diff+'_'+i;
+      const card=document.createElement('div');card.className='problem-card';
+      card.innerHTML=
+        '<span class="diff diff-'+diff+'">'+diff+'</span>'+
+        '<div class="q">'+p.q+'</div>'+
+        '<input type="text" id="'+id+'_in" placeholder="Your answer">'+
+        '<button class="btn-check" onclick="checkProblem(\''+id+'\')">Check</button>'+
+        '<button class="btn-sol" onclick="toggleSol(\''+id+'\')">Solution</button>'+
+        '<div class="feedback" id="'+id+'_fb"></div>'+
+        '<div class="solution" id="'+id+'_sol">'+p.sol+'</div>';
+      card._ans=p.ans;
+      c.appendChild(card);
+    });
+  });
+}
+function normalize(s){return (s||'').toString().trim().toLowerCase().replace(/\s+/g,'').replace(/[₀₁₂₃₄₅₆₇₈₉]/g,d=>['0','1','2','3','4','5','6','7','8','9']['₀₁₂₃₄₅₆₇₈₉'.indexOf(d)]);}
+function checkProblem(id){
+  const inp=document.getElementById(id+'_in'),fb=document.getElementById(id+'_fb');
+  const card=inp.closest('.problem-card');
+  const ok=normalize(inp.value)===normalize(card._ans);
+  fb.className='feedback '+(ok?'correct':'wrong');
+  fb.textContent=ok?'✓ Correct!':'Not quite — try again or view solution.';
+}
+function toggleSol(id){const s=document.getElementById(id+'_sol');s.style.display=s.style.display==='block'?'none':'block';}
+
+const quizData={
+  s71:[
+    {q:'Over ℂ_p, exp(x) converges when:',options:['v_p(x) > 1/(p−1)','v_p(x) < 0','|x|_p > 1','always'],correct:0},
+    {q:'The logarithm log_p : 1+P → ℂ_p is:',options:['Injective only','Surjective','Constant','Undefined'],correct:1},
+    {q:'On the disc D, exp and log are:',options:['Unrelated','Mutually inverse isometries','Both zero','Discontinuous'],correct:1}
+  ],
+  s72:[
+    {q:'The Gauss norm ‖f‖_c equals:',options:['Σ|a_i|c^i','max_i |a_i|c^i','min_i |a_i|','|a_0|'],correct:1},
+    {q:'The Gauss norm is:',options:['Additive','Multiplicative','Not a norm','Archimedean'],correct:1},
+    {q:'Weierstrass preparation writes f as:',options:['g+h','g·h with g distinguished, h a unit','f²','a constant'],correct:1}
+  ],
+  s73:[
+    {q:'f is entire over ℂ_p iff:',options:['v_p(a_n)/n → ∞','a_n → 0','v_p(a_n) → 0','f is a polynomial'],correct:0},
+    {q:'An entire function converges:',options:['Nowhere','On all of ℂ_p','Only at 0','On the unit disc only'],correct:1},
+    {q:'An entire function has a:',options:['Finite degree','Product expansion over its zeros','Single zero','No zeros'],correct:1}
+  ],
+  s74:[
+    {q:'The Newton polygon is the:',options:['Upper hull','Lower convex hull of (i,v_p(a_i))','Graph of f','Tangent line'],correct:1},
+    {q:'A segment of slope m gives roots of valuation:',options:['m','−m','0','p'],correct:1},
+    {q:'The horizontal length of a segment counts:',options:['The degree','The number of roots of that valuation','Coefficients','Nothing'],correct:1}
+  ]
+};
+
+function genQuiz(containerId,key){
+  const c=document.getElementById(containerId);if(!c)return;
+  const qs=quizData[key]||[];
+  c.innerHTML=qs.map((q,qi)=>
+    '<div class="quiz-q"><div class="q-text">'+(qi+1)+'. '+q.q+'</div>'+
+    q.options.map((o,oi)=>'<label><input type="radio" name="'+key+'_'+qi+'" value="'+oi+'"> '+o+'</label>').join('')+
+    '</div>').join('')+
+    '<button class="quiz-btn" onclick="gradeQuiz(\''+containerId+'\',\''+key+'\')">Submit Quiz</button>'+
+    '<div class="quiz-score" id="'+containerId+'_score" style="display:none"></div>';
+}
+function gradeQuiz(containerId,key){
+  const qs=quizData[key]||[];let score=0;
+  qs.forEach((q,qi)=>{const sel=document.querySelector('input[name="'+key+'_'+qi+'"]:checked');if(sel&&+sel.value===q.correct)score++;});
+  const sc=document.getElementById(containerId+'_score');
+  sc.style.display='block';
+  sc.textContent='Score: '+score+' / '+qs.length+(score===qs.length?' 🎉 Perfect!':'');
+}
+
+const examPool=[
+  {q:'Over ℂ_p, exp(x) converges exactly when:',
+   options:['v_p(x) > 1/(p−1)','v_p(x) < 0','|x|_p > 1','always'],correct:0,
+   explain:['Correct! Same domain bound as over ℚ_p.','No, that diverges.','No.','No, the domain is restricted.']},
+  {q:'log(1+x) converges over ℂ_p when:',
+   options:['v_p(x) > 0 (x ∈ P)','v_p(x) < 0','x = 0 only','never'],correct:0,
+   explain:['Correct! Need x in the maximal ideal.','No.','No, it converges on all of P.','No.']},
+  {q:'The map log_p : U₁ = 1+P → ℂ_p is:',
+   options:['Only injective','Surjective (onto)','The zero map','Undefined'],correct:1,
+   explain:['It is surjective — the key new feature.','Correct! Every element of ℂ_p is a logarithm.','No.','No, it is well defined.']},
+  {q:'On the disc D, the maps exp and log are:',
+   options:['Equal','Mutually inverse isometries','Discontinuous','Constant'],correct:1,
+   explain:['No.','Correct! Inverse isometries between 1+D and D.','No, they are isometries.','No.']},
+  {q:'The Gauss norm of f = Σ a_i X^i at radius c is:',
+   options:['Σ |a_i| c^i','max_i |a_i| c^i','|a_0|','min_i |a_i|'],correct:1,
+   explain:['No, it is a max not a sum.','Correct! ‖f‖_c = max_i |a_i| c^i.','Only the constant term.','No.']},
+  {q:'A fundamental property of the Gauss norm is that it is:',
+   options:['Additive','Multiplicative','Archimedean','Not a norm'],correct:1,
+   explain:['No.','Correct! ‖fg‖_c = ‖f‖_c ‖g‖_c.','No, it is non-archimedean.','It is a genuine norm.']},
+  {q:'The Weierstrass Preparation Theorem factors f as:',
+   options:['g + h','g·h, g distinguished poly, h a unit','f²','a single monomial'],correct:1,
+   explain:['No, it is a product.','Correct! deg g counts zeros in the disc.','No.','No.']},
+  {q:'If the Gauss norm maximum is attained last at index N, then in B(0,c) the function f has:',
+   options:['No zeros','Exactly N zeros','Infinitely many zeros','N+1 zeros'],correct:1,
+   explain:['No.','Correct! N = degree of the distinguished factor.','No, finitely many.','No.']},
+  {q:'A power series f = Σ a_n X^n over ℂ_p is ENTIRE iff:',
+   options:['v_p(a_n)/n → +∞','a_n → 0','v_p(a_n) → 0','f is a polynomial'],correct:0,
+   explain:['Correct! Valuations must grow faster than linearly.','Necessary but not sufficient.','That gives radius 1.','No, entire ⊋ polynomial.']},
+  {q:'If v_p(a_n) = 2n, the radius of convergence is:',
+   options:['∞','p²','1','p'],correct:1,
+   explain:['No, only finite.','Correct! ρ = p^(lim v/n) = p². Not entire.','No.','No.']},
+  {q:'If v_p(a_n) = n², the function is:',
+   options:['Not entire','Entire','A polynomial','Divergent everywhere'],correct:1,
+   explain:['No, n²/n = n → ∞.','Correct! Entire (infinite radius).','No.','No.']},
+  {q:'An entire function over ℂ_p admits:',
+   options:['No factorization','A (possibly infinite) product over its zeros','Only finite degree','A unique zero'],correct:1,
+   explain:['No.','Correct! f = a·∏(1 − X/λ_i).','No.','No.']},
+  {q:'The Newton polygon of f = Σ a_i X^i is:',
+   options:['The graph of f','The lower convex hull of (i, v_p(a_i))','The upper hull','A tangent line'],correct:1,
+   explain:['No.','Correct! Lower convex hull of the valuation points.','No, the LOWER hull.','No.']},
+  {q:'A Newton-polygon segment of slope m corresponds to roots of:',
+   options:['Valuation m','Valuation −m (|root| = p^m)','Valuation 0','Valuation p'],correct:1,
+   explain:['Sign error.','Correct! v(root) = −m, so |root| = p^m.','No.','No.']},
+  {q:'The horizontal length of a Newton-polygon segment equals:',
+   options:['The degree of f','The number of roots of that valuation','The number of coefficients','Always 1'],correct:1,
+   explain:['No, that is the total length.','Correct! Counts roots of that absolute value.','No.','No.']},
+  {q:'Across all segments, the Newton-polygon segment lengths sum to:',
+   options:['1','deg f','v_p(a_0)','the number of slopes'],correct:1,
+   explain:['No.','Correct! They partition the degree of f.','No.','No.']}
+];
+
+let examTimer=null,examTimeLeft=0;
+function startExam(){
+  const timed=document.getElementById('timedMode').checked;
+  const body=document.getElementById('examBody');
+  body.innerHTML=examPool.map((q,qi)=>
+    '<div class="quiz-q"><div class="q-text">'+(qi+1)+'. '+q.q+'</div>'+
+    q.options.map((o,oi)=>'<label><input type="radio" name="ex_'+qi+'" value="'+oi+'"> '+o+'</label>').join('')+
+    '</div>').join('')+
+    '<button class="quiz-btn" onclick="gradeExam()">Submit Exam</button>'+
+    '<button class="quiz-btn secondary" onclick="resetExam()">Reset</button>'+
+    '<div id="examResult"></div>';
+  const t=document.getElementById('timer');
+  if(timed){examTimeLeft=20*60;t.style.display='block';updateTimer();examTimer=setInterval(()=>{examTimeLeft--;updateTimer();if(examTimeLeft<=0){clearInterval(examTimer);gradeExam();}},1000);}
+  else{t.style.display='none';}
+}
+function updateTimer(){const m=Math.floor(examTimeLeft/60),s=examTimeLeft%60;document.getElementById('timer').textContent=m+':'+(s<10?'0':'')+s;}
+function gradeExam(){
+  if(examTimer){clearInterval(examTimer);examTimer=null;}
+  let score=0;
+  examPool.forEach((q,qi)=>{const sel=document.querySelector('input[name="ex_'+qi+'"]:checked');if(sel&&+sel.value===q.correct)score++;});
+  const pct=Math.round(score/examPool.length*100);
+  let html='<div class="quiz-score">Final Score: '+score+' / '+examPool.length+' ('+pct+'%)</div>';
+  html+='<div class="perf-breakdown"><table><tr><th>#</th><th>Result</th></tr>';
+  examPool.forEach((q,qi)=>{const sel=document.querySelector('input[name="ex_'+qi+'"]:checked');const ok=sel&&+sel.value===q.correct;
+    html+='<tr><td>'+(qi+1)+'</td><td>'+(ok?'✓ Correct':'✗ Incorrect')+'</td></tr>';});
+  html+='</table></div>';
+  examPool.forEach((q,qi)=>{
+    html+='<div class="exam-explain"><div class="exam-explain-toggle" onclick="this.nextElementSibling.classList.toggle(\'open\')">Q'+(qi+1)+' explanation</div>'+
+      '<div class="exam-explain-body">'+
+      q.options.map((o,oi)=>'<div class="exam-explain-item '+(oi===q.correct?'opt-correct':'opt-wrong')+'"><strong>'+o+':</strong> '+((q.explain&&q.explain[oi])||'')+'</div>').join('')+
+      '</div></div>';
+  });
+  document.getElementById('examResult').innerHTML=html;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function resetExam(){if(examTimer){clearInterval(examTimer);examTimer=null;}document.getElementById('timer').style.display='none';document.getElementById('examBody').innerHTML='';}
+
+function initAll(){
+  document.querySelectorAll('.nav-link').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();goSection(a.dataset.section);}));
+  if(typeof calcCpExtend==='function')calcCpExtend();
+  if(typeof calcGaussNorm==='function')calcGaussNorm();
+  if(typeof calcEntire==='function')calcEntire();
+  if(typeof calcNewton==='function')calcNewton();
+  renderProblems('s71problems',genProblems71());
+  renderProblems('s72problems',genProblems72());
+  renderProblems('s73problems',genProblems73());
+  renderProblems('s74problems',genProblems74());
+  genQuiz('quiz71','s71');
+  genQuiz('quiz72','s72');
+  genQuiz('quiz73','s73');
+  genQuiz('quiz74','s74');
+  updateProgress('intro');
+}
+document.addEventListener('DOMContentLoaded',initAll);
+</script>
+</body>
+</html>
