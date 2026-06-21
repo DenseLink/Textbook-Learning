@@ -53,6 +53,8 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 #topbar .controls{display:flex;gap:12px;align-items:center}
 #topbar .controls button{background:none;border:1px solid rgba(128,128,128,.3);color:var(--text);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:.82rem;transition:all .2s}
 #topbar .controls button:hover{border-color:var(--accent);color:var(--accent)}
+.chapter-nav{background:var(--bg);border:1px solid rgba(128,128,128,.3);color:var(--text);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:.82rem;transition:all .2s;font-family:var(--font-main)}
+.chapter-nav:hover{border-color:var(--accent);color:var(--accent)}
 .dark-toggle{font-size:1.1rem!important;width:36px!important;padding:6px!important}
 .progress-bar{position:fixed;top:var(--topbar-h);left:var(--sidebar-w);right:0;height:3px;background:rgba(128,128,128,.15);z-index:89;transition:left var(--transition)}
 .progress-bar.full{left:0}
@@ -234,12 +236,20 @@ ul.compact li{margin-bottom:4px}
     </li>
     <li><a href="#" onclick="goTo('exam')" data-sec="exam">📝 Chapter Exam</a></li>
   </ul>
+  <div style="padding:14px 20px;margin-top:10px;border-top:1px solid rgba(128,128,128,.2)">
+    <div style="font-size:.78rem;color:var(--text2);margin-bottom:6px">Jump to another chapter:</div>
+    <a href="index_chapter_3.html" style="display:block;padding:6px 0;font-size:.85rem;color:var(--accent);text-decoration:none">Chapter 3: The p-adic Numbers →</a>
+  </div>
 </nav>
 
 <!-- TOPBAR -->
 <div id="topbar">
   <span class="breadcrumb" id="breadcrumb">Chapter 2 › Overview</span>
   <div class="controls">
+    <select class="chapter-nav" id="chapterNav" onchange="if(this.value)window.location.href=this.value" title="Switch chapter">
+      <option value="index_chapter_2.html" selected>📘 Ch 2: Foundations</option>
+      <option value="index_chapter_3.html">📗 Ch 3: The p-adic Numbers</option>
+    </select>
     <button onclick="prevSection()">← Prev</button>
     <button onclick="nextSection()">Next →</button>
     <button class="dark-toggle" onclick="toggleDark()" title="Toggle dark mode">🌙</button>

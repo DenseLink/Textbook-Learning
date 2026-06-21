@@ -18,10 +18,14 @@ These interactive tools are designed to help students and enthusiasts explore th
 * **Ultrametric Triangle Inequality**: Demonstrating why $|x+y|_p \leq \max(|x|_p, |y|_p)$.
 
 ## 📂 Repository Structure
-* `index.html`: The primary dashboard for the $p$-adic lesson modules.
-* `part2.html` & `indexpart3.html`: Sequential deep-dives into convergence, Cauchy sequences, and $p$-adic analysis.
+All modules live under `P-Adic-Numbers/`:
+* `index_chapter_2.html`: **Chapter 2 — Foundations.** Full interactive platform covering §2.1 Absolute Values, §2.2 Basic Properties, §2.3 Topology, and §2.4 Algebra (valuation ring, residue field), with practice problems, section quizzes, and a comprehensive exam.
+* `index_chapter_3.html`: **Chapter 3 — The $p$-adic Numbers.** Covers §3.1 Absolute Values on $\mathbb{Q}$ (equivalence, Ostrowski's theorem, the product formula) and §3.2 Completions (Cauchy sequences, the ring $\mathcal{C}$, null ideal $\mathcal{N}$, and the construction $\mathbb{Q}_p = \mathcal{C}/\mathcal{N}$), with the same full treatment.
+* `(first draft)/`: The earlier prototype files (`original_index.html`, `part2.html`, `indexpart3.html`) kept for reference.
+
+The two chapter files are **cross-linked**: each has a chapter switcher in the top bar and a "jump to another chapter" link in the sidebar. The links work as long as both files sit in the same folder when downloaded.
 
 ## 🚀 How to Use
 1. **Clone the Repo**: `git clone https://github.com/DenseLink/Textbook-Learning.git`
-2. **Open Locally**: Open any `.html` file in your web browser (Chrome, Firefox, or Edge recommended).
-3. **Interact**: Use the input fields to change the prime $p$ or the value $x$ to see the calculations and visualizations update in real-time.
+2. **Open Locally**: Open `P-Adic-Numbers/index_chapter_2.html` or `index_chapter_3.html` in your web browser (Chrome, Firefox, or Edge recommended). Keep both files in the same folder so cross-chapter navigation works.
+3. **Interact**: Use the input fields to change the prime $p$ or the value $x$ to see the calculations and visualizations update in real-time. Each chapter is fully self-contained (no internet or dependencies required).
