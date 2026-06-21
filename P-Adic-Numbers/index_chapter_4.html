@@ -159,7 +159,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
     <li><a href="#s41" class="nav-link" data-section="s41">4.1 — What We Know</a></li>
     <li><a href="#s42" class="nav-link" data-section="s42">4.2 — p-adic Integers</a></li>
     <li><a href="#s43" class="nav-link" data-section="s43">4.3 — Elements of ℚₚ</a></li>
+    <li><a href="#s44" class="nav-link" data-section="s44">4.4 — What Does ℚₚ Look Like?</a></li>
     <li><a href="#s45" class="nav-link" data-section="s45">4.5 — Hensel's Lemma</a></li>
+    <li><a href="#s46" class="nav-link" data-section="s46">4.6 — Using Hensel's Lemma</a></li>
+    <li><a href="#s47" class="nav-link" data-section="s47">4.7 — Hensel for Polynomials</a></li>
+    <li><a href="#s48" class="nav-link" data-section="s48">4.8 — Local and Global</a></li>
     <li><a href="#exam" class="nav-link" data-section="exam">Chapter Exam</a></li>
     <li style="margin-top:14px;border-top:1px solid rgba(128,128,128,.2);padding-top:10px">
       <a href="index_chapter_3.html">← Jump to another chapter</a>
@@ -195,7 +199,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
       <li><strong>§4.1</strong> — Properties of ℚₚ already known from the construction.</li>
       <li><strong>§4.2</strong> — The p-adic integers Zₚ = {x ∈ ℚₚ : |x|ₚ ≤ 1} (compact valuation ring).</li>
       <li><strong>§4.3</strong> — p-adic expansions: every x ∈ ℚₚ as Σ bₙ pⁿ (unique base-p series).</li>
+      <li><strong>§4.4</strong> — Visualizing ℚₚ: Cantor sets, fractals, and total disconnectedness.</li>
       <li><strong>§4.5</strong> — Hensel's Lemma: lifting roots from mod p to Zₚ.</li>
+      <li><strong>§4.6</strong> — Applications: roots of unity and squares in ℚₚ.</li>
+      <li><strong>§4.7</strong> — Hensel's Lemma for polynomial factorizations.</li>
+      <li><strong>§4.8</strong> — The local-global principle and the Hasse–Minkowski theorem.</li>
     </ul>
   </div>
   <div class="nav-btns"><button class="nav-btn" disabled>← Prev</button><button class="nav-btn" onclick="goSection('s41')">Next →</button></div>
@@ -252,8 +260,33 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
     <p>Every element of Zₚ is the limit of a unique <strong>coherent sequence</strong> (αₙ) where αₙ ≡ αₙ₋₁ (mod pⁿ⁻¹).</p>
   </div>
 
-  <div class="block block-thm"><div class="label">Corollary 4.2.7</div>
-    <p><strong>Zₚ is compact</strong>, and ℚₚ is locally compact.</p>
+  <div class="block block-thm"><div class="label">Corollary 4.2.3 — ℤ is dense in Zₚ</div>
+    <p>Every p-adic integer is a limit of ordinary integers. (One could even <em>define</em> Zₚ as the completion of ℤ with respect to |·|ₚ.) The coherent sequence (αₙ) of Prop. 4.2.2(iii) is exactly the "coherent sequence" of Chapter 1.</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Corollary 4.2.4 — ℚₚ = Zₚ[1/p]</div>
+    <p>For every x ∈ ℚₚ there is an n ≥ 0 with <span class="math">pⁿx ∈ Zₚ</span>. Multiplication by p is a homeomorphism, and the sets <span class="math">pⁿZₚ</span> (n ∈ ℤ) form a fundamental system of neighborhoods of 0 covering all of ℚₚ.</p>
+    <p>This gives a clean description of the valuation: vₚ(x) is the largest n with <span class="math">x ∈ pⁿZₚ</span>. Crucially, <span class="math">|x − y|ₚ ≤ p⁻ⁿ ⟺ x − y ∈ pⁿZₚ</span>, so <span class="math">B(0, p⁻ⁿ) = pⁿZₚ</span> — topology and algebra are tightly linked.</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Corollary 4.2.5 — Exact sequence & finite quotients</div>
+    <p>For each n ≥ 1 the sequence <span class="math">0 → Zₚ —(·pⁿ)→ Zₚ → ℤ/pⁿℤ → 0</span> is exact, so</p>
+    <span class="math-block">Zₚ / pⁿZₚ ≅ ℤ/pⁿℤ</span>
+    <p>The cosets <span class="math">a + pⁿZₚ</span> (a = 0,…,pⁿ−1) are precisely the balls B(a, p⁻ⁿ). The <em>finiteness</em> of these quotients is exactly what forces Zₚ to be compact.</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Corollary 4.2.6 — Topology of ℚₚ</div>
+    <p>ℚₚ is a <strong>totally disconnected, Hausdorff</strong> topological space: the connected component of any point is just that point, yet any two distinct points can be separated by disjoint (cl)open balls.</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Corollary 4.2.7 — Compactness</div>
+    <p><strong>Zₚ is compact</strong>, and ℚₚ is locally compact. (More generally: a complete field with principal valuation ideal is locally compact iff its residue field is finite.)</p>
+  </div>
+
+  <div class="block block-def"><div class="label">Definition — The p-adic units Zₚ×</div>
+    <p>The invertible elements of Zₚ form a group, the <strong>p-adic units</strong>:</p>
+    <span class="math-block">Zₚ× = {x ∈ ℚₚ : |x|ₚ = 1},   Zₚ× ∩ ℚ = {a/b : p ∤ ab}</span>
+    <p>It is a closed (hence compact) subset of Zₚ. Every nonzero x ∈ ℚₚ factors uniquely as <span class="math">x = pᵛᵖ⁽ˣ⁾ · u</span> with u ∈ Zₚ×.</p>
   </div>
 
   <div class="interactive-viz">
@@ -283,9 +316,14 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 
 <section class="section" id="s43">
   <h1>4.3 — The Elements of ℚₚ (p-adic Expansions)</h1>
-  <p>Every p-adic number can be written uniquely as a base-p "decimal" expansion extending infinitely to the left.</p>
-  
-  <div class="block block-thm"><div class="label">Theorem 4.3.1 (p-adic Expansion)</div>
+  <p>We give two concrete descriptions of elements of ℚₚ — both met in Chapter 1: <strong>coherent sequences</strong> (theoretical) and <strong>p-adic expansions</strong> (the most concrete).</p>
+
+  <div class="block block-def"><div class="label">Coherent Sequences & the Inverse Limit</div>
+    <p>Writing φₙ : Zₚ → ℤ/pⁿℤ for the projections and Aₙ = ℤ/pⁿℤ, a <strong>coherent sequence</strong> is a tuple (αₙ) with αₙ ∈ Aₙ and ψₙ(αₙ) = αₙ₋₁ (reduction mod pⁿ⁻¹).</p>
+    <p><strong>Proposition 4.3.1:</strong> The maps φₙ identify Zₚ, as a topological ring, with the closed subring of ∏ₙ Aₙ consisting of coherent sequences. In high-brow language, <span class="math">Zₚ = lim← ℤ/pⁿℤ</span> is the <strong>inverse limit</strong> of the finite rings ℤ/pⁿℤ — a purely algebraic construction with a universal property.</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Theorem 4.3.3 — Corollary (p-adic Expansion)</div>
     <p>Every x ∈ ℚₚ has a unique representation as</p>
     <span class="math-block">x = b₋ₘ p⁻ᵐ + b₋ₘ₊₁ p⁻ᵐ⁺¹ + ⋯ + b₋₁ p⁻¹ + b₀ + b₁ p + b₂ p² + ⋯</span>
     <span class="math-block">= Σ (n ≥ -m) bₙ pⁿ</span>
@@ -301,6 +339,14 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
   <div class="block block-example"><div class="label">Example: -1 in ℚₚ</div>
     <p>Write <span class="math">-1 = (p-1) + (p-1)p + (p-1)p² + ⋯</span> (all digits = p-1).</p>
     <p>Check: this series converges (terms → 0), and equals <span class="math">(p-1)/(1-p) = -1</span>.</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Corollary 4.3.5 — Arbitrary digit sets</div>
+    <p>The digits need not be {0,…,p−1}. Any set <span class="math">A ⊂ Zₚ</span> of representatives of ℤ/pℤ works: every x ∈ ℚₚ has a unique expansion <span class="math">Σ bₙ pⁿ</span> with bₙ ∈ A. The elements of A need not even be integers — e.g. one may use 0 together with the (p−1)-st roots of unity (the <em>Teichmüller representatives</em>). The expansion depends strongly on the chosen digit set.</p>
+  </div>
+
+  <div class="block block-example"><div class="label">R vs ℚₚ — a clean analogy</div>
+    <p>A real x = Σ bᵢ10⁻ⁱ extends infinitely to the <em>right</em> (and is <em>not</em> unique: 0.999… = 1). A p-adic x = Σ bₙpⁿ extends infinitely to the <em>left</em> (and <em>is</em> unique). In both cases eventually-periodic expansions correspond exactly to <strong>rational</strong> numbers. Both ℝ and ℚₚ are locally compact, but ℚₚ is totally disconnected.</p>
   </div>
 
   <div class="interactive-viz">
@@ -325,7 +371,60 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
   <h2>Section Quiz</h2>
   <div class="quiz-container" id="quiz43"></div>
 
-  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s42')">← Prev</button><button class="nav-btn" onclick="goSection('s45')">Next →</button></div>
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s42')">← Prev</button><button class="nav-btn" onclick="goSection('s44')">Next →</button></div>
+</section>
+
+<section class="section" id="s44">
+  <h1>4.4 — What Does ℚₚ Look Like?</h1>
+  <p>We have a beautiful mental picture of ℝ as a line. Can we "see" ℚₚ (or at least Zₚ)? The challenge: ℚₚ is <strong>totally disconnected but not discrete</strong> — its points are not connected to each other, yet none of them is isolated. We can't draw that with intervals or with scattered dots.</p>
+
+  <div class="block block-def"><div class="label">What "visualizing" means here</div>
+    <p>The real line encodes topology <em>and</em> order <em>and</em> metric. For Zₚ we settle for a picture that preserves the <strong>topology</strong> (which sequences converge to which limits) but <em>not</em> the metric. So distances in the picture won't be proportional to p-adic distances — but convergent sequences will still look convergent.</p>
+  </div>
+
+  <div class="block block-def"><div class="label">The Cantor middle-thirds set C</div>
+    <p>Start with C₀ = [0,1], remove the open middle third to get C₁ = [0,⅓] ∪ [⅔,1], repeat forever: <span class="math">C = ⋂ₙ Cₙ</span>. The result is compact, totally disconnected, and "perfect" (no isolated points). A point lies in C iff it has a base-3 expansion using only digits {0, 2}.</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Theorem 4.4.1 — Z₂ ≅ Cantor set</div>
+    <p>Z₂ with the 2-adic metric is <strong>homeomorphic</strong> to the middle-thirds Cantor set C ⊂ ℝ. The bijection sends a 2-adic expansion Σ bₙ2ⁿ (bₙ ∈ {0,1}) to the base-3 number Σ 2bₙ/3ⁿ⁺¹ (digits in {0,2}):</p>
+    <span class="math-block">f(b₀ + b₁·2 + b₂·2² + ⋯) = 2b₀/3 + 2b₁/3² + 2b₂/3³ + ⋯</span>
+    <p>The hierarchical "split each piece into 2" structure of C mirrors "each residue mod 2ⁿ splits into 2 mod 2ⁿ⁺¹".</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Theorem 4.4.2 — All Zₚ are homeomorphic</div>
+    <p>For any prime p, <span class="math">Z₂ ≅ Zₚ</span> (topologically). This follows from a topology theorem: <em>any compact, perfect, totally disconnected subset of ℝ is homeomorphic to the Cantor set</em>. So <strong>every Zₚ is "a Cantor set."</strong></p>
+  </div>
+
+  <div class="block block-example"><div class="label">Fractals via "vector digits"</div>
+    <p>For prettier pictures, place a point xᵢ ∈ ℝⁿ for each digit i and map <span class="math">Σ aᵢpⁱ ↦ Σ (1/bⁱ⁺¹) x_{aᵢ}</span> for a large base b. The image of Zₚ becomes a self-similar <strong>fractal</strong>. Using the vertices of a regular p-gon, Sage's <code>Zp(5).plot()</code> draws such a picture; Z₃ comes out as the <strong>Sierpiński gasket</strong>. Scaling these copies by θ⁻¹ repeatedly builds a picture of all of ℚₚ.</p>
+  </div>
+
+  <div class="block block-proof"><div class="label">Caveat</div>
+    <p>These pictures are <em>topologically</em> faithful but <em>not</em> metrically faithful, and they don't encode the algebraic (field) structure. Fun to look at — but limited as a working tool.</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: The Zₚ Ball-Tree & Cantor Subdivision</h4>
+    <p>Zₚ splits into p balls (cosets of pZₚ); each splits into p more (cosets of p²Zₚ); forever. This tree <em>is</em> the topology of Zₚ. Watch how it generalizes the Cantor construction.</p>
+    <div class="controls-row">
+      <label for="s44p">p =</label>
+      <select id="s44p" onchange="drawTree()"><option selected>2</option><option>3</option><option>5</option></select>
+      <label for="s44d">depth =</label>
+      <input type="range" id="s44d" min="1" max="4" value="3" oninput="drawTree()">
+      <span class="val" id="s44dVal">3</span>
+    </div>
+    <div class="viz-svg" id="s44svg"></div>
+    <div class="viz-output" id="s44out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s44problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz44"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s43')">← Prev</button><button class="nav-btn" onclick="goSection('s45')">Next →</button></div>
 </section>
 
 <section class="section" id="s45">
@@ -345,6 +444,18 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
   <div class="block block-example"><div class="label">Example: √2 in ℚ₇</div>
     <p>Does √2 exist in ℚ₇? Let f(X) = X² - 2. We need a root α ∈ ℤ/7ℤ of f. Check: 3² = 9 ≡ 2 (mod 7). So α = 3 works.</p>
     <p>f'(X) = 2X, f'(3) = 6 ≢ 0 (mod 7). Hensel's Lemma applies! ∴ √2 exists in Z₇.</p>
+  </div>
+
+  <div class="block block-proof"><div class="label">Why Newton's method? (the lifting step)</div>
+    <p>To go from αₙ (good mod pⁿ) to αₙ₊₁ = αₙ + bpⁿ, expand <span class="math">F(αₙ + bpⁿ) ≡ F(αₙ) + F'(αₙ)·bpⁿ (mod pⁿ⁺¹)</span>. Writing F(αₙ) = pⁿx and dividing by pⁿ gives <span class="math">x + F'(αₙ)b ≡ 0 (mod p)</span>. Since F'(αₙ) is a unit (≢ 0 mod p), b is uniquely solvable. Substituting back yields exactly</p>
+    <span class="math-block">αₙ₊₁ = αₙ − F(αₙ)/F'(αₙ)</span>
+    <p>— Newton's iteration. Unlike the real case, in Zₚ it <em>always</em> converges (provided F'(α₁) ≢ 0), never leaves Zₚ, and the limit is the unique root near α₁.</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Theorem 4.5.3 — Stronger Hensel (Problem 120)</div>
+    <p>The hypotheses can be weakened: it suffices that</p>
+    <span class="math-block">|F(α₁)|ₚ &lt; |F'(α₁)|ₚ²</span>
+    <p>Then the Newton sequence still converges to a unique root α with <span class="math">|α − α₁|ₚ &lt; |F'(α₁)|ₚ</span>. This version handles cases where F'(α₁) <em>is</em> divisible by p — essential for p = 2 (e.g. lifting square roots, where F'(X) = 2X is always even).</p>
   </div>
 
   <div class="interactive-viz">
@@ -369,7 +480,173 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
   <h2>Section Quiz</h2>
   <div class="quiz-container" id="quiz45"></div>
 
-  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s43')">← Prev</button><button class="nav-btn" onclick="goSection('exam')">Next →</button></div>
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s43')">← Prev</button><button class="nav-btn" onclick="goSection('s46')">Next →</button></div>
+</section>
+
+<section class="section" id="s46">
+  <h1>4.6 — Using Hensel's Lemma</h1>
+  <p>Two beautiful applications: determining exactly which <strong>roots of unity</strong> live in ℚₚ, and classifying the <strong>squares</strong> in ℚₚ.</p>
+
+  <h2>Roots of Unity</h2>
+  <p>An m-th root of unity ζ satisfies ζᵐ = 1; it is <em>primitive</em> if no smaller power equals 1. Any root of unity has |ζ|ₚ = 1, so ζ ∈ Zₚ×. Apply Hensel to F(X) = Xᵐ − 1, with F'(X) = mXᵐ⁻¹ (a unit mod p iff p ∤ m).</p>
+
+  <div class="block block-thm"><div class="label">Proposition 4.6.1 — Roots of unity in ℚₚ</div>
+    <p>For p ∤ m, ℚₚ contains a primitive m-th root of unity <strong>if and only if m divides p − 1</strong>.</p>
+    <p>Consequently the roots of unity of order prime to p are exactly the <strong>(p−1)-st roots of unity</strong>: there are exactly p − 1 of them, forming a cyclic group ≅ ℤ/(p−1)ℤ. (For p² | order: no pⁿ-th roots exist except ±1 when p = 2.)</p>
+  </div>
+
+  <div class="block block-example"><div class="label">Example: 4th roots of unity in ℚ₅</div>
+    <p>p = 5, p − 1 = 4. Since 4 | 4, ℚ₅ contains a primitive 4th root of unity — i.e. a square root of −1! Indeed 2² = 4 ≡ −1 (mod 5), and Hensel lifts 2 to i ∈ Z₅.</p>
+  </div>
+
+  <h2>Squares in ℚₚ</h2>
+  <div class="block block-thm"><div class="label">Proposition 4.6.2 & Corollary 4.6.3 (p ≠ 2)</div>
+    <p>For an odd prime p and a unit b ∈ Zₚ×: if α₁² ≡ b (mod p) has a solution, then b is a square in Zₚ× (apply Hensel to X² − b; 2α₁ ≢ 0 mod p).</p>
+    <p>In general, x ∈ ℚₚ is a square iff <span class="math">x = p²ⁿ y²</span> with y ∈ Zₚ× — that is, vₚ(x) is even <em>and</em> the unit part is a QR mod p. The group <span class="math">ℚₚ×/(ℚₚ×)²</span> has order <strong>4</strong>, with coset representatives <span class="math">{1, p, c, cp}</span> where c is a non-residue mod p. (Compare ℝ: ℝ×/(ℝ×)² = {1, −1}, order 2 — a "rule of signs.")</p>
+  </div>
+
+  <div class="block block-lem"><div class="label">The case p = 2</div>
+    <p>Here F'(X) = 2X is always even, so we need the stronger Hensel (Thm 4.5.3). Result: a 2-adic unit b is a square <strong>iff b ≡ 1 (mod 8)</strong>. The group <span class="math">ℚ₂×/(ℚ₂×)²</span> has order <strong>8</strong>, generated by −1, 5, 2; representatives <span class="math">{1, −1, 5, −5, 2, −2, 10, −10}</span>.</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: Is x a Square in ℚₚ? & Roots of Unity</h4>
+    <div class="controls-row">
+      <label for="s46x">x =</label>
+      <input type="number" id="s46x" value="6" style="width:70px">
+      <label for="s46p">p =</label>
+      <select id="s46p" onchange="calcSquare()"><option>2</option><option selected>5</option><option>7</option><option>11</option><option>13</option></select>
+      <button onclick="calcSquare()">Check square</button>
+    </div>
+    <div class="viz-output" id="s46out"></div>
+    <div class="controls-row" style="margin-top:10px">
+      <label for="s46p2">Roots of unity: p =</label>
+      <select id="s46p2" onchange="calcRoots()"><option>2</option><option>3</option><option selected>7</option><option>11</option><option>13</option></select>
+      <button onclick="calcRoots()">List orders</button>
+    </div>
+    <div class="viz-output" id="s46out2"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s46problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz46"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s45')">← Prev</button><button class="nav-btn" onclick="goSection('s47')">Next →</button></div>
+</section>
+
+<section class="section" id="s47">
+  <h1>4.7 — Hensel's Lemma for Polynomials</h1>
+  <p>The first Hensel's Lemma lifts a root, i.e. a linear factor (X − α). The general version lifts <em>any</em> factorization mod p — provided the factors are coprime mod p.</p>
+
+  <div class="block block-def"><div class="label">Definition 4.7.1 — Relatively prime mod p</div>
+    <p>Polynomials g, h ∈ Zₚ[X] are <strong>relatively prime modulo p</strong> if their reductions ḡ, h̄ ∈ 𝔽ₚ[X] satisfy gcd(ḡ, h̄) = 1; equivalently, ∃ a, b ∈ Zₚ[X] with <span class="math">a·g + b·h ≡ 1 (mod p)</span>.</p>
+    <p>This generalizes "f'(α) ≢ 0 mod p" (which says (X − α) does <em>not</em> divide the cofactor mod p — i.e. α is not a double root).</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Theorem 4.7.2 — Hensel's Lemma for Polynomials</div>
+    <p>Let f ∈ Zₚ[X], and suppose <span class="math">f ≡ g₁·h₁ (mod p)</span> where g₁ is <strong>monic</strong> and g₁, h₁ are <strong>relatively prime mod p</strong>. Then there exist g, h ∈ Zₚ[X] with:</p>
+    <ul style="margin-left:20px">
+      <li>g monic, with g ≡ g₁ and h ≡ h₁ (mod p),</li>
+      <li>and a true factorization over Zₚ: <span class="math">f = g·h</span>.</li>
+    </ul>
+  </div>
+
+  <div class="block block-proof"><div class="label">Proof idea (successive approximation)</div>
+    <p>Build gₙ, hₙ with f ≡ gₙhₙ (mod pⁿ), gₙ monic of fixed degree, gₙ₊₁ ≡ gₙ (mod pⁿ). To pass from level n to n+1, set g = gₙ + p·r, h = hₙ + p·s and solve <span class="math">k ≡ r·hₙ + s·gₙ (mod p)</span> where pk = f − gₙhₙ. Coprimality gives a, b with a·gₙ + b·hₙ ≡ 1, so r̃ = b·k, s̃ = a·k work — then reduce r̃ mod gₙ to keep g monic of the right degree. Taking limits gives g, h over Zₚ. (Same engine as the first Hensel's Lemma.)</p>
+  </div>
+
+  <div class="block block-example"><div class="label">Example (Problem 126)</div>
+    <p>p = 2, f(X) = 2X² + X + 2. Mod 2 this is just X, so take g₁ = X, h₁ = 1 (coprime mod 2). Hensel lifts this to a genuine factorization of f over Z₂ — the trick of reducing r̃ mod g₁ is what keeps the monic factor degree-1.</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: Are Two Factors Coprime mod p?</h4>
+    <p>The key hypothesis is gcd(ḡ, h̄) = 1 in 𝔽ₚ[X]. Enter polynomial coefficients (constant term first, space-separated) and test.</p>
+    <div class="controls-row">
+      <label for="s47g">g coeffs =</label>
+      <input type="text" id="s47g" value="1 1" placeholder="e.g. 1 1  (means 1 + X)" style="width:140px">
+      <label for="s47h">h coeffs =</label>
+      <input type="text" id="s47h" value="0 1" placeholder="e.g. 0 1  (means X)" style="width:140px">
+      <label for="s47p">p =</label>
+      <select id="s47p" onchange="calcCoprime()"><option selected>2</option><option>3</option><option>5</option><option>7</option></select>
+      <button onclick="calcCoprime()">Test gcd mod p</button>
+    </div>
+    <div class="viz-output" id="s47out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s47problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz47"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s46')">← Prev</button><button class="nav-btn" onclick="goSection('s48')">Next →</button></div>
+</section>
+
+<section class="section" id="s48">
+  <h1>4.8 — Local and Global</h1>
+  <p>Deciding if a polynomial has roots in each ℚₚ (a <strong>local</strong> question) is easy via Hensel. The dream: patch local information together to answer the hard <strong>global</strong> question of roots in ℚ. This is the <strong>local-global (Hasse) principle</strong>.</p>
+
+  <div class="block block-def"><div class="label">"Local" vs "Global" — the convention p ≤ ∞</div>
+    <p>Following Hensel's analogy, each ℚₚ carries "local" information near the prime p, with ℝ = ℚ_∞ treated as the prime "at infinity." A root in ℚ ("global") is automatically a root in every ℚₚ ("local everywhere"). So: <strong>no local root at some p ⟹ no global root.</strong></p>
+    <ul style="margin-left:20px">
+      <li>X² + 1 = 0: no root in ℝ ⟹ none in ℚ.</li>
+      <li>X² − 2 = 0: no root in ℚ₂ ⟹ none in ℚ.</li>
+    </ul>
+  </div>
+
+  <div class="block block-thm"><div class="label">Proposition 4.8.1 — Squares (a clean local-global)</div>
+    <p>x ∈ ℚ is a square <strong>if and only if</strong> it is a square in every ℚₚ, p ≤ ∞. (Square at ∞ ⟹ positive; square at each finite p ⟹ vₚ(x) even ⟹ x is a square in ℚ.)</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Theorem 4.8.2 — Hasse–Minkowski</div>
+    <p>A <strong>quadratic form</strong> F(X₁,…,Xₙ) = Σ cᵢⱼXᵢXⱼ over ℚ has a non-trivial zero in ℚ <strong>if and only if</strong> it has a non-trivial zero in every ℚₚ, p ≤ ∞.</p>
+    <p>The local conditions are each decidable (Hensel + finitely many primes matter), so this completely solves the rational solvability of quadratic forms.</p>
+  </div>
+
+  <div class="block block-lem"><div class="label">⚠️ The naïve principle is FALSE in general</div>
+    <p>"Solvable locally everywhere ⟺ solvable globally" fails beyond quadratics:</p>
+    <ul style="margin-left:20px">
+      <li><span class="math">(X²−2)(X²−17)(X²−34) = 0</span> has a root in every ℚₚ but <strong>none in ℚ</strong> (Problem 129).</li>
+      <li><span class="math">X⁴ − 17 = 2Y²</span> is solvable locally everywhere but not in ℚ (Problem 130).</li>
+    </ul>
+    <p>Yet the <em>idea</em> remains central — the Birch &amp; Swinnerton-Dyer conjecture is a deep modern descendant.</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Worked machinery: aX² + bY² + cZ² = 0</div>
+    <p>For pairwise-coprime square-free integers a, b, c, Hasse–Minkowski reduces to checking each ℚₚ. <strong>Chevalley–Warning</strong> (Prop 4.8.3) handles odd p ∤ abc automatically (there's always a non-trivial solution mod p, which Hensel lifts). The remaining conditions (Prop 4.8.6) for a non-trivial rational solution are:</p>
+    <ol style="margin-left:20px">
+      <li>a, b, c are <strong>not all the same sign</strong> (the ℝ / ∞ condition);</li>
+      <li>for each odd prime dividing a: −b/c is a QR mod p (∃ r with b + r²c ≡ 0 mod p); similarly for primes dividing b and c;</li>
+      <li>if a, b, c all odd: some two of them sum to 0 mod 4;</li>
+      <li>if one is even: b+c or a+b+c is divisible by 8 (sym.).</li>
+    </ol>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: Local-Global Solvability of aX² + bY² + cZ² = 0</h4>
+    <p>Enter pairwise-coprime square-free integers. The tool checks the Hasse–Minkowski conditions (Prop 4.8.6) and reports whether a non-trivial rational solution exists.</p>
+    <div class="controls-row">
+      <label for="s48a">a =</label>
+      <input type="number" id="s48a" value="1" style="width:70px">
+      <label for="s48b">b =</label>
+      <input type="number" id="s48b" value="1" style="width:70px">
+      <label for="s48c">c =</label>
+      <input type="number" id="s48c" value="-2" style="width:70px">
+      <button onclick="calcLocalGlobal()">Analyze</button>
+    </div>
+    <div class="viz-output" id="s48out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s48problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz48"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s47')">← Prev</button><button class="nav-btn" onclick="goSection('exam')">Next →</button></div>
 </section>
 
 <section class="section" id="exam">
@@ -386,7 +663,7 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 </main>
 
 <script>
-const SECTIONS = ['intro','s41','s42','s43','s45','exam'];
+const SECTIONS = ['intro','s41','s42','s43','s44','s45','s46','s47','s48','exam'];
 function goSection(id){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   const el=document.getElementById(id); if(!el)return;
@@ -493,6 +770,178 @@ function calcHensel(){
     'After '+iter+' iteration'+(iter>1?'s':'')+', x ≈ √'+a+' in Z<sub>'+p+'</sub>.';
 }
 
+// ---- §4.4: Zp ball-tree / Cantor subdivision ----
+function drawTree(){
+  const p=+document.getElementById('s44p').value;
+  const depth=+document.getElementById('s44d').value;
+  document.getElementById('s44dVal').textContent=depth;
+  const W=Math.min(820, Math.max(360, Math.pow(p,depth)*16+40));
+  const levelH=70, H=levelH*(depth+1)+30;
+  let svg='<svg width="100%" viewBox="0 0 '+W+' '+H+'" style="max-width:'+W+'px">';
+  const accent='#4361ee';
+  // recursively place: each level n has p^n nodes spread across width
+  function place(n){const cnt=Math.pow(p,n);const xs=[];for(let i=0;i<cnt;i++){xs.push(20+(W-40)*(i+0.5)/cnt);}return xs;}
+  // draw edges from level n to n+1
+  for(let n=0;n<depth;n++){
+    const xs=place(n), xs2=place(n+1);
+    const y=30+n*levelH, y2=30+(n+1)*levelH;
+    xs2.forEach((x2,j)=>{const parent=xs[Math.floor(j/p)];
+      svg+='<line x1="'+parent+'" y1="'+(y+6)+'" x2="'+x2+'" y2="'+(y2-6)+'" stroke="rgba(128,128,128,.5)" stroke-width="1"/>';});
+  }
+  // draw nodes
+  for(let n=0;n<=depth;n++){
+    const xs=place(n), y=30+n*levelH;
+    xs.forEach((x,i)=>{
+      const r=Math.max(3,8-n);
+      svg+='<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+accent+'"/>';
+      if(n<=2 && xs.length<=Math.pow(p,2)){
+        svg+='<text x="'+x+'" y="'+(y-r-3)+'" font-size="9" text-anchor="middle" fill="currentColor">'+i+'</text>';
+      }
+    });
+    // level label
+    svg+='<text x="6" y="'+(y+4)+'" font-size="9" fill="currentColor">'+(n===0?'Zp':'p'+(n===1?'':'<tspan dy="-3" font-size="7">'+n+'</tspan>')+'Zp')+'</text>';
+  }
+  svg+='</svg>';
+  document.getElementById('s44svg').innerHTML=svg;
+  document.getElementById('s44out').innerHTML=
+    'p = '+p+', depth = '+depth+': Z<sub>'+p+'</sub> is partitioned into <strong>'+Math.pow(p,depth)+'</strong> balls (cosets of p<sup>'+depth+'</sup>Z<sub>'+p+'</sub>), each ≅ Z<sub>'+p+'</sub>.<br>'+
+    'Each ball splits into '+p+' sub-balls at the next level — forever. This infinite '+p+'-ary tree IS the topology of Z<sub>'+p+'</sub> (a Cantor set).';
+}
+
+// ---- §4.6: squares in Qp & roots of unity ----
+function isQRmodp(a,p){a=((a%p)+p)%p;if(a===0)return true;for(let r=1;r<p;r++){if((r*r)%p===a)return true;}return false;}
+function calcSquare(){
+  const x=+document.getElementById('s46x').value;
+  const p=+document.getElementById('s46p').value;
+  const out=document.getElementById('s46out');
+  if(x===0){out.innerHTML='0 is a square (0 = 0²).';return;}
+  const v=vp(x,p);
+  let unit=Math.abs(x);while(unit%p===0)unit/=p; // unit part magnitude (sign handled below for p odd)
+  let html='x = '+x+', v<sub>'+p+'</sub>(x) = '+v+'<br>';
+  if(p===2){
+    // x = 2^v * u, u odd; square iff v even and u ≡ 1 mod 8
+    let u=x;while(u%2===0)u/=2;
+    const umod8=((u%8)+8)%8;
+    const ok = (v%2===0) && (umod8===1);
+    html+='Unit part u = '+u+' ≡ '+umod8+' (mod 8)<br>';
+    html+='Square in ℚ₂ ⟺ v even AND u ≡ 1 (mod 8): v '+(v%2===0?'even ✓':'odd ✗')+', u '+(umod8===1?'≡1 ✓':'≢1 ✗')+'<br>';
+    html+='<strong>'+(ok?'✓ x IS a square in ℚ₂':'✗ x is NOT a square in ℚ₂')+'</strong>';
+  } else {
+    // sign: in Qp (p odd) sign doesn't independently matter; -1 is a square iff p≡1 mod 4. Use unit residue mod p.
+    let ured=((x/Math.pow(p,v))%p+p)%p; // unit part mod p
+    const qr=isQRmodp(ured,p);
+    const ok=(v%2===0)&&qr;
+    html+='Unit part ≡ '+ured+' (mod '+p+'); is it a QR mod '+p+'? '+(qr?'yes ✓':'no ✗')+'<br>';
+    html+='Square in ℚ<sub>'+p+'</sub> ⟺ v even AND unit is a QR: v '+(v%2===0?'even ✓':'odd ✗')+'<br>';
+    html+='<strong>'+(ok?'✓ x IS a square in ℚ'+p:'✗ x is NOT a square in ℚ'+p)+'</strong>';
+  }
+  out.innerHTML=html;
+}
+function divisors(n){const d=[];for(let i=1;i<=n;i++)if(n%i===0)d.push(i);return d;}
+function calcRoots(){
+  const p=+document.getElementById('s46p2').value;
+  const divs=divisors(p-1);
+  document.getElementById('s46out2').innerHTML=
+    'In ℚ<sub>'+p+'</sub>, a primitive m-th root of unity (p∤m) exists ⟺ m | (p−1) = '+(p-1)+'.<br>'+
+    'Allowed orders m: <strong>{'+divs.join(', ')+'}</strong><br>'+
+    'So ℚ<sub>'+p+'</sub> contains exactly the '+(p-1)+' (= p−1) roots of unity of order prime to p, forming a cyclic group ℤ/'+(p-1)+'ℤ.'+
+    (p===2?'<br>(p=2: only ±1, and ±1 are the only roots of unity.)':'');
+}
+
+// ---- §4.7: gcd of polynomials over F_p ----
+function polyTrim(a){while(a.length>1 && a[a.length-1]===0)a.pop();return a;}
+function polyMod(a,p){return a.map(c=>((c%p)+p)%p);}
+function polyDegree(a){let d=a.length-1;while(d>0&&a[d]===0)d--;return d;}
+function polyIsZero(a){return polyDegree(a)===0 && (((a[0]%1)===0)?a[0]===0:true) && a[0]===0;}
+function polyRemModp(a,b,p){
+  // remainder of a divided by b in F_p[X]
+  let r=polyMod(a.slice(),p);r=polyTrim(r);
+  const db=polyDegree(b);
+  const binv=modInv(b[db],p);
+  let guard=0;
+  while(polyDegree(r)>=db && !(polyDegree(r)===0&&r[0]===0) && guard++<1000){
+    const dr=polyDegree(r);
+    if(r[dr]===0)break;
+    const lead=(r[dr]*binv)%p;
+    for(let i=0;i<=db;i++){r[dr-db+i]=((r[dr-db+i]-lead*b[i])%p+p)%p;}
+    r=polyTrim(r);
+    if(polyDegree(r)===dr && r[dr]!==0)break; // safety
+  }
+  return polyTrim(r);
+}
+function polyGCDmodp(g,h,p){
+  let a=polyTrim(polyMod(g.slice(),p)), b=polyTrim(polyMod(h.slice(),p));
+  let guard=0;
+  while(!(polyDegree(b)===0 && b[0]===0) && guard++<100){
+    const r=polyRemModp(a,b,p);
+    a=b;b=r;
+  }
+  a=polyTrim(a);
+  const d=polyDegree(a);
+  if(a[d]!==0){const inv=modInv(a[d],p);a=a.map(c=>((c*inv)%p+p)%p);}
+  return polyTrim(a);
+}
+function polyStr(a){
+  const terms=[];a.forEach((c,i)=>{if(c!==0)terms.push((i===0?c:(c===1?'':c)+'X'+(i===1?'':'^'+i)));});
+  return terms.length?terms.join(' + '):'0';
+}
+function calcCoprime(){
+  const p=+document.getElementById('s47p').value;
+  const g=document.getElementById('s47g').value.trim().split(/\s+/).map(Number);
+  const h=document.getElementById('s47h').value.trim().split(/\s+/).map(Number);
+  if(g.some(isNaN)||h.some(isNaN)){document.getElementById('s47out').innerHTML='Please enter space-separated integer coefficients.';return;}
+  const gcdp=polyGCDmodp(g,h,p);
+  const coprime=(polyDegree(gcdp)===0 && gcdp[0]!==0);
+  document.getElementById('s47out').innerHTML=
+    'ḡ = '+polyStr(polyMod(g,p))+' , h̄ = '+polyStr(polyMod(h,p))+' in 𝔽<sub>'+p+'</sub>[X]<br>'+
+    'gcd(ḡ, h̄) = <strong>'+polyStr(gcdp)+'</strong><br>'+
+    '<strong>'+(coprime?'✓ Relatively prime mod '+p+' — Hensel\'s Lemma for Polynomials APPLIES (the factorization lifts to Z'+p+').':'✗ NOT relatively prime mod '+p+' — the gcd is non-constant, so the lifting hypothesis FAILS.')+'</strong>';
+}
+
+// ---- §4.8: local-global solvability of aX²+bY²+cZ²=0 ----
+function primeFactors(n){n=Math.abs(n);const f=[];for(let d=2;d*d<=n;d++){if(n%d===0){f.push(d);while(n%d===0)n/=d;}}if(n>1)f.push(n);return f;}
+function isSquareFree(n){n=Math.abs(n);if(n===0)return false;for(let d=2;d*d<=n;d++){if(n%(d*d)===0)return false;}return true;}
+function existsR(b,c,p){for(let r=0;r<p;r++){if(((b+r*r*c)%p+p)%p===0)return true;}return false;}
+function calcLocalGlobal(){
+  const a=+document.getElementById('s48a').value,b=+document.getElementById('s48b').value,c=+document.getElementById('s48c').value;
+  const out=document.getElementById('s48out');
+  if(!a||!b||!c){out.innerHTML='Enter nonzero integers a, b, c.';return;}
+  let warn='';
+  if(!isSquareFree(a)||!isSquareFree(b)||!isSquareFree(c))warn+='⚠️ a, b, c should be square-free. ';
+  if(gcd(a,b)>1||gcd(b,c)>1||gcd(a,c)>1)warn+='⚠️ a, b, c should be pairwise coprime. ';
+  // Condition (i): not all same sign
+  const allPos=a>0&&b>0&&c>0, allNeg=a<0&&b<0&&c<0;
+  const c1=!(allPos||allNeg);
+  // Condition (ii): for each odd prime dividing a: exists r with b+r^2 c ≡0 mod p; sym for b,c
+  function condOdd(coef, other1, other2){
+    const ps=primeFactors(coef).filter(q=>q%2===1);
+    for(const q of ps){if(!existsR(other1,other2,q))return {ok:false,p:q};}
+    return {ok:true};
+  }
+  const r2a=condOdd(a,b,c), r2b=condOdd(b,a,c), r2c=condOdd(c,a,b);
+  const c2=r2a.ok&&r2b.ok&&r2c.ok;
+  // Condition (iii)/(iv) at p=2
+  const allOdd=(a%2!==0)&&(b%2!==0)&&(c%2!==0);
+  let c3text='', c3=true;
+  if(allOdd){
+    const ok=((a+b)%4===0)||((b+c)%4===0)||((a+c)%4===0);
+    c3=ok;c3text='All odd ⟹ need two summing to 0 mod 4: '+(ok?'✓ satisfied':'✗ fails');
+  } else {
+    const ok=((b+c)%8===0)||((a+c)%8===0)||((a+b)%8===0)||((a+b+c)%8===0);
+    c3=ok;c3text='One even ⟹ need b+c, a+c, a+b or a+b+c divisible by 8: '+(ok?'✓ satisfied':'✗ fails');
+  }
+  const solvable=c1&&c2&&c3;
+  let html=(warn?'<span style="color:#ef6c00">'+warn+'</span><br>':'')+
+    'Equation: '+a+'X² + '+b+'Y² + '+c+'Z² = 0<br>'+
+    '<strong>(i)</strong> Not all same sign: '+(c1?'✓':'✗ all '+(allPos?'positive':'negative'))+'<br>'+
+    '<strong>(ii)</strong> Odd-prime conditions (−b/c QR mod p, etc.): '+(c2?'✓':'✗ fails at p='+(!r2a.ok?r2a.p:!r2b.ok?r2b.p:r2c.p))+'<br>'+
+    '<strong>(iii/iv)</strong> '+c3text+'<br><br>'+
+    '<strong style="font-size:1.05em">'+(solvable?
+      '✓ A non-trivial RATIONAL solution EXISTS (solvable in ℚ).':
+      '✗ NO non-trivial rational solution (fails locally at some p ≤ ∞).')+'</strong>';
+  out.innerHTML=html;
+}
+
 function genProblems41(){
   return {
     easy:[
@@ -557,6 +1006,67 @@ function genProblems45(){
   };
 }
 
+function genProblems44(){
+  return {
+    easy:[
+      {q:'Is ℚₚ discrete? (yes/no)',ans:'no',sol:'<div class="step">No — it is totally disconnected but NOT discrete (no isolated points).</div>'},
+      {q:'Is Zₚ homeomorphic to a Cantor set? (yes/no)',ans:'yes',sol:'<div class="step">Yes (Theorems 4.4.1–4.4.2): every Zₚ is homeomorphic to the Cantor set.</div>'}
+    ],
+    medium:[
+      {q:'A point is in the Cantor set iff its base-3 digits avoid which digit? (number)',ans:'1',sol:'<div class="step">It must use only digits {0,2}; the digit 1 is forbidden.</div>'},
+      {q:'Is Z₂ homeomorphic to Z₅? (yes/no)',ans:'yes',sol:'<div class="step">Yes — all Zₚ are homeomorphic (Theorem 4.4.2).</div>'}
+    ],
+    hard:[
+      {q:'Z₃ embeds in the plane as which famous fractal? (one word)',ans:'sierpinski',sol:'<div class="step">The Sierpiński gasket (using vector digits).</div>'}
+    ]
+  };
+}
+function genProblems46(){
+  return {
+    easy:[
+      {q:'How many (p−1)-st roots of unity does ℚₚ contain? (write p-1)',ans:'p-1',sol:'<div class="step">Exactly p−1, forming a cyclic group ℤ/(p−1)ℤ.</div>'},
+      {q:'Order of ℚₚ×/(ℚₚ×)² for odd p? (number)',ans:'4',sol:'<div class="step">4, with reps {1, p, c, cp}, c a non-residue.</div>'}
+    ],
+    medium:[
+      {q:'Does ℚ₅ contain a primitive 4th root of unity? (yes/no)',ans:'yes',sol:'<div class="step">Yes: 4 | (5−1)=4, so √−1 ∈ ℚ₅ (2²≡−1 mod 5).</div>'},
+      {q:'A 2-adic unit b is a square iff b ≡ ? (mod 8) (number)',ans:'1',sol:'<div class="step">b ≡ 1 (mod 8).</div>'}
+    ],
+    hard:[
+      {q:'Order of ℚ₂×/(ℚ₂×)²? (number)',ans:'8',sol:'<div class="step">8, generated by −1, 5, 2.</div>'}
+    ]
+  };
+}
+function genProblems47(){
+  return {
+    easy:[
+      {q:'Hensel for polynomials needs the factors to be relatively prime mod ? (one letter)',ans:'p',sol:'<div class="step">Relatively prime modulo p: gcd(ḡ,h̄)=1 in 𝔽ₚ[X].</div>'},
+      {q:'One factor must be ___ (monic/zero)?',ans:'monic',sol:'<div class="step">g₁ must be monic so the degree is preserved when lifting.</div>'}
+    ],
+    medium:[
+      {q:'Is gcd(X, X+1) = 1 in 𝔽₂[X]? (yes/no)',ans:'yes',sol:'<div class="step">Yes — they are coprime, so the factorization lifts.</div>'},
+      {q:'Does the root version (f\'(α)≠0) follow from the polynomial version? (yes/no)',ans:'yes',sol:'<div class="step">Yes — f≡(X−α)g with (X−α),g coprime mod p ⟺ α not a double root.</div>'}
+    ],
+    hard:[
+      {q:'Is gcd(X²+1, X+1)=1 in 𝔽₂[X]? (yes/no)',ans:'no',sol:'<div class="step">No: X²+1=(X+1)² in 𝔽₂[X], so (X+1) is a common factor.</div>'}
+    ]
+  };
+}
+function genProblems48(){
+  return {
+    easy:[
+      {q:'A rational root is automatically a root in every ℚₚ. (true/false)',ans:'true',sol:'<div class="step">True — ℚ ⊂ ℚₚ, so global ⟹ local everywhere.</div>'},
+      {q:'Does X²+1=0 have a root in ℚ? (yes/no)',ans:'no',sol:'<div class="step">No — no root in ℝ=ℚ_∞ ⟹ none in ℚ.</div>'}
+    ],
+    medium:[
+      {q:'The naïve local-global principle is true for ALL polynomials. (true/false)',ans:'false',sol:'<div class="step">False — e.g. (X²−2)(X²−17)(X²−34) is solvable locally everywhere but not in ℚ.</div>'},
+      {q:'Hasse–Minkowski applies to which kind of form? (one word)',ans:'quadratic',sol:'<div class="step">Quadratic forms (degree-2 homogeneous).</div>'}
+    ],
+    hard:[
+      {q:'Is x∈ℚ a square iff a square in every ℚₚ, p≤∞? (yes/no)',ans:'yes',sol:'<div class="step">Yes — Proposition 4.8.1.</div>'}
+    ]
+  };
+}
+
 function renderProblems(containerId,bank){
   const c=document.getElementById(containerId);if(!c)return;
   c.innerHTML='';
@@ -603,10 +1113,30 @@ const quizData={
     {q:'Does 1+p+p²+⋯ converge in ℚₚ?',options:['No','Yes','Only for p=2','Only for p odd'],correct:1},
     {q:'p-adic expansions extend infinitely in which direction?',options:['Right','Left','Both','Neither'],correct:1}
   ],
+  s44:[
+    {q:'Topologically, Z₂ is homeomorphic to:',options:['A line segment [0,1]','The Cantor set','A circle','ℝ'],correct:1},
+    {q:'Which property do ALL Zₚ share topologically?',options:['They are connected','They are homeomorphic to each other','They are countable','They contain intervals'],correct:1},
+    {q:'The "balls" of Zₚ form a structure best pictured as a:',options:['Grid','Rooted p-ary tree','Single point','Number line'],correct:1}
+  ],
   s45:[
     {q:'Hensel\'s Lemma lifts roots from:',options:['ℚ to ℝ','mod p to Zₚ','ℤ to ℚ','Zₚ to ℚₚ'],correct:1},
     {q:'Hensel requires f\'(α) to be:',options:['Zero mod p','Nonzero mod p','Zero in Zₚ','Any value'],correct:1},
     {q:'Does √2 exist in ℚ₇?',options:['No','Yes','Unknown','Only for p=2'],correct:1}
+  ],
+  s46:[
+    {q:'For odd p, the number of square classes in ℚₚ× is:',options:['2','4','8','infinite'],correct:1},
+    {q:'How many square classes does ℚ₂× have?',options:['2','4','8','16'],correct:2},
+    {q:'A unit u∈Zₚ× (p odd) is a square in ℚₚ iff:',options:['u≡1 mod p','u is a QR mod p','u is even','always'],correct:1}
+  ],
+  s47:[
+    {q:'Hensel\'s Lemma for polynomials lifts a factorization that is valid:',options:['over ℚ','mod p into coprime factors','over ℝ','only for linear factors'],correct:1},
+    {q:'The key hypothesis for factor lifting is that the factors mod p are:',options:['equal','relatively prime','irreducible','monic'],correct:1},
+    {q:'Lifting f̄=ḡh̄ gives a factorization f=gh over:',options:['𝔽ₚ','ℚ','Zₚ','ℝ'],correct:2}
+  ],
+  s48:[
+    {q:'The Hasse principle (local-global) relates solutions over ℚ to solutions over:',options:['ℂ only','all ℚₚ and ℝ','ℤ only','𝔽ₚ only'],correct:1},
+    {q:'Hasse–Minkowski applies to which kind of forms?',options:['Cubic forms','Quadratic forms','Quartic forms','Linear forms'],correct:1},
+    {q:'Does the local-global principle hold for ALL polynomial equations?',options:['Yes, always','No, there are counterexamples','Only over ℝ','Only for primes'],correct:1}
   ]
 };
 
@@ -659,6 +1189,24 @@ const examPool=[
   {q:'Zₚ/pⁿZₚ is isomorphic to:',
    options:['ℤ/pⁿℤ','ℚₚ','Zₚ','pℤₚ'],correct:0,
    explain:['Correct! (Corollary 4.2.5)','No, that\'s the fraction field.','No, that\'s the whole ring.','No, that\'s the maximal ideal.']},
+  {q:'Topologically, the ring of p-adic integers Zₚ is homeomorphic to:',
+   options:['The interval [0,1]','The Cantor set','The circle S¹','ℝ'],correct:1,
+   explain:['No, [0,1] is connected; Zₚ is totally disconnected.','Correct! (Theorem 4.4.1/4.4.2) Zₚ is a Cantor set.','No, the circle is connected.','No, ℝ is connected.']},
+  {q:'How many square classes does ℚₚ× have when p is an odd prime?',
+   options:['2','4','8','infinitely many'],correct:1,
+   explain:['No, that\'s ℝ×.','Correct! ℚₚ×/(ℚₚ×)² has order 4 for odd p.','No, 8 is the count for p=2.','No, it is finite.']},
+  {q:'For an odd prime p, a p-adic unit u is a square in ℚₚ if and only if:',
+   options:['u≡1 (mod p)','u is a quadratic residue mod p','u is divisible by p','u>0'],correct:1,
+   explain:['Too strong; QR is the right condition.','Correct! Reduce mod p and apply Hensel.','No, units are not divisible by p.','No, ℚₚ has no ordering.']},
+  {q:'Hensel\'s Lemma for polynomials lets you lift a factorization f̄=ḡh̄ mod p provided ḡ and h̄ are:',
+   options:['equal','relatively prime in 𝔽ₚ[X]','both irreducible','both linear'],correct:1,
+   explain:['No, equal factors give a repeated factor (fails).','Correct! Coprimality mod p is the key hypothesis (Thm 4.7.2).','Not required.','Not required.']},
+  {q:'The local–global (Hasse) principle for quadratic forms states a form has a nontrivial rational zero iff it has one over:',
+   options:['ℂ','ℝ and every ℚₚ','ℤ','some single ℚₚ'],correct:1,
+   explain:['No, ℂ is too weak (always solvable).','Correct! Hasse–Minkowski (Theorem 4.8.2).','No, ℤ-solubility is different.','No, need ALL places simultaneously.']},
+  {q:'Does the local–global principle hold for every polynomial equation?',
+   options:['Yes, always','No — there are counterexamples (e.g. higher-degree forms)','Only for p=2','Only for linear equations'],correct:1,
+   explain:['No, it can fail beyond quadratics.','Correct! It holds for quadratic forms but fails in general (Selmer\'s cubic).','Not a p-specific statement.','It does hold for these but the claim "every" is false.']},
 ];
 
 let examTimer=null,examTimeLeft=0;
@@ -704,11 +1252,24 @@ function initAll(){
   renderProblems('s41problems',genProblems41());
   renderProblems('s42problems',genProblems42());
   renderProblems('s43problems',genProblems43());
+  renderProblems('s44problems',genProblems44());
   renderProblems('s45problems',genProblems45());
+  renderProblems('s46problems',genProblems46());
+  renderProblems('s47problems',genProblems47());
+  renderProblems('s48problems',genProblems48());
   genQuiz('quiz41','s41');
   genQuiz('quiz42','s42');
   genQuiz('quiz43','s43');
+  genQuiz('quiz44','s44');
   genQuiz('quiz45','s45');
+  genQuiz('quiz46','s46');
+  genQuiz('quiz47','s47');
+  genQuiz('quiz48','s48');
+  if(typeof drawTree==='function')drawTree();
+  if(typeof calcSquare==='function')calcSquare();
+  if(typeof calcRoots==='function')calcRoots();
+  if(typeof calcCoprime==='function')calcCoprime();
+  if(typeof calcLocalGlobal==='function')calcLocalGlobal();
   updateProgress('intro');
 }
 document.addEventListener('DOMContentLoaded',initAll);
