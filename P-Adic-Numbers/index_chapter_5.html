@@ -157,9 +157,15 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
   <ul>
     <li><a href="#intro" class="nav-link active" data-section="intro">Introduction</a></li>
     <li><a href="#s51" class="nav-link" data-section="s51">5.1 — Sequences & Series</a></li>
+    <li><a href="#s52" class="nav-link" data-section="s52">5.2 — Functions & Continuity</a></li>
+    <li><a href="#s53" class="nav-link" data-section="s53">5.3 — Integrals</a></li>
     <li><a href="#s54" class="nav-link" data-section="s54">5.4 — Power Series</a></li>
+    <li><a href="#s55" class="nav-link" data-section="s55">5.5 — Functions via Power Series</a></li>
+    <li><a href="#s56" class="nav-link" data-section="s56">5.6 — Strassman's Theorem</a></li>
     <li><a href="#s57" class="nav-link" data-section="s57">5.7 — exp & log</a></li>
     <li><a href="#s58" class="nav-link" data-section="s58">5.8 — Structure of Zₚ×</a></li>
+    <li><a href="#s59" class="nav-link" data-section="s59">5.9 — Binomial Series</a></li>
+    <li><a href="#s510" class="nav-link" data-section="s510">5.10 — Interpolation</a></li>
     <li><a href="#exam" class="nav-link" data-section="exam">Chapter Exam</a></li>
     <li style="margin-top:14px;border-top:1px solid rgba(128,128,128,.2);padding-top:10px">
       <a href="index_chapter_4.html">← Jump to another chapter</a>
@@ -193,9 +199,15 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
   <div class="block block-def"><div class="label">Roadmap</div>
     <ul style="list-style:none;padding-left:0">
       <li><strong>§5.1</strong> — Convergence of sequences and series: <span class="math">Σaₙ</span> converges ⟺ <span class="math">aₙ → 0</span>.</li>
-      <li><strong>§5.4</strong> — Power series: sharp radii of convergence, Strassman's Theorem (finitely many zeros).</li>
+      <li><strong>§5.2</strong> — Functions, continuity, derivatives: locally constant functions, derivative formulas.</li>
+      <li><strong>§5.3</strong> — Integrals: p-adic measures and integration basics.</li>
+      <li><strong>§5.4</strong> — Power series: radius of convergence, Newton polygons.</li>
+      <li><strong>§5.5</strong> — Functions defined by power series: analytic continuation, algebraic results.</li>
+      <li><strong>§5.6</strong> — Strassman's Theorem: finitely many zeros for power series.</li>
       <li><strong>§5.7</strong> — p-adic exp and log: local functions with restricted domains.</li>
       <li><strong>§5.8</strong> — Structure of Zₚ×: roots of unity × principal units.</li>
+      <li><strong>§5.9</strong> — Binomial series: <span class="math">(1+x)ᵃ</span> and applications.</li>
+      <li><strong>§5.10</strong> — Interpolation: Mahler's theorem, continuous functions as power series.</li>
     </ul>
   </div>
   <div class="nav-btns"><button class="nav-btn" disabled>← Prev</button><button class="nav-btn" onclick="goSection('s51')">Next →</button></div>
@@ -242,7 +254,97 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
   <h2>Section Quiz</h2>
   <div class="quiz-container" id="quiz51"></div>
 
-  <div class="nav-btns"><button class="nav-btn" onclick="goSection('intro')">← Prev</button><button class="nav-btn" onclick="goSection('s54')">Next →</button></div>
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('intro')">← Prev</button><button class="nav-btn" onclick="goSection('s52')">Next →</button></div>
+</section>
+
+<section class="section" id="s52">
+  <h1>5.2 — Functions, Continuity, Derivatives</h1>
+  <p>Functions on ℚₚ behave similarly to functions on ℝ in many ways, but with surprising twists due to the ultrametric topology.</p>
+  
+  <div class="block block-def"><div class="label">Definition 5.2.1 (Continuity)</div>
+    <p>f: U → ℚₚ is <strong>continuous at a</strong> if ∀ε>0 ∃δ>0: |x-a|ₚ<δ ⟹ |f(x)-f(a)|ₚ<ε.</p>
+    <p>f is <strong>uniformly continuous</strong> on U if δ depends only on ε, not on the point.</p>
+  </div>
+
+  <div class="block block-lem"><div class="label">Locally Constant Functions</div>
+    <p>Every function f: Zₚ → ℚₚ that is <strong>locally constant</strong> (constant on cosets of pⁿZₚ for some n) is continuous.</p>
+    <p>Example: f(x) = x mod pⁿ is locally constant.</p>
+  </div>
+
+  <div class="block block-def"><div class="label">Derivatives</div>
+    <p>The derivative of f at a is <span class="math">f'(a) = lim_{h→0} [f(a+h)-f(a)]/h</span>, if the limit exists in ℚₚ.</p>
+    <p><strong>Standard rules:</strong> sum, product, quotient, chain rule all hold (same proofs as in ℝ).</p>
+  </div>
+
+  <div class="block block-example"><div class="label">Polynomial Derivatives</div>
+    <p>For <span class="math">f(x) = xⁿ</span>, we have <span class="math">f'(x) = nxⁿ⁻¹</span> just as in real analysis.</p>
+    <p>But beware: if p | n, the derivative may vanish in unexpected ways!</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: Check Continuity of Step Functions</h4>
+    <p>Locally constant functions are continuous. Test f(x) = ⌊x/pⁿ⌋ mod p on Zₚ.</p>
+    <div class="controls-row">
+      <label for="s52p">p =</label>
+      <select id="s52p"><option>2</option><option selected>3</option><option>5</option></select>
+      <label for="s52n">n =</label>
+      <input type="range" id="s52n" min="1" max="4" value="2" oninput="checkLocallyConst()">
+      <span class="val" id="s52nVal">2</span>
+    </div>
+    <button onclick="checkLocallyConst()">Check</button>
+    <div class="viz-output" id="s52out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s52problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz52"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s51')">← Prev</button><button class="nav-btn" onclick="goSection('s53')">Next →</button></div>
+</section>
+
+<section class="section" id="s53">
+  <h1>5.3 — Integrals</h1>
+  <p>Integration in ℚₚ uses <strong>Haar measure</strong> on the compact groups Zₚ and its cosets, giving a natural notion of "uniform distribution."</p>
+  
+  <div class="block block-def"><div class="label">Haar Measure on Zₚ</div>
+    <p>There exists a unique (up to scalar) translation-invariant measure μ on Zₚ with μ(Zₚ) = 1.</p>
+    <p><strong>Key property:</strong> μ(a + pⁿZₚ) = p⁻ⁿ (each coset of pⁿZₚ has measure p⁻ⁿ).</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Integration Formula</div>
+    <p>For continuous f: Zₚ → ℚₚ, the integral</p>
+    <span class="math-block">∫_{Zₚ} f dμ</span>
+    <p>can be computed as the limit of Riemann sums over partitions into cosets of pⁿZₚ.</p>
+  </div>
+
+  <div class="block block-example"><div class="label">Example: ∫ xᵏ dμ</div>
+    <p>For k ≥ 0, <span class="math">∫_{Zₚ} xᵏ dμ</span> can be computed using symmetry.</p>
+    <p>If p∤(k+1), the integral is 0 (by averaging over cosets). If p | (k+1), more subtle analysis is needed.</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: Measure of Cosets</h4>
+    <p>Calculate μ(a + pⁿZₚ) = p⁻ⁿ for various n.</p>
+    <div class="controls-row">
+      <label for="s53p">p =</label>
+      <select id="s53p"><option>2</option><option selected>3</option><option>5</option><option>7</option></select>
+      <label for="s53n">n =</label>
+      <input type="range" id="s53n" min="1" max="5" value="2" oninput="calcMeasure()">
+      <span class="val" id="s53nVal">2</span>
+    </div>
+    <button onclick="calcMeasure()">Compute Measure</button>
+    <div class="viz-output" id="s53out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s53problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz53"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s52')">← Prev</button><button class="nav-btn" onclick="goSection('s54')">Next →</button></div>
 </section>
 
 <section class="section" id="s54">
@@ -285,7 +387,96 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
   <h2>Section Quiz</h2>
   <div class="quiz-container" id="quiz54"></div>
 
-  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s51')">← Prev</button><button class="nav-btn" onclick="goSection('s57')">Next →</button></div>
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s53')">← Prev</button><button class="nav-btn" onclick="goSection('s55')">Next →</button></div>
+</section>
+
+<section class="section" id="s55">
+  <h1>5.5 — Functions Defined by Power Series</h1>
+  <p>Power series convergent on a ball define <strong>analytic functions</strong>, which can be differentiated term-by-term.</p>
+  
+  <div class="block block-thm"><div class="label">Theorem 5.5.1 (Term-by-Term Differentiation)</div>
+    <p>If <span class="math">f(x) = Σaₙxⁿ</span> has radius r > 0, then f is differentiable on |x|ₚ < r, and</p>
+    <span class="math-block">f'(x) = Σ naₙxⁿ⁻¹</span>
+    <p>with the same radius of convergence r.</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Theorem 5.5.3 (Uniqueness)</div>
+    <p>If two power series Σaₙxⁿ and Σbₙxⁿ converge to the same function on a ball, then aₙ = bₙ for all n.</p>
+    <p>(Power series representations are <strong>unique</strong>.)</p>
+  </div>
+
+  <div class="block block-example"><div class="label">Algebraic Operations</div>
+    <p>If f = Σaₙxⁿ and g = Σbₙxⁿ both converge on |x|ₚ < r, then:</p>
+    <ul style="margin-left:20px">
+      <li><strong>Sum:</strong> f+g = Σ(aₙ+bₙ)xⁿ</li>
+      <li><strong>Product:</strong> fg = Σ(Σᵢ₊ⱼ₌ₙ aᵢbⱼ)xⁿ (Cauchy product)</li>
+      <li><strong>Composition:</strong> f(g(x)) can be computed (if |g(x)|ₚ small enough)</li>
+    </ul>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: Term-by-Term Derivative</h4>
+    <p>Compute derivative of Σxⁿ/n! by differentiating each term.</p>
+    <div class="controls-row">
+      <label for="s55terms">Show terms:</label>
+      <input type="range" id="s55terms" min="3" max="7" value="5" oninput="calcDerivative()">
+      <span class="val" id="s55termsVal">5</span>
+    </div>
+    <button onclick="calcDerivative()">Compute d/dx</button>
+    <div class="viz-output" id="s55out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s55problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz55"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s54')">← Prev</button><button class="nav-btn" onclick="goSection('s56')">Next →</button></div>
+</section>
+
+<section class="section" id="s56">
+  <h1>5.6 — Strassman's Theorem</h1>
+  <p>A remarkable result: nonconstant power series in ℚₚ have <strong>finitely many zeros</strong> (unlike in ℂ!).</p>
+  
+  <div class="block block-thm"><div class="label">Theorem 5.6.1 (Strassman)</div>
+    <p>Let <span class="math">f(x) = Σaₙxⁿ</span> converge on the closed ball <span class="math">|x|ₚ ≤ r</span>.</p>
+    <p>Suppose not all aₙ ≡ 0 (mod p). Define</p>
+    <span class="math-block">N = max{n : |aₙ|ₚ rⁿ = max_k |aₖ|ₚ rᵏ}</span>
+    <p>Then f has <strong>at most N zeros</strong> in {x : |x|ₚ ≤ r}.</p>
+  </div>
+
+  <div class="block block-proof"><div class="label">Proof Sketch</div>
+    <p>If x₀,...,xₙ are N+1 distinct zeros with |xᵢ|ₚ ≤ r, write f(x) = (x-x₀)⋯(x-xₙ)g(x).</p>
+    <p>Analyze |aₖ|ₚ rᵏ using the factorization; the ultrametric inequality on coefficients forces |aₙ|ₚ rᴺ to not be maximal — contradiction.</p>
+  </div>
+
+  <div class="block block-example"><div class="label">Contrast with ℂ</div>
+    <p>In ℂ, sin(x) = x - x³/6 + ⋯ has infinitely many zeros (πℤ).</p>
+    <p>In ℚₚ, the p-adic analogue has <strong>at most finitely many</strong> zeros in any ball!</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: Strassman Bound</h4>
+    <p>For f(x) = 1 + x + x² + ⋯ + xⁿ on |x|ₚ ≤ 1, compute the Strassman bound N.</p>
+    <div class="controls-row">
+      <label for="s56p">p =</label>
+      <select id="s56p"><option>2</option><option selected>3</option><option>5</option></select>
+      <label for="s56deg">degree:</label>
+      <input type="range" id="s56deg" min="3" max="8" value="5" oninput="calcStrassman()">
+      <span class="val" id="s56degVal">5</span>
+    </div>
+    <button onclick="calcStrassman()">Compute Bound</button>
+    <div class="viz-output" id="s56out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s56problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz56"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s55')">← Prev</button><button class="nav-btn" onclick="goSection('s57')">Next →</button></div>
 </section>
 
 <section class="section" id="s57">
@@ -334,7 +525,7 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
   <h2>Section Quiz</h2>
   <div class="quiz-container" id="quiz57"></div>
 
-  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s54')">← Prev</button><button class="nav-btn" onclick="goSection('s58')">Next →</button></div>
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s56')">← Prev</button><button class="nav-btn" onclick="goSection('s58')">Next →</button></div>
 </section>
 
 <section class="section" id="s58">
@@ -373,7 +564,103 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
   <h2>Section Quiz</h2>
   <div class="quiz-container" id="quiz58"></div>
 
-  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s57')">← Prev</button><button class="nav-btn" onclick="goSection('exam')">Next →</button></div>
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s57')">← Prev</button><button class="nav-btn" onclick="goSection('s59')">Next →</button></div>
+</section>
+
+<section class="section" id="s59">
+  <h1>5.9 — The Binomial Series</h1>
+  <p>The binomial series <span class="math">(1+x)ᵃ</span> for arbitrary a ∈ ℤₚ converges in ℚₚ under suitable conditions.</p>
+  
+  <div class="block block-def"><div class="label">Binomial Coefficient (p-adic)</div>
+    <p>For a ∈ ℤₚ and n ∈ ℕ, define</p>
+    <span class="math-block">(a choose n) = a(a-1)⋯(a-n+1) / n!</span>
+    <p>This is well-defined in ℚₚ (denominator n! may have p-divisibility, but the product is in Zₚ for suitable a).</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Theorem 5.9.1 (Binomial Series)</div>
+    <p>For a ∈ ℤₚ and |x|ₚ < 1, the series</p>
+    <span class="math-block">(1+x)ᵃ = Σ (a choose n) xⁿ</span>
+    <p>converges in ℚₚ.</p>
+    <p><strong>Key properties:</strong></p>
+    <ul style="margin-left:20px">
+      <li>(1+x)ᵃ(1+x)ᵇ = (1+x)ᵃ⁺ᵇ (on domain |x|ₚ < 1)</li>
+      <li>Extends the usual binomial theorem from finite a ∈ ℕ to all a ∈ ℤₚ</li>
+    </ul>
+  </div>
+
+  <div class="block block-example"><div class="label">Example: (1+x)⁻¹</div>
+    <p>Taking a = -1:</p>
+    <span class="math">(1+x)⁻¹ = 1 - x + x² - x³ + ⋯</span>
+    <p>(Geometric series! Converges for |x|ₚ < 1.)</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: Binomial Coefficients</h4>
+    <p>Compute first few binomial coefficients (a choose n) for a ∈ ℤₚ.</p>
+    <div class="controls-row">
+      <label for="s59a">a (integer) =</label>
+      <input type="number" id="s59a" value="5" style="width:70px">
+      <label for="s59nmax">n up to:</label>
+      <input type="range" id="s59nmax" min="3" max="8" value="5" oninput="calcBinomial()">
+      <span class="val" id="s59nmaxVal">5</span>
+    </div>
+    <button onclick="calcBinomial()">Compute</button>
+    <div class="viz-output" id="s59out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s59problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz59"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s58')">← Prev</button><button class="nav-btn" onclick="goSection('s510')">Next →</button></div>
+</section>
+
+<section class="section" id="s510">
+  <h1>5.10 — Interpolation</h1>
+  <p><strong>Mahler's Theorem:</strong> Every continuous function f: ℤₚ → ℚₚ can be written as a convergent series in binomial polynomials.</p>
+  
+  <div class="block block-thm"><div class="label">Theorem 5.10.1 (Mahler)</div>
+    <p>For any continuous f: ℤₚ → ℚₚ, there exist unique aₙ ∈ ℚₚ with aₙ → 0 such that</p>
+    <span class="math-block">f(x) = Σ aₙ (x choose n)</span>
+    <p>for all x ∈ ℤₚ, where the series converges uniformly.</p>
+  </div>
+
+  <div class="block block-proof"><div class="label">Proof Idea</div>
+    <p>Use the fact that f is uniformly continuous on the compact space Zₚ.</p>
+    <p>Approximate f by step functions constant on cosets of pⁿZₚ, then express those via binomial basis.</p>
+    <p>The binomial polynomials {(x choose n)} form an orthogonal basis with respect to the Haar measure.</p>
+  </div>
+
+  <div class="block block-example"><div class="label">Example: Polynomials</div>
+    <p>If f(x) = xᵏ, then f can be written as</p>
+    <span class="math">xᵏ = Σ Stirling(k,n) (x choose n)</span>
+    <p>where Stirling(k,n) are Stirling numbers of the second kind.</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: Mahler Expansion</h4>
+    <p>Approximate f(x) = x² on Zₚ using binomial basis (first few terms).</p>
+    <div class="controls-row">
+      <label for="s510k">f(x) = x^k, k =</label>
+      <input type="range" id="s510k" min="1" max="4" value="2" oninput="calcMahler()">
+      <span class="val" id="s510kVal">2</span>
+      <label for="s510terms">terms:</label>
+      <input type="range" id="s510terms" min="2" max="6" value="4" oninput="calcMahler()">
+      <span class="val" id="s510termsVal">4</span>
+    </div>
+    <button onclick="calcMahler()">Compute Expansion</button>
+    <div class="viz-output" id="s510out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s510problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz510"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s59')">← Prev</button><button class="nav-btn" onclick="goSection('exam')">Next →</button></div>
 </section>
 
 <section class="section" id="exam">
@@ -390,7 +677,7 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 </main>
 
 <script>
-const SECTIONS = ['intro','s51','s54','s57','s58','exam'];
+const SECTIONS = ['intro','s51','s52','s53','s54','s55','s56','s57','s58','s59','s510','exam'];
 function goSection(id){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   const el=document.getElementById(id); if(!el)return;
@@ -489,6 +776,117 @@ function calcRootsUnity(){
     'These form μ<sub>'+(p-1)+'</sub>, the cyclic group of order '+(p-1)+'.';
 }
 
+function checkLocallyConst(){
+  const p=+document.getElementById('s52p').value;
+  const n=+document.getElementById('s52n').value;
+  document.getElementById('s52nVal').textContent=n;
+  const cosetSize = Math.pow(p,n);
+  document.getElementById('s52out').innerHTML=
+    'Function: f(x) = ⌊x/p<sup>'+n+'</sup>⌋ mod p<br>'+
+    'This function is constant on each coset of p<sup>'+n+'</sup>Zₚ<br>'+
+    'Coset size: p<sup>'+n+'</sup> = '+cosetSize+'<br>'+
+    'Number of distinct values: p = '+p+'<br>'+
+    '<strong>✓ Locally constant</strong> ⟹ continuous on Zₚ';
+}
+
+function calcMeasure(){
+  const p=+document.getElementById('s53p').value;
+  const n=+document.getElementById('s53n').value;
+  document.getElementById('s53nVal').textContent=n;
+  const measure = 1/Math.pow(p,n);
+  const numCosets = Math.pow(p,n);
+  document.getElementById('s53out').innerHTML=
+    'p = '+p+', n = '+n+'<br>'+
+    'Haar measure: μ(a + p<sup>'+n+'</sup>Zₚ) = p<sup>-'+n+'</sup> = 1/'+Math.pow(p,n)+' ≈ '+measure.toFixed(6)+'<br>'+
+    'Number of such cosets: '+numCosets+'<br>'+
+    'Total measure: '+numCosets+' × '+measure.toFixed(6)+' = 1 ✓';
+}
+
+function calcDerivative(){
+  const terms=+document.getElementById('s55terms').value;
+  document.getElementById('s55termsVal').textContent=terms;
+  let f='',df='';
+  for(let n=0;n<terms;n++){
+    f+=(n>0?'+':'')+'x<sup>'+n+'</sup>/'+factorial(n)+'!';
+  }
+  for(let n=1;n<terms;n++){
+    df+=(n>1?'+':'')+n+'x<sup>'+(n-1)+'</sup>/'+factorial(n)+'!';
+  }
+  df+=' = '+(terms>1?'':'')+'x<sup>0</sup>/0!';
+  for(let n=2;n<terms;n++){
+    df+='+x<sup>'+(n-1)+'</sup>/'+factorial(n-1)+'!';
+  }
+  document.getElementById('s55out').innerHTML=
+    '<strong>f(x) =</strong> '+f+' + ⋯<br>'+
+    '<strong>d/dx term-by-term:</strong><br>'+
+    '<strong>f\'(x) =</strong> '+df+' + ⋯<br>'+
+    '(Notice: derivative of exp is itself!)';
+}
+
+function calcStrassman(){
+  const p=+document.getElementById('s56p').value;
+  const deg=+document.getElementById('s56deg').value;
+  document.getElementById('s56degVal').textContent=deg;
+  const r=1;
+  let maxVal=1,N=0;
+  for(let n=0;n<=deg;n++){
+    const val=1;
+    if(val>=maxVal){maxVal=val;N=n;}
+  }
+  document.getElementById('s56out').innerHTML=
+    'f(x) = 1 + x + x² + ⋯ + x<sup>'+deg+'</sup> on |x|<sub>'+p+'</sub> ≤ 1<br>'+
+    'All coefficients aₙ = 1, so |aₙ|<sub>p</sub> = 1<br>'+
+    '|aₙ|<sub>p</sub> r<sup>n</sup> = 1 · 1<sup>n</sup> = 1 for all n<br>'+
+    'N = max{n : |aₙ|rⁿ maximal} = '+N+' (any n works; take largest)<br>'+
+    '<strong>Strassman bound: at most '+N+' zeros</strong> in |x|<sub>'+p+'</sub> ≤ 1';
+}
+
+function binomial(a,n){
+  if(n===0)return 1;
+  let r=1;
+  for(let i=0;i<n;i++)r*=(a-i);
+  for(let i=1;i<=n;i++)r/=i;
+  return r;
+}
+
+function calcBinomial(){
+  const a=+document.getElementById('s59a').value;
+  const nmax=+document.getElementById('s59nmax').value;
+  document.getElementById('s59nmaxVal').textContent=nmax;
+  let out='a = '+a+', computing (a choose n):<br>';
+  for(let n=0;n<=nmax;n++){
+    const val=binomial(a,n);
+    out+='('+a+' choose '+n+') = '+val+'<br>';
+  }
+  out+='<br>Binomial series: (1+x)<sup>'+a+'</sup> = Σ ('+a+' choose n) x<sup>n</sup>';
+  document.getElementById('s59out').innerHTML=out;
+}
+
+function stirling2(n,k){
+  if(n===0&&k===0)return 1;
+  if(n===0||k===0)return 0;
+  if(k>n)return 0;
+  if(k===1)return 1;
+  if(k===n)return 1;
+  return k*stirling2(n-1,k)+stirling2(n-1,k-1);
+}
+
+function calcMahler(){
+  const k=+document.getElementById('s510k').value;
+  const terms=+document.getElementById('s510terms').value;
+  document.getElementById('s510kVal').textContent=k;
+  document.getElementById('s510termsVal').textContent=terms;
+  let out='f(x) = x<sup>'+k+'</sup><br>Mahler expansion: x<sup>'+k+'</sup> = ';
+  for(let n=0;n<terms;n++){
+    const coeff=stirling2(k,n);
+    if(coeff!==0){
+      out+=(n>0&&coeff>0?'+':'')+(coeff!==1||n===0?coeff:'')+'(x choose '+n+') ';
+    }
+  }
+  out+='+ ⋯<br>(Using Stirling numbers of 2nd kind)';
+  document.getElementById('s510out').innerHTML=out;
+}
+
 function genProblems51(){
   return {
     easy:[
@@ -537,6 +935,70 @@ function genProblems57(){
   };
 }
 
+function genProblems52(){
+  return {
+    easy:[
+      {q:'Is every locally constant function continuous? (yes/no)',ans:'yes',sol:'<div class="step">Yes, locally constant ⟹ continuous.</div>'},
+      {q:'Does (xⁿ)\' = nxⁿ⁻¹ in ℚₚ? (yes/no)',ans:'yes',sol:'<div class="step">Yes, same rules as in ℝ.</div>'}
+    ],
+    medium:[
+      {q:'Derivative uses lim_{h→?} [f(a+h)-f(a)]/h. (write 0)',ans:'0',sol:'<div class="step">h → 0.</div>'},
+      {q:'If p|n, derivative of xⁿ may vanish? (yes/no)',ans:'yes',sol:'<div class="step">Yes, e.g. (xᵖ)\' = pxᵖ⁻¹ ≡ 0 mod p.</div>'}
+    ],
+    hard:[
+      {q:'Locally constant f is constant on cosets of p^? Zₚ. (write n)',ans:'n',sol:'<div class="step">pⁿZₚ for some n.</div>'}
+    ]
+  };
+}
+
+function genProblems53(){
+  return {
+    easy:[
+      {q:'Haar measure μ(Zₚ) = ? (write 1)',ans:'1',sol:'<div class="step">μ(Zₚ) = 1 (normalized).</div>'},
+      {q:'μ(a + pⁿZₚ) = p^(-?) (write n)',ans:'n',sol:'<div class="step">p⁻ⁿ.</div>'}
+    ],
+    medium:[
+      {q:'Is Haar measure translation-invariant? (yes/no)',ans:'yes',sol:'<div class="step">Yes, by definition.</div>'},
+      {q:'How many cosets of pⁿZₚ in Zₚ? (write p^n)',ans:'p^n',sol:'<div class="step">pⁿ cosets, each measure p⁻ⁿ.</div>'}
+    ],
+    hard:[
+      {q:'For continuous f, ∫_{Zₚ} f can be computed via ? sums (write riemann)',ans:'riemann',sol:'<div class="step">Riemann sums over coset partitions.</div>'}
+    ]
+  };
+}
+
+function genProblems55(){
+  return {
+    easy:[
+      {q:'Can we differentiate Σaₙxⁿ term-by-term? (yes/no)',ans:'yes',sol:'<div class="step">Yes (Theorem 5.5.1).</div>'},
+      {q:'Is power series representation unique? (yes/no)',ans:'yes',sol:'<div class="step">Yes (Theorem 5.5.3).</div>'}
+    ],
+    medium:[
+      {q:'d/dx (Σaₙxⁿ) = Σ ? aₙxⁿ⁻¹ (write n)',ans:'n',sol:'<div class="step">Σ naₙxⁿ⁻¹.</div>'},
+      {q:'Product of power series uses ? product (write cauchy)',ans:'cauchy',sol:'<div class="step">Cauchy product.</div>'}
+    ],
+    hard:[
+      {q:'Does d/dx preserve radius of convergence? (yes/no)',ans:'yes',sol:'<div class="step">Yes, same radius.</div>'}
+    ]
+  };
+}
+
+function genProblems56(){
+  return {
+    easy:[
+      {q:'Strassman: power series has finitely many zeros? (yes/no)',ans:'yes',sol:'<div class="step">Yes, at most N (finite).</div>'},
+      {q:'In ℂ, sin has infinitely many zeros. In ℚₚ? (write finite)',ans:'finite',sol:'<div class="step">Finitely many (Strassman).</div>'}
+    ],
+    medium:[
+      {q:'N = max{n : |aₙ|ₚrⁿ is ?} (write maximal)',ans:'maximal',sol:'<div class="step">Maximal.</div>'},
+      {q:'Strassman bound: at most ? zeros (write n)',ans:'n',sol:'<div class="step">At most N.</div>'}
+    ],
+    hard:[
+      {q:'Hypothesis: not all aₙ ≡ 0 mod ? (write p)',ans:'p',sol:'<div class="step">mod p.</div>'}
+    ]
+  };
+}
+
 function genProblems58(){
   return {
     easy:[
@@ -549,6 +1011,38 @@ function genProblems58(){
     ],
     hard:[
       {q:'Z₅× is cyclic? (yes/no)',ans:'no',sol:'<div class="step">No! Z₅× ≅ ℤ/4ℤ × Z₅ (not cyclic, product).</div>'}
+    ]
+  };
+}
+
+function genProblems59(){
+  return {
+    easy:[
+      {q:'(a choose 0) = ? (write 1)',ans:'1',sol:'<div class="step">Always 1.</div>'},
+      {q:'For a=-1, (1+x)⁻¹ = 1 - x + x² - ? (write x^3)',ans:'x^3',sol:'<div class="step">x³ (geometric series).</div>'}
+    ],
+    medium:[
+      {q:'Binomial series converges for |x|ₚ < ? (write 1)',ans:'1',sol:'<div class="step">|x|ₚ < 1.</div>'},
+      {q:'(1+x)ᵃ(1+x)ᵇ = (1+x)^? (write a+b)',ans:'a+b',sol:'<div class="step">(a+b).</div>'}
+    ],
+    hard:[
+      {q:'Binomial series extends finite theorem to a ∈ ? (write Zp)',ans:'zp',sol:'<div class="step">a ∈ ℤₚ.</div>'}
+    ]
+  };
+}
+
+function genProblems510(){
+  return {
+    easy:[
+      {q:'Mahler: continuous f can be written as Σaₙ(x choose ?)  (write n)',ans:'n',sol:'<div class="step">(x choose n).</div>'},
+      {q:'Are the aₙ unique? (yes/no)',ans:'yes',sol:'<div class="step">Yes (Mahler theorem).</div>'}
+    ],
+    medium:[
+      {q:'xᵏ = Σ ? (k,n)(x choose n). (write stirling)',ans:'stirling',sol:'<div class="step">Stirling numbers S(k,n).</div>'},
+      {q:'Mahler applies to continuous f: Zₚ → ? (write Qp)',ans:'qp',sol:'<div class="step">ℚₚ.</div>'}
+    ],
+    hard:[
+      {q:'Binomial basis {(x choose n)} is ? wrt Haar measure (write orthogonal)',ans:'orthogonal',sol:'<div class="step">Orthogonal.</div>'}
     ]
   };
 }
@@ -589,10 +1083,30 @@ const quizData={
     {q:'In ℝ, Σ1/n diverges even though 1/n→0. In ℚₚ?',options:['Also diverges','Converges','Depends on p','Unknown'],correct:1},
     {q:'If Σaₙ converges in ℚₚ, |Σaₙ|ₚ ≤ ?',options:['Σ|aₙ|ₚ','max|aₙ|ₚ','1','∞'],correct:1}
   ],
+  s52:[
+    {q:'A locally constant function on Zₚ is:',options:['Always continuous','Never continuous','Sometimes continuous','Not a function'],correct:0},
+    {q:'The derivative formula f\'(a) = lim_{h→?} works in ℚₚ?',options:['No','Yes, same as ℝ','Only for polynomials','Only for p=2'],correct:1},
+    {q:'If p|n, the derivative of xⁿ:',options:['Is nxⁿ⁻¹','May have unusual behavior mod p','Does not exist','Equals 0'],correct:1}
+  ],
+  s53:[
+    {q:'Haar measure on Zₚ satisfies μ(Zₚ) = ?',options:['0','1','p','∞'],correct:1},
+    {q:'μ(a + pⁿZₚ) equals:',options:['1','p⁻ⁿ','pⁿ','1/n'],correct:1},
+    {q:'Is Haar measure translation-invariant?',options:['Yes','No','Only for odd p','Only on closed balls'],correct:0}
+  ],
   s54:[
     {q:'Radius of convergence formula:',options:['1/r=limsup|aₙ|^n','1/r=limsup|aₙ|^(1/n)','r=limsup|aₙ|','r=1/limsup|aₙ|'],correct:1},
     {q:'Strassman: power series in ℚₚ has how many zeros?',options:['Infinitely many','At most N (finite)','Exactly p','None'],correct:1},
     {q:'Compared to ℂ, p-adic power series have:',options:['More zeros','Fewer zeros','Same number','Depends'],correct:1}
+  ],
+  s55:[
+    {q:'Can we differentiate Σaₙxⁿ term-by-term in ℚₚ?',options:['Yes','No','Only for convergent series','Only polynomials'],correct:0},
+    {q:'Power series representation is:',options:['Never unique','Always unique','Sometimes unique','Depends on p'],correct:1},
+    {q:'The derivative of a power series has:',options:['Smaller radius','Larger radius','Same radius','No radius'],correct:2}
+  ],
+  s56:[
+    {q:'Strassman\'s Theorem says power series have:',options:['Infinitely many zeros','At most finitely many zeros','No zeros','Exactly p zeros'],correct:1},
+    {q:'In ℂ, sin(x) has infinitely many zeros. In ℚₚ?',options:['Also infinitely many','Finitely many','No zeros','Exactly one'],correct:1},
+    {q:'The Strassman bound N depends on:',options:['Only p','|aₙ|ₚ rⁿ','The number of terms','Nothing'],correct:1}
   ],
   s57:[
     {q:'The p-adic exp is defined by:',options:['Σxⁿ','Σxⁿ/n!','Σxⁿ/n','eˣ'],correct:1},
@@ -603,6 +1117,16 @@ const quizData={
     {q:'For p odd, Zₚ× decomposes as:',options:['Cyclic','μ_{p-1}×(1+pZₚ)','ℤₚ','{±1}×Zₚ'],correct:1},
     {q:'Is Z₂× cyclic?',options:['Yes','No','Only Z₃× is','All Zₚ× are cyclic'],correct:1},
     {q:'μ_{p-1} is the group of:',options:['Units','(p-1)-th roots of unity','Principal units','All roots'],correct:1}
+  ],
+  s59:[
+    {q:'The binomial series (1+x)ᵃ converges for:',options:['All x','|x|ₚ<1','|x|ₚ≤1','|x|ₚ>1'],correct:1},
+    {q:'For a=-1, (1+x)⁻¹ gives:',options:['exp series','log series','geometric series','binomial theorem'],correct:2},
+    {q:'Binomial series extends to a ∈:',options:['ℕ only','ℤ only','ℤₚ','ℚₚ'],correct:2}
+  ],
+  s510:[
+    {q:'Mahler\'s theorem expresses continuous f using:',options:['Power series','Binomial basis (x choose n)','Taylor series','Fourier series'],correct:1},
+    {q:'The coefficients aₙ in Mahler expansion are:',options:['Not unique','Unique','Arbitrary','Always zero'],correct:1},
+    {q:'Binomial polynomials form what kind of basis?',options:['Linear','Orthogonal (wrt Haar measure)','Complete','Finite'],correct:1}
   ]
 };
 
@@ -655,6 +1179,24 @@ const examPool=[
   {q:'1+pZₚ (principal units) is isomorphic as additive group to:',
    options:['Zₚ','μ_{p-1}','ℤ/pℤ','ℚₚ'],correct:0,
    explain:['Correct! Via log.','No, that\'s roots of unity.','No, that\'s multiplicative mod p.','No, too big.']},
+  {q:'A locally constant function on Zₚ is:',
+   options:['Never continuous','Always continuous','Sometimes continuous','Not defined'],correct:1,
+   explain:['No, it IS continuous.','Correct! Locally constant ⟹ continuous.','No, always true.','Functions exist.']},
+  {q:'Haar measure on Zₚ satisfies μ(a + pⁿZₚ) = ?',
+   options:['1','pⁿ','p⁻ⁿ','1/n'],correct:2,
+   explain:['No, that\'s μ(Zₚ).','No, inverse.','Correct! Each coset has measure p⁻ⁿ.','No, depends on p.']},
+  {q:'Can we differentiate power series term-by-term in ℚₚ?',
+   options:['No','Yes, same radius','Yes, smaller radius','Only polynomials'],correct:1,
+   explain:['We can!','Correct! Term-by-term, same radius (Thm 5.5.1).','No, radius unchanged.','All power series.']},
+  {q:'The Strassman bound N = max{n: |aₙ|ₚrⁿ is ?}',
+   options:['minimal','maximal','zero','nonzero'],correct:1,
+   explain:['No, opposite.','Correct! Where |aₙ|ₚrⁿ is maximal.','Not necessarily.','Weaker condition.']},
+  {q:'The binomial series (1+x)ᵃ for a ∈ ℤₚ converges when:',
+   options:['|x|ₚ<1','|x|ₚ≤1','All x','|x|ₚ>1'],correct:0,
+   explain:['Correct! Need |x|ₚ<1.','Boundary case may fail.','No, restricted.','No, diverges.']},
+  {q:'Mahler\'s Theorem expresses continuous f: Zₚ→ℚₚ using:',
+   options:['Taylor series','Fourier series','Binomial basis (x choose n)','Exponentials'],correct:2,
+   explain:['No, different basis.','Wrong setting.','Correct! Mahler expansion Σaₙ(x choose n).','No.']},
 ];
 
 let examTimer=null,examTimeLeft=0;
@@ -698,13 +1240,31 @@ function initAll(){
   document.querySelectorAll('.nav-link').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();goSection(a.dataset.section);}));
   calcSeries();
   renderProblems('s51problems',genProblems51());
+  renderProblems('s52problems',genProblems52());
+  renderProblems('s53problems',genProblems53());
   renderProblems('s54problems',genProblems54());
+  renderProblems('s55problems',genProblems55());
+  renderProblems('s56problems',genProblems56());
   renderProblems('s57problems',genProblems57());
   renderProblems('s58problems',genProblems58());
+  renderProblems('s59problems',genProblems59());
+  renderProblems('s510problems',genProblems510());
   genQuiz('quiz51','s51');
+  genQuiz('quiz52','s52');
+  genQuiz('quiz53','s53');
   genQuiz('quiz54','s54');
+  genQuiz('quiz55','s55');
+  genQuiz('quiz56','s56');
   genQuiz('quiz57','s57');
   genQuiz('quiz58','s58');
+  genQuiz('quiz59','s59');
+  genQuiz('quiz510','s510');
+  if(typeof checkLocallyConst==='function')checkLocallyConst();
+  if(typeof calcMeasure==='function')calcMeasure();
+  if(typeof calcDerivative==='function')calcDerivative();
+  if(typeof calcStrassman==='function')calcStrassman();
+  if(typeof calcBinomial==='function')calcBinomial();
+  if(typeof calcMahler==='function')calcMahler();
   updateProgress('intro');
 }
 document.addEventListener('DOMContentLoaded',initAll);
