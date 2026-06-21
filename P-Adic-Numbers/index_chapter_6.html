@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 6 — Vector Spaces and Field Extensions | Interactive Platform</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f8f9fa;--text:#1a1a2e;--text2:#555;--accent:#4361ee;
+  --def:#e3f2fd;--def-border:#1976d2;
+  --thm:#e8f5e9;--thm-border:#388e3c;
+  --lem:#fff9c4;--lem-border:#f9a825;
+  --proof:#f5f5f5;--proof-border:#9e9e9e;
+  --example:#e0f2f1;--example-border:#00897b;
+  --problem:#fff3e0;--problem-border:#ef6c00;
+  --sidebar-w:280px;--topbar-h:56px;
+  --card-radius:8px;--shadow:0 2px 8px rgba(0,0,0,.08);
+  --font-main:'Segoe UI',system-ui,-apple-system,sans-serif;
+  --font-mono:'Fira Code','Cascadia Code',monospace;
+  --transition:0.3s ease;
+}
+.dark{
+  --bg:#0f0f23;--bg2:#1a1a35;--text:#e0e0e0;--text2:#aaa;--accent:#7c8cf8;
+  --def:#1a2744;--def-border:#5c9ce6;
+  --thm:#1a3324;--thm-border:#66bb6a;
+  --lem:#332d1a;--lem-border:#fdd835;
+  --proof:#1e1e2f;--proof-border:#777;
+  --example:#1a302e;--example-border:#4db6ac;
+  --problem:#2e2114;--problem-border:#ffa726;
+  --shadow:0 2px 8px rgba(0,0,0,.3);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-height:1.7;transition:background var(--transition),color var(--transition)}
+#sidebar{position:fixed;left:0;top:0;width:var(--sidebar-w);height:100vh;background:var(--bg2);border-right:1px solid rgba(128,128,128,.2);overflow-y:auto;z-index:100;transition:transform var(--transition),background var(--transition);padding-top:16px}
+#sidebar.closed{transform:translateX(calc(-1 * var(--sidebar-w)))}
+#sidebar h2{font-size:1.1rem;padding:8px 20px;color:var(--accent)}
+#sidebar ul{list-style:none}
+#sidebar li{margin:0}
+#sidebar li a{display:block;padding:8px 20px 8px 28px;color:var(--text);text-decoration:none;font-size:.9rem;border-left:3px solid transparent;transition:all .2s}
+#sidebar li a:hover,#sidebar li a.active{background:rgba(67,97,238,.1);border-left-color:var(--accent);color:var(--accent)}
+#sidebar li.sub a{padding-left:44px;font-size:.82rem}
+.sidebar-toggle{position:fixed;left:8px;top:8px;z-index:200;background:var(--accent);color:#fff;border:none;width:40px;height:40px;border-radius:8px;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow)}
+.sidebar-toggle:hover{opacity:.85}
+#topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:var(--bg2);border-bottom:1px solid rgba(128,128,128,.2);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:90;transition:left var(--transition),background var(--transition)}
+#topbar.full{left:0}
+#topbar .breadcrumb{font-size:.9rem;color:var(--text2)}
+#topbar .controls{display:flex;gap:12px;align-items:center}
+#topbar .controls button{background:none;border:1px solid rgba(128,128,128,.3);color:var(--text);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:.82rem;transition:all .2s}
+#topbar .controls button:hover{border-color:var(--accent);color:var(--accent)}
+.chapter-nav{background:var(--bg);border:1px solid rgba(128,128,128,.3);color:var(--text);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:.82rem;transition:all .2s;font-family:var(--font-main)}
+.chapter-nav:hover{border-color:var(--accent);color:var(--accent)}
+.dark-toggle{font-size:1.1rem!important;width:36px!important;padding:6px!important}
+.progress-bar{position:fixed;top:var(--topbar-h);left:var(--sidebar-w);right:0;height:3px;background:rgba(128,128,128,.15);z-index:89;transition:left var(--transition)}
+.progress-bar.full{left:0}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),#06d6a0);width:0;transition:width .4s}
+#main{margin-left:var(--sidebar-w);padding-top:calc(var(--topbar-h) + 16px);min-height:100vh;transition:margin-left var(--transition)}
+#main.full{margin-left:0}
+.section{display:none;padding:24px 32px 60px;max-width:900px;margin:0 auto}
+.section.active{display:block}
+.section h1{font-size:2rem;margin-bottom:8px;color:var(--accent)}
+.section h2{font-size:1.5rem;margin:32px 0 12px;border-bottom:2px solid var(--accent);padding-bottom:6px}
+.section h3{font-size:1.2rem;margin:24px 0 8px;color:var(--text)}
+.section p,.section li{margin-bottom:8px}
+.block{border-left:4px solid;border-radius:var(--card-radius);padding:18px 22px;margin:18px 0;box-shadow:var(--shadow);transition:background var(--transition)}
+.block-def{background:var(--def);border-color:var(--def-border)}
+.block-thm{background:var(--thm);border-color:var(--thm-border)}
+.block-lem{background:var(--lem);border-color:var(--lem-border)}
+.block-proof{background:var(--proof);border-color:var(--proof-border);font-size:.92rem}
+.block-example{background:var(--example);border-color:var(--example-border)}
+.block-problem{background:var(--problem);border-color:var(--problem-border)}
+.block .label{font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.block-def .label{color:var(--def-border)}
+.block-thm .label{color:var(--thm-border)}
+.block-lem .label{color:var(--lem-border)}
+.block-proof .label{color:var(--proof-border)}
+.block-example .label{color:var(--example-border)}
+.block-problem .label{color:var(--problem-border)}
+.math{font-family:var(--font-mono);background:rgba(128,128,128,.08);padding:2px 6px;border-radius:4px;font-size:.9em}
+.math-block{display:block;text-align:center;margin:14px 0;padding:12px;background:rgba(128,128,128,.05);border-radius:6px;overflow-x:auto;font-family:var(--font-mono);font-size:.92em}
+.interactive-viz{border:2px solid var(--accent);border-radius:var(--card-radius);padding:20px;margin:20px 0;background:rgba(67,97,238,.03)}
+.interactive-viz h4{color:var(--accent);margin-bottom:12px}
+.interactive-viz .controls-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.interactive-viz label{font-size:.88rem;min-width:90px}
+.interactive-viz input[type=range]{flex:1;min-width:120px;accent-color:var(--accent)}
+.interactive-viz select{padding:5px 8px;border-radius:4px;font-size:.88rem;border:1px solid rgba(128,128,128,.3);background:var(--bg);color:var(--text)}
+.interactive-viz input[type=text]{padding:5px 8px;border-radius:4px;font-size:.88rem;border:1px solid rgba(128,128,128,.3);background:var(--bg);color:var(--text);width:100px}
+.interactive-viz .val{font-weight:700;min-width:50px;text-align:center;color:var(--accent);font-size:.9rem}
+.interactive-viz .viz-output{margin:12px 0;padding:14px;background:rgba(128,128,128,.06);border-radius:6px;font-family:var(--font-mono);font-size:.88rem;line-height:1.6}
+.interactive-viz .viz-svg{text-align:center;margin:10px 0}
+.interactive-viz button{padding:6px 14px;border:none;border-radius:6px;cursor:pointer;font-size:.82rem;background:var(--accent);color:#fff;transition:opacity .2s;margin:4px}
+.interactive-viz button:hover{opacity:.85}
+.problem-set{margin:20px 0}
+.problem-card{background:var(--problem);border-left:4px solid var(--problem-border);border-radius:var(--card-radius);padding:18px;margin:14px 0;box-shadow:var(--shadow)}
+.problem-card .diff{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.75rem;font-weight:700;color:#fff;margin-bottom:10px}
+.diff-easy{background:#4caf50}.diff-medium{background:#ff9800}.diff-hard{background:#f44336}
+.problem-card .q{margin-bottom:12px;font-size:.95rem}
+.problem-card input[type=text]{width:200px;padding:8px 12px;border:2px solid rgba(128,128,128,.3);border-radius:6px;font-size:.9rem;background:var(--bg);color:var(--text);transition:border-color .2s}
+.problem-card input:focus{outline:none;border-color:var(--accent)}
+.problem-card button{padding:7px 16px;border:none;border-radius:6px;cursor:pointer;font-size:.82rem;margin:4px;transition:all .2s}
+.btn-check{background:var(--accent);color:#fff}.btn-check:hover{opacity:.85}
+.btn-rand{background:#9c27b0;color:#fff}.btn-rand:hover{opacity:.85}
+.btn-sol{background:#00897b;color:#fff}.btn-sol:hover{opacity:.85}
+.feedback{margin-top:8px;padding:8px 12px;border-radius:6px;font-size:.88rem;display:none}
+.feedback.correct{display:block;background:#c8e6c9;color:#2e7d32}
+.feedback.wrong{display:block;background:#ffcdd2;color:#c62828}
+.solution{display:none;margin-top:12px;padding:14px;background:rgba(0,137,123,.08);border-radius:6px;border-left:3px solid #00897b;font-size:.9rem}
+.quiz-container{margin:20px 0}
+.quiz-q{background:var(--bg2);border-radius:var(--card-radius);padding:18px;margin:14px 0;box-shadow:var(--shadow)}
+.quiz-q .q-text{font-weight:600;margin-bottom:12px}
+.quiz-q label{display:block;padding:8px 14px;margin:4px 0;border-radius:6px;cursor:pointer;transition:background .2s;font-size:.92rem}
+.quiz-q label:hover{background:rgba(67,97,238,.1)}
+.quiz-q input[type=radio]{margin-right:8px;accent-color:var(--accent)}
+.quiz-score{font-size:1.1rem;font-weight:700;padding:16px;background:var(--bg2);border-radius:var(--card-radius);margin:12px 0;text-align:center;box-shadow:var(--shadow)}
+.quiz-btn{padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:.95rem;margin:6px}
+.quiz-btn:hover{opacity:.85}
+.quiz-btn.secondary{background:#777}
+.timer-display{font-size:1.3rem;font-weight:700;color:var(--accent);text-align:center;margin:12px 0;padding:12px;background:var(--bg2);border-radius:var(--card-radius)}
+.perf-breakdown{margin:20px 0}
+.perf-breakdown table{width:100%;border-collapse:collapse}
+.perf-breakdown th,.perf-breakdown td{padding:10px 14px;text-align:left;border-bottom:1px solid rgba(128,128,128,.2);font-size:.9rem}
+.perf-breakdown th{background:var(--accent);color:#fff}
+.nav-btns{display:flex;justify-content:space-between;margin-top:40px;padding-top:20px;border-top:1px solid rgba(128,128,128,.2)}
+.nav-btn{padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:.9rem;transition:all .2s}
+.nav-btn:hover{opacity:.85}
+.nav-btn:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:800px){
+  #sidebar{transform:translateX(calc(-1 * var(--sidebar-w)))}
+  #sidebar.open{transform:translateX(0)}
+  #main{margin-left:0!important}
+  #topbar{left:0!important}
+  .progress-bar{left:0!important}
+  .section{padding:16px}
+  .sidebar-toggle{display:flex}
+  #topbar .breadcrumb{display:none}
+}
+@media(min-width:801px){
+  .sidebar-toggle{left:calc(var(--sidebar-w) + 8px)}
+  #sidebar.closed ~ .sidebar-toggle{left:8px}
+}
+.step{margin:6px 0;padding:6px 0 6px 16px;border-left:2px solid var(--accent);font-size:.9rem}
+.step strong{color:var(--accent)}
+.exam-explain{margin-top:10px;border-radius:6px;overflow:hidden;font-size:.88rem}
+.exam-explain-toggle{cursor:pointer;padding:8px 14px;background:rgba(0,137,123,.12);border:1px solid rgba(0,137,123,.25);border-radius:6px;color:#00897b;font-weight:600;font-size:.82rem;display:inline-block;margin-top:6px}
+.exam-explain-toggle:hover{background:rgba(0,137,123,.2)}
+.exam-explain-body{display:none;padding:12px 16px;margin-top:6px;background:rgba(128,128,128,.04);border:1px solid rgba(128,128,128,.15);border-radius:6px}
+.exam-explain-body.open{display:block}
+.exam-explain-item{padding:8px 10px;margin:4px 0;border-radius:4px;line-height:1.5}
+.exam-explain-item.opt-correct{background:rgba(76,175,80,.1);border-left:3px solid #4caf50}
+.exam-explain-item.opt-wrong{background:rgba(244,67,54,.05);border-left:3px solid #ef9a9a}
+</style>
+</head>
+
+<body>
+
+<nav id="sidebar">
+  <h2>Chapter 6 — Vector Spaces & Field Extensions</h2>
+  <ul>
+    <li><a href="#intro" class="nav-link active" data-section="intro">Introduction</a></li>
+    <li><a href="#s61" class="nav-link" data-section="s61">6.1 — Normed Vector Spaces</a></li>
+    <li><a href="#s62" class="nav-link" data-section="s62">6.2 — Finite-dimensional Spaces</a></li>
+    <li><a href="#s63" class="nav-link" data-section="s63">6.3 — Extending |·|ₚ</a></li>
+    <li><a href="#s64" class="nav-link" data-section="s64">6.4 — Finite Extensions of ℚₚ</a></li>
+    <li><a href="#s65" class="nav-link" data-section="s65">6.5 — Classifying Extensions</a></li>
+    <li><a href="#s66" class="nav-link" data-section="s66">6.6 — Analysis</a></li>
+    <li><a href="#s67" class="nav-link" data-section="s67">6.7 — Adjoining a p-th Root of 1</a></li>
+    <li><a href="#s68" class="nav-link" data-section="s68">6.8 — On to ℂₚ</a></li>
+    <li><a href="#exam" class="nav-link" data-section="exam">Chapter Exam</a></li>
+    <li style="margin-top:14px;border-top:1px solid rgba(128,128,128,.2);padding-top:10px">
+      <a href="index_chapter_5.html">← Jump to another chapter</a>
+    </li>
+  </ul>
+</nav>
+
+<header id="topbar">
+  <div class="breadcrumb" id="breadcrumb">Introduction</div>
+  <div class="controls">
+    <select class="chapter-nav" onchange="if(this.value)window.location.href=this.value">
+      <option value="">Switch chapter...</option>
+      <option value="index_chapter_2.html">Chapter 2</option>
+      <option value="index_chapter_3.html">Chapter 3</option>
+      <option value="index_chapter_4.html">Chapter 4</option>
+      <option value="index_chapter_5.html">Chapter 5</option>
+      <option value="index_chapter_6.html" selected>Chapter 6</option>
+    </select>
+    <button class="dark-toggle" onclick="toggleDark()" title="Toggle dark mode">◐</button>
+    <button onclick="prevSection()">← Prev</button>
+    <button onclick="nextSection()">Next →</button>
+  </div>
+</header>
+<button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<main id="main">
+
+<section class="section active" id="intro">
+  <h1>Chapter 6 — Vector Spaces and Field Extensions</h1>
+  <p>So far we have focused on ℚ and its completions ℚₚ. We emphasized the analogy between ℚₚ and ℝ; it is now natural to look for a p-adic analogue of the complex numbers — a field that is both <strong>complete</strong> (so we can do analysis) and <strong>algebraically closed</strong> (so every non-constant polynomial has a root).</p>
+  <p>The p-adic story is far subtler than the classical one. Going from ℝ to its algebraic closure ℂ is a single step (just add <em>i</em>), and ℂ is already complete. In the p-adic world the algebraic closure <span class="math">ℚ̄ₚ</span> is an <em>infinite</em> extension, and it turns out <strong>not</strong> to be complete — so we must complete again, finally arriving at the field <span class="math">ℂₚ</span>.</p>
+  <div class="block block-def"><div class="label">Roadmap</div>
+    <ul style="list-style:none;padding-left:0">
+      <li><strong>§6.1</strong> — Normed vector spaces over complete valued fields: norms, equivalence, the sup-norm and r-norms.</li>
+      <li><strong>§6.2</strong> — Finite-dimensional spaces: <em>all</em> norms are equivalent; completeness and local compactness.</li>
+      <li><strong>§6.3</strong> — Extending |·|ₚ to a finite extension K: the unique formula <span class="math">|x| = |N(x)|ₚ^(1/n)</span>; building ℚ̄ₚ.</li>
+      <li><strong>§6.4</strong> — Finite extensions of ℚₚ: valuation, ramification index <span class="math">e</span>, residual degree <span class="math">f</span>, and <span class="math">n = ef</span>.</li>
+      <li><strong>§6.5</strong> — Classifying extensions: totally ramified (Eisenstein) vs. unramified (roots of unity); one unramified extension per degree.</li>
+      <li><strong>§6.6</strong> — Analysis: almost everything from Chapter 5 carries over, with ramification the only real subtlety.</li>
+      <li><strong>§6.7</strong> — Worked example: <span class="math">K = ℚₚ(ζ)</span> for a p-th root of unity — totally ramified of degree p−1.</li>
+      <li><strong>§6.8</strong> — On to ℂₚ: Krasner's Lemma, ℚ̄ₚ is not complete, and the construction of the complete, algebraically closed field ℂₚ.</li>
+    </ul>
+  </div>
+  <div class="block block-example"><div class="label">The big contrast: ℝ vs ℚₚ</div>
+    <p>ℝ → ℂ = ℝ(i): one step, degree 2, already complete.</p>
+    <p>ℚₚ → ℚ̄ₚ: infinite degree, <strong>not</strong> complete → must complete → ℂₚ (complete <em>and</em> algebraically closed). Even ℂₚ is not spherically complete!</p>
+  </div>
+  <div class="nav-btns"><button class="nav-btn" disabled>← Prev</button><button class="nav-btn" onclick="goSection('s61')">Next →</button></div>
+</section>
+
+<section class="section" id="s61">
+  <h1>6.1 — Normed Vector Spaces over Complete Valued Fields</h1>
+  <p>The algebraic theory of vector spaces over ℚₚ is identical to that over any field. What is new is the <strong>metric</strong> structure: we put a <em>norm</em> on the vector space. Throughout, <span class="math">k</span> is a complete valued field of characteristic 0 with a nontrivial absolute value (keep ℝ and ℚₚ in mind).</p>
+
+  <div class="block block-def"><div class="label">Definition 6.1.1 (Norm)</div>
+    <p>A <strong>norm</strong> on a k-vector space V is a map <span class="math">‖·‖ : V → ℝ⁺</span> satisfying:</p>
+    <ul>
+      <li>(i) <span class="math">‖v‖ = 0 ⟺ v = 0</span>;</li>
+      <li>(ii) <span class="math">‖v + w‖ ≤ ‖v‖ + ‖w‖</span> (triangle inequality);</li>
+      <li>(iii) <span class="math">‖λv‖ = |λ| · ‖v‖</span> for λ ∈ k.</li>
+    </ul>
+    <p>A norm induces a metric <span class="math">d(v,w) = ‖v − w‖</span>, hence a topology, making V a topological vector space over k.</p>
+  </div>
+
+  <div class="block block-example"><div class="label">Three norms on kⁿ (fix a basis {v₁,…,vₙ})</div>
+    <p>Write <span class="math">v = a₁v₁ + ⋯ + aₙvₙ</span>. Then:</p>
+    <span class="math-block">‖v‖_sup = max₁≤ᵢ≤ₙ |aᵢ|</span>
+    <span class="math-block">‖v‖_r = ( |a₁|ʳ + ⋯ + |aₙ|ʳ )^(1/r),  r ≥ 1</span>
+    <p>Over ℝ² with r = 2 this is the usual Euclidean length; with r = 1 it's the "taxicab" norm. These all <strong>depend on the choice of basis</strong>.</p>
+  </div>
+
+  <div class="block block-def"><div class="label">Definition 6.1.3 (Equivalence)</div>
+    <p>Two norms ‖·‖₁, ‖·‖₂ on V are <strong>equivalent</strong> if there exist constants C, D > 0 with</p>
+    <span class="math-block">‖v‖₁ ≤ C‖v‖₂  and  ‖v‖₂ ≤ D‖v‖₁  for all v.</span>
+    <p>Equivalent norms define the <em>same topology</em> and the <em>same Cauchy sequences</em>.</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Proposition 6.1.4 (Completeness via the sup-norm)</div>
+    <p>Let V be finite-dimensional over a complete field k, with sup-norm relative to a basis. Then V is complete, and a sequence <span class="math">wₙ = a₁ₙv₁ + ⋯ + aₘₙvₘ</span> is Cauchy ⟺ each coefficient sequence (aᵢₙ) is Cauchy in k, with</p>
+    <span class="math-block">lim wₙ = (lim a₁ₙ)v₁ + ⋯ + (lim aₘₙ)vₘ.</span>
+  </div>
+
+  <div class="block block-proof"><div class="label">Why it works</div>
+    <p>The sup-norm is the largest coefficient, so <span class="math">‖wₙ₁ − wₙ₂‖ → 0</span> exactly when each <span class="math">aᵢₙ₁ − aᵢₙ₂ → 0</span>. Convergence is decided coordinate-by-coordinate. ∎</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: Compute Vector Norms (sup-norm vs r-norm)</h4>
+    <p>For <span class="math">v = a·v₁ + b·v₂ ∈ ℚₚ²</span>, compute the sup-norm and the r-norm using p-adic absolute values.</p>
+    <div class="controls-row">
+      <label for="s61p">p =</label>
+      <select id="s61p" onchange="calcVectorNorm()"><option>2</option><option selected>3</option><option>5</option><option>7</option></select>
+      <label for="s61a">a =</label>
+      <input type="text" id="s61a" value="9" oninput="calcVectorNorm()">
+      <label for="s61b">b =</label>
+      <input type="text" id="s61b" value="6" oninput="calcVectorNorm()">
+      <label for="s61r">r =</label>
+      <input type="range" id="s61r" min="1" max="4" value="2" oninput="calcVectorNorm()">
+      <span class="val" id="s61rVal">2</span>
+    </div>
+    <button onclick="calcVectorNorm()">Compute</button>
+    <div class="viz-output" id="s61out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s61problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz61"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('intro')">← Prev</button><button class="nav-btn" onclick="goSection('s62')">Next →</button></div>
+</section>
+
+<section class="section" id="s62">
+  <h1>6.2 — Finite-dimensional Normed Vector Spaces</h1>
+  <p>The fundamental theorem of this section says that in finite dimensions there is essentially <strong>nothing to choose</strong>: every norm is equivalent to the sup-norm, so we know everything once we know Proposition 6.1.4.</p>
+
+  <div class="block block-thm"><div class="label">Theorem 6.2.1 (Main Theorem)</div>
+    <p>Let V be a finite-dimensional vector space over a complete valued field k. Then <strong>any two norms on V are equivalent</strong>, and V is complete with respect to (the metric induced by) any norm.</p>
+  </div>
+
+  <div class="block block-lem"><div class="label">Proposition 6.2.2 (Easy inequality)</div>
+    <p>Let <span class="math">C = n · max ‖vᵢ‖₁</span>. Then <span class="math">‖v‖₁ ≤ C‖v‖₀</span> for all v (here ‖·‖₀ is the sup-norm).</p>
+  </div>
+
+  <div class="block block-proof"><div class="label">Proof of 6.2.2</div>
+    <p>Write <span class="math">v = Σ aᵢvᵢ</span>, so ‖v‖₀ = max|aᵢ|. Then</p>
+    <span class="math-block">‖v‖₁ ≤ Σ|aᵢ|‖vᵢ‖₁ ≤ n·max|aᵢ|·max‖vᵢ‖₁ = C‖v‖₀. ∎</span>
+  </div>
+
+  <div class="block block-lem"><div class="label">Proposition 6.2.3 (Hard inequality, by induction)</div>
+    <p>There exists D > 0 with <span class="math">‖v‖₀ ≤ D‖v‖₁</span> for all v. In particular V is complete with respect to ‖·‖₁.</p>
+  </div>
+
+  <div class="block block-proof"><div class="label">Sketch of the induction</div>
+    <p>Trivial in dimension 1. For the step, suppose no such D exists; then we can build vectors <span class="math">wₘ</span> with <span class="math">‖wₘ‖₁ &lt; (1/m)‖wₘ‖₀</span>. Normalizing the n-th coordinate to 1 produces a Cauchy sequence <span class="math">uₖ</span> in the (n−1)-dimensional subspace W (complete by induction) with <span class="math">‖uₖ + vₙ‖₁ → 0</span>. The limit forces <span class="math">u = −vₙ ∈ W</span>, contradicting <span class="math">vₙ ∉ W</span>. ∎</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Proposition 6.2.4 (Local compactness)</div>
+    <p>If k is locally compact and V is finite-dimensional, then V is locally compact: the closed unit ball is complete and totally bounded, hence compact.</p>
+    <p>(Conversely, any locally compact normed space over k must be finite-dimensional.)</p>
+  </div>
+
+  <div class="block block-example"><div class="label">Finite vs infinite dimension</div>
+    <p>The theorem is <strong>false</strong> for infinite-dimensional spaces — that is the starting point of (non-archimedean) functional analysis. The space of null sequences <span class="math">(aₙ), aₙ → 0</span> with sup-norm gives the standard counterexamples.</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: All Norms Are Equivalent (explicit C, D)</h4>
+    <p>Compare the sup-norm and the 1-norm on <span class="math">ℚₚⁿ</span>. The theorem guarantees constants C, D bounding their ratio.</p>
+    <div class="controls-row">
+      <label for="s62p">p =</label>
+      <select id="s62p" onchange="calcNormEquiv()"><option>2</option><option selected>3</option><option>5</option></select>
+      <label for="s62n">dim n =</label>
+      <input type="range" id="s62n" min="1" max="5" value="3" oninput="calcNormEquiv()">
+      <span class="val" id="s62nVal">3</span>
+    </div>
+    <button onclick="calcNormEquiv()">Show Equivalence</button>
+    <div class="viz-output" id="s62out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s62problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz62"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s61')">← Prev</button><button class="nav-btn" onclick="goSection('s63')">Next →</button></div>
+</section>
+
+<section class="section" id="s63">
+  <h1>6.3 — Extending the p-adic Absolute Value</h1>
+  <p>We now extend <span class="math">|·|ₚ</span> to a finite extension <span class="math">K/ℚₚ</span> of degree <span class="math">n = [K : ℚₚ]</span>. The headline results: such an extension is <strong>unique</strong>, it is given by an explicit formula via the <em>field norm</em>, and assembling all of them builds the algebraic closure <span class="math">ℚ̄ₚ</span>.</p>
+
+  <div class="block block-thm"><div class="label">Corollary 6.3.2 (Uniqueness)</div>
+    <p>There is <strong>at most one</strong> absolute value on K extending |·|ₚ. (Two such are equivalent as norms ⟹ define the same topology ⟹ equivalent absolute values ⟹ equal, since they agree on p.)</p>
+  </div>
+
+  <div class="block block-def"><div class="label">The field norm N_{K/F}</div>
+    <p>Three equivalent definitions of <span class="math">N_{K/F}(α)</span>:</p>
+    <ul>
+      <li>(i) determinant of the F-linear map "multiplication by α" on K;</li>
+      <li>(ii) <span class="math">(−1)ⁿʳ a₀ʳ</span> from the minimal polynomial, with r = [K:F(α)];</li>
+      <li>(iii) the product <span class="math">∏_σ σ(α)</span> over all automorphisms σ (when K/F is normal).</li>
+    </ul>
+    <p>Key property: the norm is <strong>multiplicative</strong>, <span class="math">N(αβ) = N(α)N(β)</span>.</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Theorem 6.3.5 (Existence &amp; formula)</div>
+    <p>For a finite extension K/ℚₚ of degree n, the function</p>
+    <span class="math-block">|x| = |N_{K/ℚₚ}(x)|ₚ^(1/n)</span>
+    <p>is a non-archimedean absolute value on K extending |·|ₚ. So the extension exists and is unique.</p>
+  </div>
+
+  <div class="block block-lem"><div class="label">Lemma 6.3.6 (the crux)</div>
+    <p>If <span class="math">f(X) = Xⁿ + ⋯ + a₀</span> is monic irreducible over ℚₚ with <span class="math">a₀ ∈ ℤₚ</span>, then <strong>all</strong> coefficients lie in ℤₚ. (Proof uses Hensel's Lemma for polynomials: otherwise f factors.)</p>
+  </div>
+
+  <div class="block block-example"><div class="label">Worked example: K = ℚ₅(√2), x = a + b√2</div>
+    <p>Multiplication-by-(a+b√2) has matrix <span class="math">[[a, 2b],[b, a]]</span>, determinant <span class="math">a² − 2b²</span>. All three definitions agree:</p>
+    <span class="math-block">N(a + b√2) = a² − 2b²,   so   |a + b√2| = |a² − 2b²|₅^(1/2).</span>
+  </div>
+
+  <div class="block block-thm"><div class="label">Gauss, Eisenstein &amp; the closure</div>
+    <p><strong>Gauss's Lemma (6.3.7):</strong> a factorization in ℚₚ[X] of f ∈ ℤₚ[X] comes from one in ℤₚ[X]. <strong>Eisenstein (6.3.11):</strong> if |aₙ|=1, |aᵢ|&lt;1 (i&lt;n), |a₀|=1/p, then f is irreducible. These give irreducible polynomials of every degree, so:</p>
+    <p><strong>Corollary 6.3.10:</strong> ℚ̄ₚ is an <em>infinite</em> extension of ℚₚ — a sharp contrast with ℂ = ℝ(i) of degree 2.</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: Extend |·|ₚ to K = ℚₚ(√m)</h4>
+    <p>Compute the field norm <span class="math">N(a+b√m) = a² − m·b²</span> and the extended absolute value <span class="math">|a+b√m| = |a²−mb²|ₚ^(1/2)</span>.</p>
+    <div class="controls-row">
+      <label for="s63p">p =</label>
+      <select id="s63p" onchange="calcFieldNorm()"><option>2</option><option>3</option><option selected>5</option><option>7</option></select>
+      <label for="s63m">m =</label>
+      <input type="text" id="s63m" value="2" oninput="calcFieldNorm()">
+      <label for="s63a">a =</label>
+      <input type="text" id="s63a" value="1" oninput="calcFieldNorm()">
+      <label for="s63b">b =</label>
+      <input type="text" id="s63b" value="5" oninput="calcFieldNorm()">
+    </div>
+    <button onclick="calcFieldNorm()">Compute |a+b√m|</button>
+    <div class="viz-output" id="s63out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s63problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz63"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s62')">← Prev</button><button class="nav-btn" onclick="goSection('s64')">Next →</button></div>
+</section>
+
+<section class="section" id="s64">
+  <h1>6.4 — Finite Extensions of ℚₚ</h1>
+  <p>We gather the structure of a finite extension <span class="math">K/ℚₚ</span> of degree n. The valuation becomes <em>fractional</em>, and the degree splits as <span class="math">n = e·f</span> into a ramification part and a residue part.</p>
+
+  <div class="block block-def"><div class="label">Definition 6.4.1 (Valuation on K)</div>
+    <p>For x ≠ 0, define <span class="math">vₚ(x)</span> by <span class="math">|x| = p^(−vₚ(x))</span>. Then</p>
+    <span class="math-block">vₚ(x) = (1/n)·vₚ(N_{K/ℚₚ}(x)) ∈ (1/n)ℤ.</span>
+  </div>
+
+  <div class="block block-thm"><div class="label">Proposition 6.4.2 &amp; Definition 6.4.3 (e and f)</div>
+    <p>The image <span class="math">vₚ(K×) = (1/e)ℤ</span> for a unique divisor e of n: the <strong>ramification index</strong>. Set <span class="math">f = n/e</span>, the <strong>residual degree</strong>.</p>
+    <ul>
+      <li><span class="math">e = 1</span> ⟹ <strong>unramified</strong>;</li>
+      <li><span class="math">e = n</span> ⟹ <strong>totally ramified</strong>;</li>
+      <li><span class="math">1 &lt; e &lt; n</span> ⟹ ramified (but not totally).</li>
+    </ul>
+  </div>
+
+  <div class="block block-def"><div class="label">Definition 6.4.4 (Uniformizer)</div>
+    <p>An element <span class="math">π ∈ K</span> with <span class="math">vₚ(π) = 1/e</span>. It generates the maximal ideal <span class="math">𝔭_K</span>. In the unramified case we may take π = p.</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Proposition 6.4.5 (Structure of K)</div>
+    <p>With <span class="math">O_K = {|x| ≤ 1}</span>, max ideal <span class="math">𝔭_K = {|x| &lt; 1}</span>, residue field <span class="math">k = O_K/𝔭_K</span>:</p>
+    <ul>
+      <li>𝔭_K is principal, generated by π;</li>
+      <li>every x ∈ K× is <span class="math">x = u·π^(e·vₚ(x))</span> with u a unit;</li>
+      <li>k is a finite extension of 𝔽ₚ, so |k| is a power of p;</li>
+      <li>O_K is compact; every x has a unique π-adic expansion <span class="math">Σ aᵢπⁱ</span> with digits from a set of residue representatives.</li>
+    </ul>
+  </div>
+
+  <div class="block block-thm"><div class="label">Theorem 6.4.6 (f = residue degree)</div>
+    <p><span class="math">[k : 𝔽ₚ] = f</span>, so <span class="math">k = 𝔽_{pᶠ}</span> has pᶠ elements, and <span class="math">n = e·f</span>. The basis <span class="math">{πⁱαⱼ : 0 ≤ i &lt; e, 1 ≤ j ≤ f}</span> of K over ℚₚ proves it.</p>
+  </div>
+
+  <div class="block block-example"><div class="label">Three running examples (p = 5, 5, 3)</div>
+    <p><strong>F₁ = ℚ₅(√2):</strong> unramified, e = 1, f = 2. &nbsp; <strong>F₂ = ℚ₅(√5):</strong> totally ramified, e = 2, f = 1 (uniformizer √5). &nbsp; <strong>F₃ = ℚ₃(ζ,√2):</strong> degree 4, ramified but not totally (e = 2, f = 2).</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: Ramification e, Residual degree f, and n = ef</h4>
+    <p>Pick a degree n and a ramification index e (a divisor of n). The tool computes f, classifies the extension, and reports the residue field and value group.</p>
+    <div class="controls-row">
+      <label for="s64p">p =</label>
+      <select id="s64p" onchange="calcEF()"><option>2</option><option selected>3</option><option>5</option><option>7</option></select>
+      <label for="s64n">n =</label>
+      <select id="s64n" onchange="calcEF()"><option>2</option><option selected>4</option><option>6</option><option>8</option><option>12</option></select>
+      <label for="s64e">e =</label>
+      <select id="s64e" onchange="calcEF()"></select>
+    </div>
+    <button onclick="calcEF()">Classify</button>
+    <div class="viz-output" id="s64out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s64problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz64"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s63')">← Prev</button><button class="nav-btn" onclick="goSection('s65')">Next →</button></div>
+</section>
+
+
+<section class="section" id="s65">
+  <h1>6.5 — Classifying Extensions of ℚₚ</h1>
+  <p>With invariants <span class="math">n = ef</span> in hand, we describe the two extreme cases — <strong>totally ramified</strong> (e = n) and <strong>unramified</strong> (e = 1). Together they essentially describe all extensions: every extension is an unramified extension followed by a totally ramified one.</p>
+
+  <div class="block block-thm"><div class="label">Proposition 6.5.1 (Totally ramified ⟺ Eisenstein)</div>
+    <p>If K/ℚₚ is totally ramified of degree n, then <span class="math">K = ℚₚ(π)</span> where the uniformizer π is a root of an <strong>Eisenstein polynomial</strong></p>
+    <span class="math-block">f(X) = Xⁿ + aₙ₋₁Xⁿ⁻¹ + ⋯ + a₀,   p | aᵢ (i &lt; n),   p² ∤ a₀.</span>
+  </div>
+
+  <div class="block block-thm"><div class="label">Theorem 6.5.2 (Hensel's Lemma over K)</div>
+    <p>Hensel's Lemma holds verbatim over K (replace ℤₚ by O_K and p by π): if <span class="math">F(α₁) ≡ 0 (mod π)</span> and <span class="math">F'(α₁) ≢ 0 (mod π)</span>, there is a root α ≡ α₁ (mod π). Same proof as Chapter 4.</p>
+  </div>
+
+  <div class="block block-lem"><div class="label">Corollary 6.5.3 (Roots of unity)</div>
+    <p>O_K× contains the cyclic group of <span class="math">(pᶠ − 1)</span>-st roots of unity. (The residue field 𝔽_{pᶠ} has a cyclic multiplicative group of order pᶠ − 1; lift via Hensel.)</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Proposition 6.5.5 (Unramified extensions)</div>
+    <p>For each f there is <strong>exactly one</strong> unramified extension of degree f, obtained by adjoining a primitive <span class="math">(pᶠ − 1)</span>-st root of unity. It is automatically normal, and its residue field is 𝔽_{pᶠ}.</p>
+  </div>
+
+  <div class="block block-example"><div class="label">From 𝔽ₚ to characteristic 0 (Witt vectors)</div>
+    <p>Each finite field <span class="math">k/𝔽ₚ</span> determines a unique unramified <span class="math">K/ℚₚ</span> with residue field k. Going from characteristic p back up to characteristic 0 is exactly what the <em>Witt vector</em> ring W(k) = O_K accomplishes.</p>
+  </div>
+
+  <div class="block block-lem"><div class="label">Corollary 6.5.6 (Hensel magic)</div>
+    <p>If K contains an element <span class="math">c ≡ ζ (mod p)</span> for a primitive (pᶠ−1)-st root of unity ζ, then K already contains the whole degree-f unramified extension. Used crucially in §6.8.</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: Unramified Extensions &amp; Roots of Unity</h4>
+    <p>For the unramified extension of degree f, the residue field is <span class="math">𝔽_{pᶠ}</span> and O_K× contains the cyclic group of <span class="math">pᶠ − 1</span> roots of unity.</p>
+    <div class="controls-row">
+      <label for="s65p">p =</label>
+      <select id="s65p" onchange="calcRootsK()"><option>2</option><option selected>3</option><option>5</option><option>7</option></select>
+      <label for="s65f">f =</label>
+      <input type="range" id="s65f" min="1" max="4" value="2" oninput="calcRootsK()">
+      <span class="val" id="s65fVal">2</span>
+    </div>
+    <button onclick="calcRootsK()">Compute</button>
+    <div class="viz-output" id="s65out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s65problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz65"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s64')">← Prev</button><button class="nav-btn" onclick="goSection('s66')">Next →</button></div>
+</section>
+
+<section class="section" id="s66">
+  <h1>6.6 — Analysis over Finite Extensions</h1>
+  <p>Once K has an absolute value, we can do analysis exactly as in Chapter 5. Almost everything carries over <em>verbatim</em>, because the proofs used only estimates on absolute values. The one subtlety is <strong>ramification</strong>: arguments that used p as a uniformizer must now use π with <span class="math">vₚ(π) = 1/e</span>.</p>
+
+  <div class="block block-thm"><div class="label">Almost everything extends</div>
+    <p>Over a finite extension K, with the extended |·|:</p>
+    <ul>
+      <li>(aₙ) is Cauchy ⟺ <span class="math">|aₙ₊₁ − aₙ| → 0</span>; a series Σaₙ converges ⟺ aₙ → 0;</li>
+      <li>power series, radius of convergence, term-by-term differentiation all work;</li>
+      <li><strong>Strassman's Theorem</strong> holds (replace ℚₚ → K, ℤₚ → O_K), and so do its corollaries.</li>
+    </ul>
+  </div>
+
+  <div class="block block-def"><div class="label">log and exp on K</div>
+    <p>The logarithm <span class="math">logₚ : U₁ → K</span> on <span class="math">U₁ = 1 + πO_K</span> satisfies <span class="math">logₚ(xy) = logₚ(x) + logₚ(y)</span>. The exponential <span class="math">expₚ : D → K</span> converges on</p>
+    <span class="math-block">D = { x ∈ O_K : |x| &lt; p^(−1/(p−1)) }.</span>
+    <p>The two are mutually inverse isometric isomorphisms <span class="math">1 + D ⟷ D</span>.</p>
+  </div>
+
+  <div class="block block-example"><div class="label">Ramification bites here</div>
+    <p>When e is large there are elements of O_K with <span class="math">|x| &lt; 1</span> but <span class="math">|x| ≥ p^(−1/(p−1))</span> — so the exp domain restriction is <em>more serious</em> than over ℚₚ. Also (item xv) the image of log is a <em>bounded</em> additive subgroup, but need <strong>not</strong> lie in πO_K — it can include negative powers of π.</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Binomial series (xvii)</div>
+    <p>For α ∈ ℤₚ, the binomial series <span class="math">(1+x)^α</span> converges for <span class="math">|x| &lt; 1</span> (i.e. x ∈ πO_K). We keep α ∈ ℤₚ because ℤ is dense in ℤₚ — but ℤ is <em>not</em> dense in O_K.</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: exp/log Domain &amp; Ramification</h4>
+    <p>Compare the exp-convergence radius <span class="math">p^(−1/(p−1))</span> against the uniformizer size <span class="math">|π| = p^(−1/e)</span>. When <span class="math">1/e &lt; 1/(p−1)</span> there are "missing" elements where exp fails to converge.</p>
+    <div class="controls-row">
+      <label for="s66p">p =</label>
+      <select id="s66p" onchange="calcExpDomainK()"><option>2</option><option selected>3</option><option>5</option><option>7</option></select>
+      <label for="s66e">e =</label>
+      <input type="range" id="s66e" min="1" max="6" value="3" oninput="calcExpDomainK()">
+      <span class="val" id="s66eVal">3</span>
+    </div>
+    <button onclick="calcExpDomainK()">Compare Domains</button>
+    <div class="viz-output" id="s66out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s66problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz66"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s65')">← Prev</button><button class="nav-btn" onclick="goSection('s67')">Next →</button></div>
+</section>
+
+<section class="section" id="s67">
+  <h1>6.7 — Example: Adjoining a p-th Root of Unity</h1>
+  <p>A concrete application that ties everything together. Let <span class="math">K = ℚₚ(ζ)</span> with ζ a primitive p-th root of unity (p ≠ 2), so ζ is a root of the <strong>cyclotomic polynomial</strong></p>
+  <span class="math-block">Φₚ(X) = (Xᵖ − 1)/(X − 1) = Xᵖ⁻¹ + Xᵖ⁻² + ⋯ + X + 1.</span>
+
+  <div class="block block-lem"><div class="label">Lemma 6.7.1 (Φₚ is irreducible)</div>
+    <p>Apply Eisenstein to <span class="math">F(X) = Φₚ(X + 1)</span>: modulo p, <span class="math">F(X) ≡ Xᵖ⁻¹</span>, so all lower coefficients are divisible by p, and <span class="math">F(0) = Φₚ(1) = p</span> (not divisible by p²). Hence Φₚ is irreducible.</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Structure of K = ℚₚ(ζ)</div>
+    <ul>
+      <li>degree <span class="math">[K : ℚₚ] = p − 1</span>;</li>
+      <li><span class="math">N(ζ) = 1</span>, so |ζ| = 1; ζ is a 1-unit (ζ ≡ 1 mod π);</li>
+      <li><span class="math">|ζ − 1| = p^(−1/(p−1))</span>, and <span class="math">π = ζ − 1</span> is a uniformizer;</li>
+      <li>K is <strong>totally ramified</strong>: e = p − 1, f = 1, residue field 𝔽ₚ;</li>
+      <li><span class="math">ℤₚ[ζ] = O_K</span>.</li>
+    </ul>
+  </div>
+
+  <div class="block block-example"><div class="label">A remarkable formula</div>
+    <p>Since <span class="math">ζᵖ = 1 ⟹ p·logₚ(ζ) = logₚ(1) = 0</span>, we get <span class="math">logₚ(ζ) = 0</span>, i.e.</p>
+    <span class="math-block">Σₙ₌₁^∞ (1 − ζ)ⁿ / n = 0.</span>
+  </div>
+
+  <div class="block block-thm"><div class="label">A (p−1)-st root of −p</div>
+    <p>From <span class="math">∏ᵢ₌₁^{p−1}(1 − ζⁱ) = p</span> and Wilson's theorem <span class="math">(p−1)! ≡ −1 (mod p)</span>, one shows <span class="math">(1−ζ)^{p−1}·(1-unit) = −p</span>. Hensel then gives <span class="math">π₁ ∈ O_K</span> with <span class="math">π₁^{p−1} = −p</span> — an instance of a tamely ramified extension (e = p−1 prime to p).</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Counting roots of unity via Strassman</div>
+    <p>Solving <span class="math">logₚ(x) = 0</span> in <span class="math">1 + πO_K</span>: write <span class="math">f(X) = log(1 + πX)</span>. The valuation <span class="math">vₚ(πⁿ/n) = n/(p−1) − vₚ(n)</span> is minimized (= 1/(p−1)) last at n = p, so Strassman gives N = p roots. Since the p-th roots of unity are p such roots, K contains exactly the <span class="math">p(p−1)</span>-st roots of unity.</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: ℚₚ(ζₚ) Invariants &amp; the Table vₚ(πⁿ/n)</h4>
+    <p>For a p-th root of unity, K is totally ramified of degree p−1. Explore the invariants and the valuation table that bounds the zeros of log.</p>
+    <div class="controls-row">
+      <label for="s67p">p =</label>
+      <select id="s67p" onchange="calcCyclotomic()"><option selected>3</option><option>5</option><option>7</option><option>11</option></select>
+      <label for="s67nmax">table up to n =</label>
+      <input type="range" id="s67nmax" min="3" max="14" value="8" oninput="calcCyclotomic()">
+      <span class="val" id="s67nmaxVal">8</span>
+    </div>
+    <button onclick="calcCyclotomic()">Compute</button>
+    <div class="viz-output" id="s67out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s67problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz67"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s66')">← Prev</button><button class="nav-btn" onclick="goSection('s68')">Next →</button></div>
+</section>
+
+<section class="section" id="s68">
+  <h1>6.8 — On to ℂₚ</h1>
+  <p>The grand finale: we show <span class="math">ℚ̄ₚ</span> is <strong>not</strong> complete, complete it once more, and prove the result stays algebraically closed. The completion is <span class="math">ℂₚ</span> — the p-adic analogue of the complex numbers.</p>
+
+  <div class="block block-thm"><div class="label">Theorem 6.8.2 (Krasner's Lemma)</div>
+    <p>Let K be non-archimedean complete of characteristic 0, and let <span class="math">a = a₁, a₂, …, aₙ</span> be the conjugates of a over K. If b is closer to a than any other conjugate,</p>
+    <span class="math-block">|b − a| &lt; |a − aᵢ|  (i = 2, …, n),  then  K(a) ⊂ K(b).</span>
+    <p>An analytic fact (b near a) forces an algebraic one (a is a polynomial in b).</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Corollary 6.8.3 (Continuity of irreducibility)</div>
+    <p>If f is monic irreducible with root λ and L = K(λ), there is ε > 0 such that any monic g of the same degree with <span class="math">|aᵢ − bᵢ| &lt; ε</span> is also irreducible over K and has a root in L. "Root structure varies continuously with the coefficients."</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Theorem 6.8.4 / 6.8.5 (ℚ̄ₚ is not complete)</div>
+    <p>The series <span class="math">Σᵢ₌₀^∞ ζᵢ pⁱ</span> (with ζᵢ a primitive (p^{fᵢ}−1)-st root of unity, fᵢ | fᵢ₊₁ → ∞) is Cauchy but has <strong>no limit</strong> in ℚ̄ₚ: a limit c would force <span class="math">[ℚₚ(c):ℚₚ] ≥ fᵢ</span> for all i (via Corollary 6.5.6), impossible. Even the maximal unramified extension <span class="math">ℚₚ^unr</span> is not complete.</p>
+  </div>
+
+  <div class="block block-def"><div class="label">Proposition 6.8.6 (Construction of ℂₚ)</div>
+    <p>Completing ℚ̄ₚ (same Cauchy-sequence construction as Chapter 3) gives a field <span class="math">ℂₚ</span> with:</p>
+    <ul>
+      <li>ℂₚ ⊇ ℚ̄ₚ, restriction of |·| to ℚₚ is |·|ₚ;</li>
+      <li>ℂₚ is complete; ℚ̄ₚ is dense in ℂₚ;</li>
+      <li>value group <span class="math">vₚ(ℂₚ×) = ℚ</span> (dense in ℝ).</li>
+    </ul>
+  </div>
+
+  <div class="block block-thm"><div class="label">Proposition 6.8.8 (ℂₚ is algebraically closed)</div>
+    <p>An irreducible f over ℂₚ is approximated (Cor. 6.8.3) by f₀ over ℚₚ of the same degree; f₀ is irreducible over ℚ̄ₚ ⟹ degree 1 ⟹ f has degree 1. The process <strong>stops</strong>: ℂₚ is complete <em>and</em> algebraically closed.</p>
+  </div>
+
+  <div class="block block-example"><div class="label">Surprises</div>
+    <p>As an abstract field, ℂₚ ≅ ℂ (Steinitz: uncountable algebraically closed fields of equal characteristic and cardinality are isomorphic — though never as valued fields). And ℂₚ is <strong>not</strong> locally compact, nor <strong>spherically complete</strong> — for some functional-analytic applications one needs an even bigger field.</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: The Tower ℚ → ℚₚ → ℚ̄ₚ → ℂₚ</h4>
+    <p>Step through the four-stage construction and see which property (complete? algebraically closed?) holds at each stage.</p>
+    <div class="controls-row">
+      <label for="s68stage">Stage =</label>
+      <input type="range" id="s68stage" min="0" max="3" value="0" oninput="calcTower()">
+      <span class="val" id="s68stageVal">0</span>
+    </div>
+    <button onclick="calcTower()">Show Stage</button>
+    <div class="viz-output" id="s68out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s68problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz68"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s67')">← Prev</button><button class="nav-btn" onclick="goSection('exam')">Next →</button></div>
+</section>
+
+<section class="section" id="exam">
+  <h1>Chapter 6 Exam</h1>
+  <p>Comprehensive assessment of vector spaces and field extensions: norms, the norm formula, ramification (e, f, n = ef), classifying extensions, cyclotomic fields, and the construction of ℂₚ. Each question has expandable per-option explanations.</p>
+  <div style="margin:16px 0">
+    <label><input type="checkbox" id="timedMode"> Timed mode (20 min)</label>
+  </div>
+  <div class="timer-display" id="timer" style="display:none">20:00</div>
+  <button class="quiz-btn" onclick="startExam()">Start Exam</button>
+  <div id="examBody"></div>
+</section>
+
+</main>
+
+
+
+<script>
+const SECTIONS = ['intro','s61','s62','s63','s64','s65','s66','s67','s68','exam'];
+function goSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id); if(!el)return;
+  el.classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(a=>a.classList.toggle('active',a.dataset.section===id));
+  const bc=document.getElementById('breadcrumb');
+  const link=document.querySelector('.nav-link[data-section="'+id+'"]');
+  if(bc&&link)bc.textContent=link.textContent;
+  updateProgress(id);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function curIndex(){const a=document.querySelector('.section.active');return a?SECTIONS.indexOf(a.id):0;}
+function nextSection(){const i=curIndex();if(i<SECTIONS.length-1)goSection(SECTIONS[i+1]);}
+function prevSection(){const i=curIndex();if(i>0)goSection(SECTIONS[i-1]);}
+function updateProgress(id){const i=SECTIONS.indexOf(id);const pct=((i+1)/SECTIONS.length)*100;const f=document.getElementById('progressFill');if(f)f.style.width=pct+'%';}
+function toggleSidebar(){
+  const sb=document.getElementById('sidebar'),mn=document.getElementById('main'),tb=document.getElementById('topbar'),pb=document.querySelector('.progress-bar');
+  const wide=window.innerWidth>800;
+  if(wide){sb.classList.toggle('closed');mn.classList.toggle('full');tb.classList.toggle('full');pb.classList.toggle('full');}
+  else{sb.classList.toggle('open');}
+}
+function toggleDark(){document.body.classList.toggle('dark');}
+
+function vp(n,p){if(n===0)return Infinity;let v=0;n=Math.abs(n);while(n%p===0){n/=p;v++;}return v;}
+function padicAbs(n,p){const v=vp(n,p);return v===Infinity?0:Math.pow(p,-v);}
+function factorial(n){let r=1;for(let i=2;i<=n;i++)r*=i;return r;}
+function divisors(n){const d=[];for(let i=1;i<=n;i++)if(n%i===0)d.push(i);return d;}
+
+/* ---------- 6.1 Vector norms over a complete valued field ---------- */
+function calcVectorNorm(){
+  const p=+document.getElementById('s61p').value;
+  const a=+document.getElementById('s61a').value;
+  const b=+document.getElementById('s61b').value;
+  const r=+document.getElementById('s61r').value;
+  document.getElementById('s61rVal').textContent=r.toFixed(2);
+  const na=padicAbs(a,p), nb=padicAbs(b,p);
+  // sup norm
+  const sup=Math.max(na,nb);
+  // p-style weighted norm: ||(a,b)||_r = max(|a|, r*|b|)
+  const weighted=Math.max(na, r*nb);
+  // sum norm (l1)
+  const sum=na+nb;
+  document.getElementById('s61out').innerHTML=
+    'Vector v = (a, b) = ('+a+', '+b+') in K², K = ℚ<sub>'+p+'</sub><br>'+
+    '|a|<sub>'+p+'</sub> = '+na.toFixed(4)+', |b|<sub>'+p+'</sub> = '+nb.toFixed(4)+'<br>'+
+    '<strong>Sup norm</strong> ‖v‖<sub>∞</sub> = max(|a|,|b|) = '+sup.toFixed(4)+'<br>'+
+    '<strong>Sum norm</strong> ‖v‖<sub>1</sub> = |a|+|b| = '+sum.toFixed(4)+'<br>'+
+    '<strong>Weighted norm</strong> max(|a|, '+r.toFixed(2)+'·|b|) = '+weighted.toFixed(4)+'<br>'+
+    'All three are <em>equivalent</em> norms (Cor. 6.2): they define the same topology on the finite-dimensional space K².';
+}
+
+/* ---------- 6.2 Finite-dimensional spaces: all norms equivalent ---------- */
+function calcNormEquiv(){
+  const p=+document.getElementById('s62p').value;
+  const n=+document.getElementById('s62n').value;
+  document.getElementById('s62nVal').textContent=n;
+  // illustrate equivalence constants for sup vs sum on K^n: ||x||_inf <= ||x||_1 <= n ||x||_inf
+  document.getElementById('s62out').innerHTML=
+    'Space K<sup>'+n+'</sup> over K = ℚ<sub>'+p+'</sub> (a complete valued field).<br>'+
+    '<strong>Theorem 6.2.1:</strong> any two norms on a finite-dimensional space over a complete field are equivalent.<br>'+
+    'For the sup and sum norms on K<sup>'+n+'</sup>:<br>'+
+    '‖x‖<sub>∞</sub> ≤ ‖x‖<sub>1</sub> ≤ '+n+'·‖x‖<sub>∞</sub><br>'+
+    'so c₁‖x‖<sub>∞</sub> ≤ ‖x‖<sub>1</sub> ≤ c₂‖x‖<sub>∞</sub> with c₁ = 1, c₂ = '+n+'.<br>'+
+    '<strong>Consequence:</strong> K<sup>'+n+'</sup> is complete, and every finite-dimensional subspace is closed. Completeness transfers to all finite extensions of ℚ<sub>'+p+'</sub>.';
+}
+
+/* ---------- 6.3 Extending the p-adic absolute value (quadratic case) ---------- */
+function calcFieldNorm(){
+  const p=+document.getElementById('s63p').value;
+  const m=+document.getElementById('s63m').value;
+  const a=+document.getElementById('s63a').value;
+  const b=+document.getElementById('s63b').value;
+  // element x = a + b*sqrt(m) in K = Qp(sqrt m); norm N(x)=a^2 - m b^2; |x| = |N(x)|^(1/2)
+  const N=a*a - m*b*b;
+  const absN=padicAbs(N,p);
+  const ext=Math.sqrt(absN); // |x| = |N(x)|^(1/2)
+  document.getElementById('s63out').innerHTML=
+    'K = ℚ<sub>'+p+'</sub>(√'+m+'), element x = a + b√'+m+' = '+a+' + '+b+'√'+m+'<br>'+
+    '<strong>Field norm</strong> N(x) = a² − m·b² = '+(a*a)+' − '+m+'·'+(b*b)+' = '+N+'<br>'+
+    '|N(x)|<sub>'+p+'</sub> = '+absN.toFixed(4)+'<br>'+
+    '<strong>Extended absolute value</strong> |x| = |N(x)|<sub>'+p+'</sub><sup>1/2</sup> = '+ext.toFixed(4)+'<br>'+
+    'This is the unique extension of |·|<sub>'+p+'</sub> to the degree-2 extension (Theorem 6.3): |x| = |N<sub>K/ℚ<sub>'+p+'</sub></sub>(x)|<sub>'+p+'</sub><sup>1/[K:ℚ<sub>'+p+'</sub>]</sup>.';
+}
+
+/* ---------- 6.4 Finite extensions: n = e·f ---------- */
+function calcEF(){
+  const p=+document.getElementById('s64p').value;
+  const n=+document.getElementById('s64n').value;
+  const sel=document.getElementById('s64e');
+  // populate e options (divisors of n) if not matching
+  const divs=divisors(n);
+  const cur=sel.value;
+  if(sel.dataset.n!==String(n)){
+    sel.innerHTML=divs.map(d=>'<option value="'+d+'">'+d+'</option>').join('');
+    sel.dataset.n=String(n);
+  }
+  let e=+sel.value;
+  if(!divs.includes(e)){e=divs[0];sel.value=String(e);}
+  const f=n/e;
+  let type;
+  if(e===1)type='<strong>Unramified</strong> (e = 1): residue field grows, value group unchanged.';
+  else if(f===1)type='<strong>Totally ramified</strong> (f = 1): value group grows, residue field unchanged.';
+  else type='<strong>Mixed</strong> (e &gt; 1 and f &gt; 1): both ramification and residue extension occur.';
+  const resField='𝔽<sub>'+p+'<sup>'+f+'</sup></sub> (size '+Math.pow(p,f)+')';
+  document.getElementById('s64out').innerHTML=
+    'Finite extension K / ℚ<sub>'+p+'</sub> of degree n = '+n+'.<br>'+
+    'Fundamental identity: <strong>n = e·f</strong> ⟹ '+n+' = '+e+' · '+f+'<br>'+
+    '<strong>e = '+e+'</strong> (ramification index) — value group is (1/'+e+')ℤ, i.e. v<sub>'+p+'</sub>(π) = 1/'+e+' for a uniformizer π.<br>'+
+    '<strong>f = '+f+'</strong> (residue degree) — residue field is '+resField+'.<br>'+
+    type;
+}
+
+/* ---------- 6.5 Classifying extensions: roots of unity in unramified ext ---------- */
+function calcRootsK(){
+  const p=+document.getElementById('s65p').value;
+  const f=+document.getElementById('s65f').value;
+  document.getElementById('s65fVal').textContent=f;
+  const q=Math.pow(p,f);
+  const rootsOfUnity=q-1;
+  document.getElementById('s65out').innerHTML=
+    'Unramified extension K / ℚ<sub>'+p+'</sub> of degree f = '+f+'.<br>'+
+    'There is a <strong>unique</strong> unramified extension of each degree (Thm 6.5), namely ℚ<sub>'+p+'</sub>(ζ) with ζ a primitive ('+rootsOfUnity+')-th root of unity.<br>'+
+    'Residue field: 𝔽<sub>'+q+'</sub> (q = p<sup>f</sup> = '+q+').<br>'+
+    '<strong>Roots of unity of order prime to p</strong> in K: q − 1 = <strong>'+rootsOfUnity+'</strong> (the Teichmüller representatives).<br>'+
+    'K is generated over ℚ<sub>'+p+'</sub> by these roots of unity — unramified extensions are exactly the cyclotomic ones of degree prime to p.';
+}
+
+/* ---------- 6.6 Analysis: convergence domain of exp in an extension ---------- */
+function calcExpDomainK(){
+  const p=+document.getElementById('s66p').value;
+  const e=+document.getElementById('s66e').value;
+  document.getElementById('s66eVal').textContent=e;
+  // exp converges for v(x) > 1/(p-1); uniformizer has v(pi)=1/e
+  const expBound=1/(p-1);          // need v(x) > 1/(p-1)
+  const piVal=1/e;                 // v(pi)
+  const converges = piVal>expBound;
+  document.getElementById('s66out').innerHTML=
+    'Extension K / ℚ<sub>'+p+'</sub> with ramification index e = '+e+'.<br>'+
+    'Normalized valuation v extends v<sub>'+p+'</sub>; a uniformizer π satisfies v(π) = 1/e = '+piVal.toFixed(4)+'.<br>'+
+    '<strong>exp(x)</strong> converges ⟺ v(x) &gt; 1/(p−1) = '+expBound.toFixed(4)+'.<br>'+
+    'For x = π: v(π) = '+piVal.toFixed(4)+' '+(converges?'&gt;':'≤')+' '+expBound.toFixed(4)+' ⟹ '+
+    '<strong>'+(converges?'exp(π) converges ✓':'exp(π) need NOT converge ✗')+'</strong><br>'+
+    'The bigger the ramification e, the smaller v(π), so heavily ramified extensions shrink the convergence domain.';
+}
+
+/* ---------- 6.7 Adjoining a p-th root of unity: Q_p(zeta_p) ---------- */
+function calcCyclotomic(){
+  const p=+document.getElementById('s67p').value;
+  const nmax=+document.getElementById('s67nmax').value;
+  document.getElementById('s67nmaxVal').textContent=nmax;
+  // K = Qp(zeta_p): degree p-1, e=p-1, f=1, pi = zeta-1, |zeta-1| = p^{-1/(p-1)}
+  const deg=p-1;
+  // v_p(pi^n / n) = n/(p-1) - v_p(n); find where minimized over 1..nmax
+  let rows='', minVal=Infinity, minN=0;
+  for(let nn=1;nn<=nmax;nn++){
+    const val=nn/(p-1) - vp(nn,p);
+    rows+='<tr><td>'+nn+'</td><td>'+(nn/(p-1)).toFixed(3)+'</td><td>'+vp(nn,p)+'</td><td>'+val.toFixed(3)+'</td></tr>';
+    if(val<=minVal){minVal=val;minN=nn;}
+  }
+  const rootsOfUnity=p*(p-1);
+  document.getElementById('s67out').innerHTML=
+    'K = ℚ<sub>'+p+'</sub>(ζ<sub>'+p+'</sub>), a primitive '+p+'-th root of unity.<br>'+
+    '<strong>Degree</strong> [K:ℚ<sub>'+p+'</sub>] = p − 1 = '+deg+'; <strong>e = '+deg+', f = 1</strong> (totally ramified).<br>'+
+    'Uniformizer π = ζ − 1, with |ζ − 1| = p<sup>−1/(p−1)</sup> = '+Math.pow(p,-1/(p-1)).toFixed(4)+', i.e. v(π) = 1/(p−1).<br>'+
+    'Tracking v(πⁿ/n) = n/(p−1) − v<sub>'+p+'</sub>(n):'+
+    '<table style="margin:8px 0;border-collapse:collapse"><tr><th>n</th><th>n/(p−1)</th><th>v<sub>p</sub>(n)</th><th>v(πⁿ/n)</th></tr>'+rows+'</table>'+
+    'Minimum so far at n = '+minN+' (value '+minVal.toFixed(3)+'). The exp-style series for ζ is governed by these valuations.<br>'+
+    '<strong>Roots of unity in K:</strong> p·(p−1) = '+rootsOfUnity+' (the (p−1) prime-to-p ones × the p-th roots).';
+}
+
+/* ---------- 6.8 On to C_p: the tower ---------- */
+function calcTower(){
+  const stage=+document.getElementById('s68stage').value;
+  document.getElementById('s68stageVal').textContent=stage;
+  const stages=[
+    {name:'ℚ', desc:'The rationals with |·|<sub>p</sub>. Neither complete nor algebraically closed.', complete:false, closed:false},
+    {name:'ℚ<sub>p</sub>', desc:'Completion of ℚ. <strong>Complete</strong>, but NOT algebraically closed (e.g. √p, roots of unity missing).', complete:true, closed:false},
+    {name:'ℚ̄<sub>p</sub>', desc:'Algebraic closure of ℚ<sub>p</sub>. <strong>Algebraically closed</strong>, |·|<sub>p</sub> extends uniquely — but it is NO LONGER complete (infinite-dimensional over ℚ<sub>p</sub>).', complete:false, closed:true},
+    {name:'ℂ<sub>p</sub>', desc:'Completion of ℚ̄<sub>p</sub>. <strong>Both complete AND algebraically closed</strong> — the p-adic analogue of ℂ.', complete:true, closed:true}
+  ];
+  const s=stages[stage];
+  let chain=stages.map((st,i)=>i<=stage?'<strong style="color:var(--accent)">'+st.name+'</strong>':st.name).join(' ⊂ ');
+  document.getElementById('s68out').innerHTML=
+    'Tower: '+chain+'<br><br>'+
+    '<strong>Stage '+stage+': '+s.name+'</strong><br>'+s.desc+'<br><br>'+
+    'Complete? <strong>'+(s.complete?'Yes ✓':'No ✗')+'</strong> &nbsp;|&nbsp; Algebraically closed? <strong>'+(s.closed?'Yes ✓':'No ✗')+'</strong><br>'+
+    (stage===3?'ℂ<sub>p</sub> is where p-adic analysis lives: it has both properties at once, achieved by alternately completing and taking the algebraic closure.':'Advance the slider to keep building the tower toward ℂ<sub>p</sub>.');
+}
+
+/* ---------- Problem banks ---------- */
+function genProblems61(){return{
+  easy:[
+    {q:'A norm on a K-vector space satisfies ‖λv‖ = |λ|·‖?‖ (write v)',ans:'v',sol:'<div class="step">‖λv‖ = |λ|·‖v‖ (homogeneity).</div>'},
+    {q:'Is the sup norm on K² a valid norm? (yes/no)',ans:'yes',sol:'<div class="step">Yes, it satisfies all norm axioms.</div>'}
+  ],
+  medium:[
+    {q:'A space with a norm coming from |·| over a complete field K — is K² complete? (yes/no)',ans:'yes',sol:'<div class="step">Yes, finite-dimensional spaces over a complete field are complete.</div>'},
+    {q:'The field K must be ? for the theory to work (write complete)',ans:'complete',sol:'<div class="step">Complete (with respect to its absolute value).</div>'}
+  ],
+  hard:[
+    {q:'Does the ultrametric inequality pass to the sup norm on Kⁿ? (yes/no)',ans:'yes',sol:'<div class="step">Yes: ‖x+y‖<sub>∞</sub> ≤ max(‖x‖<sub>∞</sub>,‖y‖<sub>∞</sub>).</div>'}
+  ]
+};}
+function genProblems62(){return{
+  easy:[
+    {q:'On a finite-dimensional space over a complete field, any two norms are ? (write equivalent)',ans:'equivalent',sol:'<div class="step">Equivalent (Theorem 6.2.1).</div>'},
+    {q:'Equivalent norms define the same ? (write topology)',ans:'topology',sol:'<div class="step">Topology.</div>'}
+  ],
+  medium:[
+    {q:'‖x‖<sub>∞</sub> ≤ ‖x‖₁ ≤ n·‖x‖<sub>∞</sub> on Kⁿ — what is the upper constant? (write n)',ans:'n',sol:'<div class="step">c₂ = n (dimension).</div>'},
+    {q:'Is every finite-dimensional subspace closed? (yes/no)',ans:'yes',sol:'<div class="step">Yes, a consequence of completeness.</div>'}
+  ],
+  hard:[
+    {q:'Does norm-equivalence require the base field to be complete? (yes/no)',ans:'yes',sol:'<div class="step">Yes — the theorem fails over incomplete fields.</div>'}
+  ]
+};}
+function genProblems63(){return{
+  easy:[
+    {q:'The extension of |·|ₚ to a finite extension is given by the field ? (write norm)',ans:'norm',sol:'<div class="step">|x| = |N(x)|ₚ^(1/n).</div>'},
+    {q:'For x = a+b√m, N(x) = a² − m·? (write b^2)',ans:'b^2',sol:'<div class="step">N(x) = a² − m b².</div>'}
+  ],
+  medium:[
+    {q:'On a degree-n extension, the exponent on |N(x)|ₚ is 1/? (write n)',ans:'n',sol:'<div class="step">1/n.</div>'},
+    {q:'Is the extension of the absolute value unique? (yes/no)',ans:'yes',sol:'<div class="step">Yes, unique on a complete field (Theorem 6.3).</div>'}
+  ],
+  hard:[
+    {q:'The extended |·| is still non-archimedean? (yes/no)',ans:'yes',sol:'<div class="step">Yes, it remains ultrametric.</div>'}
+  ]
+};}
+function genProblems64(){return{
+  easy:[
+    {q:'The fundamental identity is n = e·? (write f)',ans:'f',sol:'<div class="step">n = e·f.</div>'},
+    {q:'e is called the ? index (write ramification)',ans:'ramification',sol:'<div class="step">Ramification index.</div>'}
+  ],
+  medium:[
+    {q:'If e = 1 the extension is called ? (write unramified)',ans:'unramified',sol:'<div class="step">Unramified.</div>'},
+    {q:'If f = 1 the extension is ? ramified (write totally)',ans:'totally',sol:'<div class="step">Totally ramified.</div>'}
+  ],
+  hard:[
+    {q:'For x ∈ K, vₚ(x) = (1/n)·vₚ(N(x)). The value group of K is (1/?)ℤ (write e)',ans:'e',sol:'<div class="step">(1/e)ℤ — uniformizer has valuation 1/e.</div>'}
+  ]
+};}
+function genProblems65(){return{
+  easy:[
+    {q:'There is a unique ? extension of each degree (write unramified)',ans:'unramified',sol:'<div class="step">Unramified extension — unique per degree.</div>'},
+    {q:'The residue field of the degree-f unramified ext is 𝔽 with p^? elements (write f)',ans:'f',sol:'<div class="step">𝔽_{p^f}.</div>'}
+  ],
+  medium:[
+    {q:'Roots of unity of order prime to p in the degree-f unramified ext: p^f − ? (write 1)',ans:'1',sol:'<div class="step">p^f − 1 (Teichmüller reps).</div>'},
+    {q:'Unramified extensions are generated by roots of unity of order prime to ? (write p)',ans:'p',sol:'<div class="step">Prime to p.</div>'}
+  ],
+  hard:[
+    {q:'The unramified extension of degree f corresponds to the residue extension 𝔽_{p^f}/𝔽_p which is ? (write galois)',ans:'galois',sol:'<div class="step">Galois (cyclic), matching the unramified ext.</div>'}
+  ]
+};}
+function genProblems66(){return{
+  easy:[
+    {q:'exp(x) converges when v(x) > 1/(p−?) (write 1)',ans:'1',sol:'<div class="step">v(x) > 1/(p−1).</div>'},
+    {q:'A uniformizer π in a degree-e ramified ext has v(π) = 1/? (write e)',ans:'e',sol:'<div class="step">v(π) = 1/e.</div>'}
+  ],
+  medium:[
+    {q:'Larger ramification e makes the exp convergence domain ? (write smaller)',ans:'smaller',sol:'<div class="step">Smaller — v(π)=1/e shrinks.</div>'},
+    {q:'Does the valuation extend uniquely to the finite extension? (yes/no)',ans:'yes',sol:'<div class="step">Yes (from §6.3).</div>'}
+  ],
+  hard:[
+    {q:'exp(π) converges iff 1/e > 1/(p−1), i.e. e < p−? (write 1)',ans:'1',sol:'<div class="step">e < p−1 needed (strictly).</div>'}
+  ]
+};}
+function genProblems67(){return{
+  easy:[
+    {q:'[ℚₚ(ζₚ):ℚₚ] = p − ? (write 1)',ans:'1',sol:'<div class="step">Degree p−1.</div>'},
+    {q:'A uniformizer of ℚₚ(ζₚ) is ζ − ? (write 1)',ans:'1',sol:'<div class="step">π = ζ − 1.</div>'}
+  ],
+  medium:[
+    {q:'ℚₚ(ζₚ) is totally ramified, so f = ? (write 1)',ans:'1',sol:'<div class="step">f = 1, e = p−1.</div>'},
+    {q:'|ζ − 1| = p^(−1/(p−?)) (write 1)',ans:'1',sol:'<div class="step">p^(−1/(p−1)).</div>'}
+  ],
+  hard:[
+    {q:'Number of roots of unity in ℚₚ(ζₚ): p·(p−?) (write 1)',ans:'1',sol:'<div class="step">p(p−1).</div>'}
+  ]
+};}
+function genProblems68(){return{
+  easy:[
+    {q:'ℚₚ is complete but not algebraically ? (write closed)',ans:'closed',sol:'<div class="step">Not algebraically closed.</div>'},
+    {q:'ℂₚ is the completion of ℚ̄ₚ — is it algebraically closed? (yes/no)',ans:'yes',sol:'<div class="step">Yes, and complete too.</div>'}
+  ],
+  medium:[
+    {q:'Is ℚ̄ₚ (algebraic closure of ℚₚ) complete? (yes/no)',ans:'no',sol:'<div class="step">No — completing it gives ℂₚ.</div>'},
+    {q:'ℂₚ is the p-adic analogue of which classical field? (write C)',ans:'c',sol:'<div class="step">ℂ (the complex numbers).</div>'}
+  ],
+  hard:[
+    {q:'Building ℂₚ requires alternately completing and taking the algebraic ? (write closure)',ans:'closure',sol:'<div class="step">Algebraic closure, then completion.</div>'}
+  ]
+};}
+
+function renderProblems(containerId,bank){
+  const c=document.getElementById(containerId);if(!c)return;
+  c.innerHTML='';
+  ['easy','medium','hard'].forEach(diff=>{
+    (bank[diff]||[]).forEach((p,i)=>{
+      const id=containerId+'_'+diff+'_'+i;
+      const card=document.createElement('div');card.className='problem-card';
+      card.innerHTML=
+        '<span class="diff diff-'+diff+'">'+diff+'</span>'+
+        '<div class="q">'+p.q+'</div>'+
+        '<input type="text" id="'+id+'_in" placeholder="Your answer">'+
+        '<button class="btn-check" onclick="checkProblem(\''+id+'\')">Check</button>'+
+        '<button class="btn-sol" onclick="toggleSol(\''+id+'\')">Solution</button>'+
+        '<div class="feedback" id="'+id+'_fb"></div>'+
+        '<div class="solution" id="'+id+'_sol">'+p.sol+'</div>';
+      card._ans=p.ans;
+      c.appendChild(card);
+    });
+  });
+}
+function normalize(s){return (s||'').toString().trim().toLowerCase().replace(/\s+/g,'').replace(/[₀₁₂₃₄₅₆₇₈₉]/g,d=>['0','1','2','3','4','5','6','7','8','9']['₀₁₂₃₄₅₆₇₈₉'.indexOf(d)]);}
+function checkProblem(id){
+  const inp=document.getElementById(id+'_in'),fb=document.getElementById(id+'_fb');
+  const card=inp.closest('.problem-card');
+  const ok=normalize(inp.value)===normalize(card._ans);
+  fb.className='feedback '+(ok?'correct':'wrong');
+  fb.textContent=ok?'✓ Correct!':'Not quite — try again or view solution.';
+}
+function toggleSol(id){const s=document.getElementById(id+'_sol');s.style.display=s.style.display==='block'?'none':'block';}
+
+const quizData={
+  s61:[
+    {q:'A norm ‖·‖ on a K-vector space must satisfy ‖λv‖ = ?',options:['‖v‖','|λ|·‖v‖','λ·‖v‖','|λ|+‖v‖'],correct:1},
+    {q:'For the theory of norms to behave well, the base field K should be:',options:['Finite','Complete','Archimedean','Compact'],correct:1},
+    {q:'The sup norm on K² is:',options:['Not a norm','A valid (ultrametric) norm','Only a seminorm','Archimedean'],correct:1}
+  ],
+  s62:[
+    {q:'On a finite-dimensional space over a complete field, any two norms are:',options:['Unrelated','Equivalent','Equal','Incomparable'],correct:1},
+    {q:'Equivalent norms induce:',options:['Different topologies','The same topology','No topology','Only metric spaces'],correct:1},
+    {q:'A finite-dimensional normed space over a complete field is:',options:['Never complete','Complete','Sometimes complete','Open'],correct:1}
+  ],
+  s63:[
+    {q:'The extension of |·|ₚ to a degree-n extension uses:',options:['The trace','The field norm N(x)','The determinant only','Nothing'],correct:1},
+    {q:'For x = a+b√m, the norm N(x) equals:',options:['a²+mb²','a²−mb²','a+mb','ab'],correct:1},
+    {q:'The extended absolute value is |x| = |N(x)|ₚ raised to:',options:['1','1/n','n','1/2 always'],correct:1}
+  ],
+  s64:[
+    {q:'The fundamental identity for a degree-n extension is:',options:['n = e+f','n = e·f','n = e/f','n = ef²'],correct:1},
+    {q:'The ramification index e governs the:',options:['Residue field','Value group','Galois group','Degree only'],correct:1},
+    {q:'An unramified extension has:',options:['e = 1','f = 1','e = f','n = 1'],correct:0}
+  ],
+  s65:[
+    {q:'How many unramified extensions of ℚₚ of a given degree exist?',options:['None','Exactly one','Infinitely many','p of them'],correct:1},
+    {q:'The residue field of the degree-f unramified extension is:',options:['𝔽ₚ','𝔽_{p^f}','ℚₚ','ℤ/fℤ'],correct:1},
+    {q:'Roots of unity of order prime to p in it number:',options:['p^f','p^f − 1','p − 1','f'],correct:1}
+  ],
+  s66:[
+    {q:'The p-adic exp converges when:',options:['v(x) > 1/(p−1)','v(x) < 0','|x|ₚ > 1','always'],correct:0},
+    {q:'A uniformizer π in a degree-e ramified extension satisfies:',options:['v(π)=e','v(π)=1/e','v(π)=1','v(π)=p'],correct:1},
+    {q:'Increasing ramification e makes the convergence domain of exp:',options:['Larger','Smaller','Unchanged','Empty'],correct:1}
+  ],
+  s67:[
+    {q:'[ℚₚ(ζₚ):ℚₚ] equals:',options:['p','p−1','p+1','2'],correct:1},
+    {q:'A uniformizer of ℚₚ(ζₚ) is:',options:['p','ζ','ζ−1','ζ+1'],correct:2},
+    {q:'ℚₚ(ζₚ) is:',options:['Unramified','Totally ramified','Unramified of degree p','Trivial'],correct:1}
+  ],
+  s68:[
+    {q:'ℚₚ is complete but:',options:['Not a field','Not algebraically closed','Finite','Archimedean'],correct:1},
+    {q:'The algebraic closure ℚ̄ₚ is:',options:['Complete','Not complete','Finite','Equal to ℂₚ'],correct:1},
+    {q:'ℂₚ is:',options:['Only complete','Only algebraically closed','Both complete and algebraically closed','Neither'],correct:2}
+  ]
+};
+
+function genQuiz(containerId,key){
+  const c=document.getElementById(containerId);if(!c)return;
+  const qs=quizData[key]||[];
+  c.innerHTML=qs.map((q,qi)=>
+    '<div class="quiz-q"><div class="q-text">'+(qi+1)+'. '+q.q+'</div>'+
+    q.options.map((o,oi)=>'<label><input type="radio" name="'+key+'_'+qi+'" value="'+oi+'"> '+o+'</label>').join('')+
+    '</div>').join('')+
+    '<button class="quiz-btn" onclick="gradeQuiz(\''+containerId+'\',\''+key+'\')">Submit Quiz</button>'+
+    '<div class="quiz-score" id="'+containerId+'_score" style="display:none"></div>';
+}
+function gradeQuiz(containerId,key){
+  const qs=quizData[key]||[];let score=0;
+  qs.forEach((q,qi)=>{const sel=document.querySelector('input[name="'+key+'_'+qi+'"]:checked');if(sel&&+sel.value===q.correct)score++;});
+  const sc=document.getElementById(containerId+'_score');
+  sc.style.display='block';
+  sc.textContent='Score: '+score+' / '+qs.length+(score===qs.length?' 🎉 Perfect!':'');
+}
+
+const examPool=[
+  {q:'A norm on a K-vector space must satisfy ‖λv‖ = ?',
+   options:['‖v‖','|λ|·‖v‖','λ·‖v‖','|λ|+‖v‖'],correct:1,
+   explain:['No, ignores the scalar.','Correct! Homogeneity: ‖λv‖=|λ|·‖v‖.','No, must use the absolute value.','No, that is additive.']},
+  {q:'On a finite-dimensional space over a COMPLETE field, any two norms are:',
+   options:['Unrelated','Equivalent','Always equal','Never comparable'],correct:1,
+   explain:['No, they are tightly related.','Correct! Theorem 6.2.1.','No, equivalent ≠ equal.','No, they are comparable.']},
+  {q:'A finite-dimensional normed space over a complete field is:',
+   options:['Never complete','Complete','Open','Compact'],correct:1,
+   explain:['No.','Correct! Completeness transfers.','Not the property.','Not in general.']},
+  {q:'The unique extension of |·|ₚ to a degree-n extension is given by:',
+   options:['The trace','|N(x)|ₚ^(1/n)','|x|ₚ','the determinant'],correct:1,
+   explain:['No, the trace is additive.','Correct! Uses the field norm.','That is the original.','Not directly.']},
+  {q:'For x = a + b√m in ℚₚ(√m), N(x) = ?',
+   options:['a²+mb²','a²−mb²','a+mb','2ab'],correct:1,
+   explain:['Sign error.','Correct! Conjugate product.','No.','No.']},
+  {q:'The fundamental identity for a degree-n extension of ℚₚ is:',
+   options:['n=e+f','n=e·f','n=ef²','n=e−f'],correct:1,
+   explain:['No, multiplicative.','Correct! n = e·f.','No.','No.']},
+  {q:'The ramification index e controls the:',
+   options:['Residue field','Value group (1/e)ℤ','Galois group','Degree alone'],correct:1,
+   explain:['No, that is f.','Correct! v(π)=1/e.','No.','No.']},
+  {q:'An unramified extension has:',
+   options:['e = 1','f = 1','n = 1','e = f'],correct:0,
+   explain:['Correct! e=1, residue field grows.','That is totally ramified.','That is trivial.','Not in general.']},
+  {q:'How many unramified extensions of ℚₚ of a given degree exist?',
+   options:['None','Exactly one','Infinitely many','p'],correct:1,
+   explain:['No.','Correct! Unique per degree.','No.','No.']},
+  {q:'The residue field of the degree-f unramified extension is:',
+   options:['𝔽ₚ','𝔽_{p^f}','ℚₚ','ℤ/fℤ'],correct:1,
+   explain:['Too small.','Correct! p^f elements.','Not a residue field.','No.']},
+  {q:'The p-adic exp(x) converges when:',
+   options:['v(x) > 1/(p−1)','v(x) < 0','|x|ₚ > 1','always'],correct:0,
+   explain:['Correct! v(x) > 1/(p−1).','No, diverges.','No.','No, restricted domain.']},
+  {q:'A uniformizer π in a degree-e totally ramified extension satisfies:',
+   options:['v(π)=e','v(π)=1/e','v(π)=1','v(π)=p'],correct:1,
+   explain:['No, inverse.','Correct! v(π)=1/e.','That is ℚₚ itself.','No.']},
+  {q:'[ℚₚ(ζₚ):ℚₚ] equals:',
+   options:['p','p−1','p+1','2'],correct:1,
+   explain:['No.','Correct! Degree p−1.','No.','Only for p=3.']},
+  {q:'ℚₚ(ζₚ) is:',
+   options:['Unramified','Totally ramified (e=p−1)','Of degree p','Trivial'],correct:1,
+   explain:['No, e>1.','Correct! e=p−1, f=1, π=ζ−1.','No, degree p−1.','No.']},
+  {q:'The algebraic closure ℚ̄ₚ is:',
+   options:['Complete','NOT complete','Finite','Equal to ℂₚ'],correct:1,
+   explain:['No — that is the surprise.','Correct! Must complete it to get ℂₚ.','No, infinite degree.','No, ℂₚ is its completion.']},
+  {q:'ℂₚ is characterized as:',
+   options:['Only complete','Only algebraically closed','Both complete AND algebraically closed','Neither'],correct:2,
+   explain:['Not enough.','Not enough.','Correct! The p-adic analogue of ℂ.','No.']}
+];
+
+let examTimer=null,examTimeLeft=0;
+function startExam(){
+  const timed=document.getElementById('timedMode').checked;
+  const body=document.getElementById('examBody');
+  body.innerHTML=examPool.map((q,qi)=>
+    '<div class="quiz-q"><div class="q-text">'+(qi+1)+'. '+q.q+'</div>'+
+    q.options.map((o,oi)=>'<label><input type="radio" name="ex_'+qi+'" value="'+oi+'"> '+o+'</label>').join('')+
+    '</div>').join('')+
+    '<button class="quiz-btn" onclick="gradeExam()">Submit Exam</button>'+
+    '<button class="quiz-btn secondary" onclick="resetExam()">Reset</button>'+
+    '<div id="examResult"></div>';
+  const t=document.getElementById('timer');
+  if(timed){examTimeLeft=20*60;t.style.display='block';updateTimer();examTimer=setInterval(()=>{examTimeLeft--;updateTimer();if(examTimeLeft<=0){clearInterval(examTimer);gradeExam();}},1000);}
+  else{t.style.display='none';}
+}
+function updateTimer(){const m=Math.floor(examTimeLeft/60),s=examTimeLeft%60;document.getElementById('timer').textContent=m+':'+(s<10?'0':'')+s;}
+function gradeExam(){
+  if(examTimer){clearInterval(examTimer);examTimer=null;}
+  let score=0;
+  examPool.forEach((q,qi)=>{const sel=document.querySelector('input[name="ex_'+qi+'"]:checked');if(sel&&+sel.value===q.correct)score++;});
+  const pct=Math.round(score/examPool.length*100);
+  let html='<div class="quiz-score">Final Score: '+score+' / '+examPool.length+' ('+pct+'%)</div>';
+  html+='<div class="perf-breakdown"><table><tr><th>#</th><th>Result</th></tr>';
+  examPool.forEach((q,qi)=>{const sel=document.querySelector('input[name="ex_'+qi+'"]:checked');const ok=sel&&+sel.value===q.correct;
+    html+='<tr><td>'+(qi+1)+'</td><td>'+(ok?'✓ Correct':'✗ Incorrect')+'</td></tr>';});
+  html+='</table></div>';
+  examPool.forEach((q,qi)=>{
+    html+='<div class="exam-explain"><div class="exam-explain-toggle" onclick="this.nextElementSibling.classList.toggle(\'open\')">Q'+(qi+1)+' explanation</div>'+
+      '<div class="exam-explain-body">'+
+      q.options.map((o,oi)=>'<div class="exam-explain-item '+(oi===q.correct?'opt-correct':'opt-wrong')+'"><strong>'+o+':</strong> '+((q.explain&&q.explain[oi])||'')+'</div>').join('')+
+      '</div></div>';
+  });
+  document.getElementById('examResult').innerHTML=html;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function resetExam(){if(examTimer){clearInterval(examTimer);examTimer=null;}document.getElementById('timer').style.display='none';document.getElementById('examBody').innerHTML='';}
+
+function initAll(){
+  document.querySelectorAll('.nav-link').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();goSection(a.dataset.section);}));
+  if(typeof calcVectorNorm==='function')calcVectorNorm();
+  if(typeof calcNormEquiv==='function')calcNormEquiv();
+  if(typeof calcFieldNorm==='function')calcFieldNorm();
+  if(typeof calcEF==='function')calcEF();
+  if(typeof calcRootsK==='function')calcRootsK();
+  if(typeof calcExpDomainK==='function')calcExpDomainK();
+  if(typeof calcCyclotomic==='function')calcCyclotomic();
+  if(typeof calcTower==='function')calcTower();
+  renderProblems('s61problems',genProblems61());
+  renderProblems('s62problems',genProblems62());
+  renderProblems('s63problems',genProblems63());
+  renderProblems('s64problems',genProblems64());
+  renderProblems('s65problems',genProblems65());
+  renderProblems('s66problems',genProblems66());
+  renderProblems('s67problems',genProblems67());
+  renderProblems('s68problems',genProblems68());
+  genQuiz('quiz61','s61');
+  genQuiz('quiz62','s62');
+  genQuiz('quiz63','s63');
+  genQuiz('quiz64','s64');
+  genQuiz('quiz65','s65');
+  genQuiz('quiz66','s66');
+  genQuiz('quiz67','s67');
+  genQuiz('quiz68','s68');
+  updateProgress('intro');
+}
+document.addEventListener('DOMContentLoaded',initAll);
+</script>
+</body>
+</html>
