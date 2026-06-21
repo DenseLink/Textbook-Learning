@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Final Exam — Chapters 5–7 | p-adic Numbers Interactive Platform</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f8f9fa;--text:#1a1a2e;--text2:#555;--accent:#4361ee;
+  --def:#e3f2fd;--def-border:#1976d2;
+  --thm:#e8f5e9;--thm-border:#388e3c;
+  --lem:#fff9c4;--lem-border:#f9a825;
+  --proof:#f5f5f5;--proof-border:#9e9e9e;
+  --example:#e0f2f1;--example-border:#00897b;
+  --problem:#fff3e0;--problem-border:#ef6c00;
+  --plain:#f3e8ff;--plain-border:#8e44ad;
+  --sidebar-w:280px;--topbar-h:56px;
+  --card-radius:8px;--shadow:0 2px 8px rgba(0,0,0,.08);
+  --font-main:'Segoe UI',system-ui,-apple-system,sans-serif;
+  --font-mono:'Fira Code','Cascadia Code',monospace;
+  --transition:0.3s ease;
+}
+.dark{
+  --bg:#0f0f23;--bg2:#1a1a35;--text:#e0e0e0;--text2:#aaa;--accent:#7c8cf8;
+  --def:#1a2744;--def-border:#5c9ce6;
+  --thm:#1a3324;--thm-border:#66bb6a;
+  --lem:#332d1a;--lem-border:#fdd835;
+  --proof:#1e1e2f;--proof-border:#777;
+  --example:#1a302e;--example-border:#4db6ac;
+  --problem:#2e2114;--problem-border:#ffa726;
+  --plain:#2a1f3d;--plain-border:#b388e0;
+  --shadow:0 2px 8px rgba(0,0,0,.3);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-height:1.7;transition:background var(--transition),color var(--transition)}
+#sidebar{position:fixed;left:0;top:0;width:var(--sidebar-w);height:100vh;background:var(--bg2);border-right:1px solid rgba(128,128,128,.2);overflow-y:auto;z-index:100;transition:transform var(--transition),background var(--transition);padding-top:16px}
+#sidebar.closed{transform:translateX(calc(-1 * var(--sidebar-w)))}
+#sidebar h2{font-size:1.1rem;padding:8px 20px;color:var(--accent)}
+#sidebar ul{list-style:none}
+#sidebar li{margin:0}
+#sidebar li a{display:block;padding:8px 20px 8px 28px;color:var(--text);text-decoration:none;font-size:.9rem;border-left:3px solid transparent;transition:all .2s}
+#sidebar li a:hover,#sidebar li a.active{background:rgba(67,97,238,.1);border-left-color:var(--accent);color:var(--accent)}
+#sidebar li.sub a{padding-left:44px;font-size:.82rem}
+.sidebar-toggle{position:fixed;left:8px;top:8px;z-index:200;background:var(--accent);color:#fff;border:none;width:40px;height:40px;border-radius:8px;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow)}
+.sidebar-toggle:hover{opacity:.85}
+#topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:var(--bg2);border-bottom:1px solid rgba(128,128,128,.2);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:90;transition:left var(--transition),background var(--transition)}
+#topbar.full{left:0}
+#topbar .breadcrumb{font-size:.9rem;color:var(--text2)}
+#topbar .controls{display:flex;gap:12px;align-items:center}
+#topbar .controls button{background:none;border:1px solid rgba(128,128,128,.3);color:var(--text);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:.82rem;transition:all .2s}
+#topbar .controls button:hover{border-color:var(--accent);color:var(--accent)}
+.chapter-nav{background:var(--bg);border:1px solid rgba(128,128,128,.3);color:var(--text);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:.82rem;transition:all .2s;font-family:var(--font-main)}
+.chapter-nav:hover{border-color:var(--accent);color:var(--accent)}
+.dark-toggle{font-size:1.1rem!important;width:36px!important;padding:6px!important}
+.progress-bar{position:fixed;top:var(--topbar-h);left:var(--sidebar-w);right:0;height:3px;background:rgba(128,128,128,.15);z-index:89;transition:left var(--transition)}
+.progress-bar.full{left:0}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),#06d6a0);width:0;transition:width .4s}
+#main{margin-left:var(--sidebar-w);padding-top:calc(var(--topbar-h) + 16px);min-height:100vh;transition:margin-left var(--transition)}
+#main.full{margin-left:0}
+.section{display:none;padding:24px 32px 60px;max-width:900px;margin:0 auto}
+.section.active{display:block}
+.section h1{font-size:2rem;margin-bottom:8px;color:var(--accent)}
+.section h2{font-size:1.5rem;margin:32px 0 12px;border-bottom:2px solid var(--accent);padding-bottom:6px}
+.section h3{font-size:1.2rem;margin:24px 0 8px;color:var(--text)}
+.section p,.section li{margin-bottom:8px}
+.block{border-left:4px solid;border-radius:var(--card-radius);padding:18px 22px;margin:18px 0;box-shadow:var(--shadow);transition:background var(--transition)}
+.block-def{background:var(--def);border-color:var(--def-border)}
+.block-thm{background:var(--thm);border-color:var(--thm-border)}
+.block-lem{background:var(--lem);border-color:var(--lem-border)}
+.block-proof{background:var(--proof);border-color:var(--proof-border);font-size:.92rem}
+.block-example{background:var(--example);border-color:var(--example-border)}
+.block-problem{background:var(--problem);border-color:var(--problem-border)}
+.block .label{font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.block-def .label{color:var(--def-border)}
+.block-plain{background:var(--plain);border-color:var(--plain-border)}
+.block-plain .label{color:var(--plain-border)}
+.block-thm .label{color:var(--thm-border)}
+.block-lem .label{color:var(--lem-border)}
+.block-proof .label{color:var(--proof-border)}
+.block-example .label{color:var(--example-border)}
+.block-problem .label{color:var(--problem-border)}
+.math{font-family:var(--font-mono);background:rgba(128,128,128,.08);padding:2px 6px;border-radius:4px;font-size:.9em}
+.math-block{display:block;text-align:center;margin:14px 0;padding:12px;background:rgba(128,128,128,.05);border-radius:6px;overflow-x:auto;font-family:var(--font-mono);font-size:.92em}
+.interactive-viz{border:2px solid var(--accent);border-radius:var(--card-radius);padding:20px;margin:20px 0;background:rgba(67,97,238,.03)}
+.interactive-viz h4{color:var(--accent);margin-bottom:12px}
+.interactive-viz .controls-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.interactive-viz label{font-size:.88rem;min-width:90px}
+.interactive-viz input[type=range]{flex:1;min-width:120px;accent-color:var(--accent)}
+.interactive-viz select{padding:5px 8px;border-radius:4px;font-size:.88rem;border:1px solid rgba(128,128,128,.3);background:var(--bg);color:var(--text)}
+.interactive-viz input[type=text]{padding:5px 8px;border-radius:4px;font-size:.88rem;border:1px solid rgba(128,128,128,.3);background:var(--bg);color:var(--text);width:100px}
+.interactive-viz .val{font-weight:700;min-width:50px;text-align:center;color:var(--accent);font-size:.9rem}
+.interactive-viz .viz-output{margin:12px 0;padding:14px;background:rgba(128,128,128,.06);border-radius:6px;font-family:var(--font-mono);font-size:.88rem;line-height:1.6}
+.interactive-viz .viz-svg{text-align:center;margin:10px 0}
+.interactive-viz button{padding:6px 14px;border:none;border-radius:6px;cursor:pointer;font-size:.82rem;background:var(--accent);color:#fff;transition:opacity .2s;margin:4px}
+.interactive-viz button:hover{opacity:.85}
+.problem-set{margin:20px 0}
+.problem-card{background:var(--problem);border-left:4px solid var(--problem-border);border-radius:var(--card-radius);padding:18px;margin:14px 0;box-shadow:var(--shadow)}
+.problem-card .diff{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.75rem;font-weight:700;color:#fff;margin-bottom:10px}
+.diff-easy{background:#4caf50}.diff-medium{background:#ff9800}.diff-hard{background:#f44336}
+.problem-card .q{margin-bottom:12px;font-size:.95rem}
+.problem-card input[type=text]{width:200px;padding:8px 12px;border:2px solid rgba(128,128,128,.3);border-radius:6px;font-size:.9rem;background:var(--bg);color:var(--text);transition:border-color .2s}
+.problem-card input:focus{outline:none;border-color:var(--accent)}
+.problem-card button{padding:7px 16px;border:none;border-radius:6px;cursor:pointer;font-size:.82rem;margin:4px;transition:all .2s}
+.btn-check{background:var(--accent);color:#fff}.btn-check:hover{opacity:.85}
+.btn-rand{background:#9c27b0;color:#fff}.btn-rand:hover{opacity:.85}
+.btn-sol{background:#00897b;color:#fff}.btn-sol:hover{opacity:.85}
+.feedback{margin-top:8px;padding:8px 12px;border-radius:6px;font-size:.88rem;display:none}
+.feedback.correct{display:block;background:#c8e6c9;color:#2e7d32}
+.feedback.wrong{display:block;background:#ffcdd2;color:#c62828}
+.solution{display:none;margin-top:12px;padding:14px;background:rgba(0,137,123,.08);border-radius:6px;border-left:3px solid #00897b;font-size:.9rem}
+.quiz-container{margin:20px 0}
+.quiz-q{background:var(--bg2);border-radius:var(--card-radius);padding:18px;margin:14px 0;box-shadow:var(--shadow)}
+.quiz-q .q-text{font-weight:600;margin-bottom:12px}
+.quiz-q label{display:block;padding:8px 14px;margin:4px 0;border-radius:6px;cursor:pointer;transition:background .2s;font-size:.92rem}
+.quiz-q label:hover{background:rgba(67,97,238,.1)}
+.quiz-q input[type=radio]{margin-right:8px;accent-color:var(--accent)}
+.quiz-score{font-size:1.1rem;font-weight:700;padding:16px;background:var(--bg2);border-radius:var(--card-radius);margin:12px 0;text-align:center;box-shadow:var(--shadow)}
+.quiz-btn{padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:.95rem;margin:6px}
+.quiz-btn:hover{opacity:.85}
+.quiz-btn.secondary{background:#777}
+.timer-display{font-size:1.3rem;font-weight:700;color:var(--accent);text-align:center;margin:12px 0;padding:12px;background:var(--bg2);border-radius:var(--card-radius)}
+.perf-breakdown{margin:20px 0}
+.perf-breakdown table{width:100%;border-collapse:collapse}
+.perf-breakdown th,.perf-breakdown td{padding:10px 14px;text-align:left;border-bottom:1px solid rgba(128,128,128,.2);font-size:.9rem}
+.perf-breakdown th{background:var(--accent);color:#fff}
+.nav-btns{display:flex;justify-content:space-between;margin-top:40px;padding-top:20px;border-top:1px solid rgba(128,128,128,.2)}
+.nav-btn{padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:.9rem;transition:all .2s}
+.nav-btn:hover{opacity:.85}
+.nav-btn:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:800px){
+  #sidebar{transform:translateX(calc(-1 * var(--sidebar-w)))}
+  #sidebar.open{transform:translateX(0)}
+  #main{margin-left:0!important}
+  #topbar{left:0!important}
+  .progress-bar{left:0!important}
+  .section{padding:16px}
+  .sidebar-toggle{display:flex}
+  #topbar .breadcrumb{display:none}
+}
+@media(min-width:801px){
+  .sidebar-toggle{left:calc(var(--sidebar-w) + 8px)}
+  #sidebar.closed ~ .sidebar-toggle{left:8px}
+}
+.step{margin:6px 0;padding:6px 0 6px 16px;border-left:2px solid var(--accent);font-size:.9rem}
+.step strong{color:var(--accent)}
+.exam-explain{margin-top:10px;border-radius:6px;overflow:hidden;font-size:.88rem}
+.exam-explain-toggle{cursor:pointer;padding:8px 14px;background:rgba(0,137,123,.12);border:1px solid rgba(0,137,123,.25);border-radius:6px;color:#00897b;font-weight:600;font-size:.82rem;display:inline-block;margin-top:6px}
+.exam-explain-toggle:hover{background:rgba(0,137,123,.2)}
+.exam-explain-body{display:none;padding:12px 16px;margin-top:6px;background:rgba(128,128,128,.04);border:1px solid rgba(128,128,128,.15);border-radius:6px}
+.exam-explain-body.open{display:block}
+.exam-explain-item{padding:8px 10px;margin:4px 0;border-radius:4px;line-height:1.5}
+.exam-explain-item.opt-correct{background:rgba(76,175,80,.1);border-left:3px solid #4caf50}
+.exam-explain-item.opt-wrong{background:rgba(244,67,54,.05);border-left:3px solid #ef9a9a}
+
+
+.exam-wrap{max-width:920px;margin:0 auto;padding:24px 32px 80px}
+.exam-hero{background:linear-gradient(135deg,var(--accent),#06d6a0);color:#fff;border-radius:12px;padding:30px 34px;margin-bottom:24px;box-shadow:var(--shadow)}
+.exam-hero h1{font-size:1.9rem;margin-bottom:10px}
+.exam-hero p{font-size:1rem;opacity:.95;max-width:680px}
+.exam-coverage{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.exam-coverage span{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);padding:5px 12px;border-radius:20px;font-size:.82rem}
+.exam-card{background:var(--bg2);border-radius:var(--card-radius);padding:22px 26px;margin-bottom:22px;box-shadow:var(--shadow)}
+.exam-card h2{font-size:1.15rem;color:var(--accent);margin-bottom:12px}
+.exam-card ul{margin-left:20px;font-size:.92rem;color:var(--text2)}
+.exam-card li{margin:5px 0}
+.setup-row{display:flex;flex-wrap:wrap;gap:24px;align-items:center;margin:14px 0}
+.setup-row label{font-size:.92rem;font-weight:600}
+.setup-row select{padding:7px 12px;border-radius:6px;border:1px solid rgba(128,128,128,.4);background:var(--bg);color:var(--text);font-size:.9rem;font-family:var(--font-main)}
+.part-header{font-size:1.15rem;font-weight:700;color:var(--accent);margin:30px 0 6px;padding-bottom:8px;border-bottom:2px solid var(--accent)}
+.q-tag{display:inline-block;font-size:.72rem;background:rgba(67,97,238,.12);color:var(--accent);padding:2px 9px;border-radius:12px;margin-bottom:8px;font-weight:600}
+.exam-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.scroll-top-btn{position:fixed;right:20px;bottom:20px;background:var(--accent);color:#fff;border:none;width:46px;height:46px;border-radius:50%;cursor:pointer;font-size:1.3rem;box-shadow:var(--shadow);display:none;z-index:50}
+.result-banner{font-size:1.5rem;font-weight:800;text-align:center;padding:24px;border-radius:12px;margin:14px 0;color:#fff}
+.result-banner.pass{background:linear-gradient(135deg,#388e3c,#66bb6a)}
+.result-banner.fail{background:linear-gradient(135deg,#e65100,#ff9800)}
+@media(max-width:700px){.exam-wrap{padding:16px}.exam-hero{padding:22px}}
+
+</style>
+</head>
+<body>
+
+<header id="topbar" class="full">
+  <div class="breadcrumb">Final Exam</div>
+  <div class="controls">
+    <select class="chapter-nav" onchange="if(this.value)window.location.href=this.value">
+      <option value="">Go to chapter…</option>
+      <option value="index_chapter_2.html">Chapter 2</option>
+      <option value="index_chapter_3.html">Chapter 3</option>
+      <option value="index_chapter_4.html">Chapter 4</option>
+      <option value="index_chapter_5.html">Chapter 5</option>
+      <option value="index_chapter_6.html">Chapter 6</option>
+      <option value="index_chapter_7.html">Chapter 7</option>
+      <option value="midterm.html">★ Midterm (Ch 2–4)</option>
+      <option value="final.html" selected>★ Final (Ch 5–7)</option>
+    </select>
+    <button class="dark-toggle" onclick="toggleDark()" title="Toggle dark mode">◐</button>
+  </div>
+</header>
+
+<main id="main" class="full">
+<div class="exam-wrap">
+
+  <div class="exam-hero">
+    <h1>Final Exam — Chapters 5–7</h1>
+    <p>A cumulative assessment of p-adic analysis: sequences, series and power series; exponential, logarithm and the structure of Zₚ×; normed vector spaces and finite field extensions; and analysis over ℂₚ including Newton polygons and entire functions.</p>
+    <div class="exam-coverage"><span>Chapter 5 — Elementary Analysis in ℚₚ</span><span>Chapter 6 — Vector Spaces & Field Extensions</span><span>Chapter 7 — Analysis in ℂₚ</span></div>
+  </div>
+
+  <div class="exam-card" id="setupPanel">
+    <h2>How this exam works</h2>
+    <ul>
+      <li>Questions are drawn from a bank of <strong id="totCount">0</strong> vetted multiple-choice questions spanning every covered section.</li>
+      <li>Choose a length below. Questions are <strong>randomized</strong> each attempt, and answer choices can be shuffled too.</li>
+      <li>Covers p-adic analysis, Strassman & Mahler (Ch 5), normed vector spaces, ramification & extensions of ℚₚ (Ch 6), and analysis in ℂₚ, entire functions & Newton polygons (Ch 7).</li>
+      <li>After submitting you get an overall score, a <strong>per-chapter breakdown</strong>, and an expandable explanation for every question.</li>
+      <li>Passing mark: <strong>70%</strong>. Your dark/light preference is remembered.</li>
+    </ul>
+    <div class="setup-row">
+      <label>Exam length:
+        <select id="lenSel"></select>
+      </label>
+      <label><input type="checkbox" id="shuffleOpts" checked> Shuffle answer choices</label>
+      <label><input type="checkbox" id="timedMode"> Timed mode (~1.5 min/question)</label>
+    </div>
+    <div class="exam-actions">
+      <button class="quiz-btn" onclick="startExam()">▶ Start Exam</button>
+    </div>
+  </div>
+
+  <div class="timer-display" id="timer" style="display:none">⏱ 00:00</div>
+  <div id="examBody"></div>
+
+</div>
+</main>
+
+<button class="scroll-top-btn" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+
+const BANK = {"ch5": [{"q": "The main convergence test in ℚₚ is:", "options": ["Comparison test", "aₙ→0", "Ratio test", "Integral test"], "correct": 1, "explain": ["No, not needed in ℚₚ.", "Yes! Σaₙ converges ⟺ aₙ→0.", "No, easier test exists.", "No, integration is different."], "ch": 5, "sec": ""}, {"q": "In ℝ, Σ1/n diverges. In ℚₚ?", "options": ["Also diverges", "Converges", "Depends on p", "Unknown"], "correct": 1, "explain": ["No! In ℚₚ, 1/n→0 ⇒ Σ1/n converges.", "Correct! 1/n→0 ⇒ converges.", "No, works for all p.", "It's known."], "ch": 5, "sec": ""}, {"q": "If Σaₙ converges in ℚₚ, then |Σaₙ|ₚ ≤ ?", "options": ["Σ|aₙ|ₚ", "max|aₙ|ₚ", "1", "min|aₙ|ₚ"], "correct": 1, "explain": ["No, ultrametric is stronger.", "Correct! Ultrametric inequality for series.", "No, unbounded.", "No."], "ch": 5, "sec": ""}, {"q": "Strassman's Theorem says power series in ℚₚ have:", "options": ["Infinitely many zeros", "At most N zeros (finite)", "No zeros", "Exactly p zeros"], "correct": 1, "explain": ["No, that's ℂ!", "Yes! At most N (finitely many).", "Not necessarily.", "No."], "ch": 5, "sec": ""}, {"q": "The p-adic exp(x) is defined by:", "options": ["eˣ (usual)", "Σxⁿ/n!", "Σxⁿ", "log⁻¹(x)"], "correct": 1, "explain": ["No, series definition.", "Correct!", "No, missing factorial.", "Wrong direction."], "ch": 5, "sec": ""}, {"q": "Is exp(x+y)=exp(x)·exp(y) for all x,y ∈ ℚₚ?", "options": ["Yes", "No, only locally", "Only for p=2", "Yes, if |x|,|y|<1"], "correct": 1, "explain": ["No, restricted domain!", "Correct! Only on restricted domain.", "No, all p.", "Close, but need vₚ≥1/(p-1)."], "ch": 5, "sec": ""}, {"q": "For p odd, Zₚ× is isomorphic to:", "options": ["ℤₚ", "μ_{p-1}×(1+pZₚ)", "Cyclic group", "ℚₚ×"], "correct": 1, "explain": ["No, that's additive.", "Correct! Roots of unity × principal units.", "No, it's a product.", "No, that's bigger."], "ch": 5, "sec": ""}, {"q": "Is Z₂× cyclic?", "options": ["Yes", "No", "Only if extended", "All Zₚ× are cyclic"], "correct": 1, "explain": ["No! Z₂×≅{±1}×(1+4Z₂).", "Correct! Not cyclic (unlike odd p).", "Not standard.", "False, Z₂× exception."], "ch": 5, "sec": ""}, {"q": "The p-adic log converges for |x|ₚ<?", "options": ["1 (p≠2)", "p", "1/p", "∞"], "correct": 0, "explain": ["Correct! (and 1/2 for p=2)", "No, smaller.", "No, larger.", "No, finite radius."], "ch": 5, "sec": ""}, {"q": "1+pZₚ (principal units) is isomorphic as additive group to:", "options": ["Zₚ", "μ_{p-1}", "ℤ/pℤ", "ℚₚ"], "correct": 0, "explain": ["Correct! Via log.", "No, that's roots of unity.", "No, that's multiplicative mod p.", "No, too big."], "ch": 5, "sec": ""}, {"q": "A locally constant function on Zₚ is:", "options": ["Never continuous", "Always continuous", "Sometimes continuous", "Not defined"], "correct": 1, "explain": ["No, it IS continuous.", "Correct! Locally constant ⟹ continuous.", "No, always true.", "Functions exist."], "ch": 5, "sec": ""}, {"q": "Haar measure on Zₚ satisfies μ(a + pⁿZₚ) = ?", "options": ["1", "pⁿ", "p⁻ⁿ", "1/n"], "correct": 2, "explain": ["No, that's μ(Zₚ).", "No, inverse.", "Correct! Each coset has measure p⁻ⁿ.", "No, depends on p."], "ch": 5, "sec": ""}, {"q": "Can we differentiate power series term-by-term in ℚₚ?", "options": ["No", "Yes, same radius", "Yes, smaller radius", "Only polynomials"], "correct": 1, "explain": ["We can!", "Correct! Term-by-term, same radius (Thm 5.5.1).", "No, radius unchanged.", "All power series."], "ch": 5, "sec": ""}, {"q": "The Strassman bound N = max{n: |aₙ|ₚrⁿ is ?}", "options": ["minimal", "maximal", "zero", "nonzero"], "correct": 1, "explain": ["No, opposite.", "Correct! Where |aₙ|ₚrⁿ is maximal.", "Not necessarily.", "Weaker condition."], "ch": 5, "sec": ""}, {"q": "The binomial series (1+x)ᵃ for a ∈ ℤₚ converges when:", "options": ["|x|ₚ<1", "|x|ₚ≤1", "All x", "|x|ₚ>1"], "correct": 0, "explain": ["Correct! Need |x|ₚ<1.", "Boundary case may fail.", "No, restricted.", "No, diverges."], "ch": 5, "sec": ""}, {"q": "Mahler's Theorem expresses continuous f: Zₚ→ℚₚ using:", "options": ["Taylor series", "Fourier series", "Binomial basis (x choose n)", "Exponentials"], "correct": 2, "explain": ["No, different basis.", "Wrong setting.", "Correct! Mahler expansion Σaₙ(x choose n).", "No."], "ch": 5, "sec": ""}], "ch6": [{"q": "A norm on a K-vector space must satisfy ‖λv‖ = ?", "options": ["‖v‖", "|λ|·‖v‖", "λ·‖v‖", "|λ|+‖v‖"], "correct": 1, "explain": ["No, ignores the scalar.", "Correct! Homogeneity: ‖λv‖=|λ|·‖v‖.", "No, must use the absolute value.", "No, that is additive."], "ch": 6, "sec": ""}, {"q": "On a finite-dimensional space over a COMPLETE field, any two norms are:", "options": ["Unrelated", "Equivalent", "Always equal", "Never comparable"], "correct": 1, "explain": ["No, they are tightly related.", "Correct! Theorem 6.2.1.", "No, equivalent ≠ equal.", "No, they are comparable."], "ch": 6, "sec": ""}, {"q": "A finite-dimensional normed space over a complete field is:", "options": ["Never complete", "Complete", "Open", "Compact"], "correct": 1, "explain": ["No.", "Correct! Completeness transfers.", "Not the property.", "Not in general."], "ch": 6, "sec": ""}, {"q": "The unique extension of |·|ₚ to a degree-n extension is given by:", "options": ["The trace", "|N(x)|ₚ^(1/n)", "|x|ₚ", "the determinant"], "correct": 1, "explain": ["No, the trace is additive.", "Correct! Uses the field norm.", "That is the original.", "Not directly."], "ch": 6, "sec": ""}, {"q": "For x = a + b√m in ℚₚ(√m), N(x) = ?", "options": ["a²+mb²", "a²−mb²", "a+mb", "2ab"], "correct": 1, "explain": ["Sign error.", "Correct! Conjugate product.", "No.", "No."], "ch": 6, "sec": ""}, {"q": "The fundamental identity for a degree-n extension of ℚₚ is:", "options": ["n=e+f", "n=e·f", "n=ef²", "n=e−f"], "correct": 1, "explain": ["No, multiplicative.", "Correct! n = e·f.", "No.", "No."], "ch": 6, "sec": ""}, {"q": "The ramification index e controls the:", "options": ["Residue field", "Value group (1/e)ℤ", "Galois group", "Degree alone"], "correct": 1, "explain": ["No, that is f.", "Correct! v(π)=1/e.", "No.", "No."], "ch": 6, "sec": ""}, {"q": "An unramified extension has:", "options": ["e = 1", "f = 1", "n = 1", "e = f"], "correct": 0, "explain": ["Correct! e=1, residue field grows.", "That is totally ramified.", "That is trivial.", "Not in general."], "ch": 6, "sec": ""}, {"q": "How many unramified extensions of ℚₚ of a given degree exist?", "options": ["None", "Exactly one", "Infinitely many", "p"], "correct": 1, "explain": ["No.", "Correct! Unique per degree.", "No.", "No."], "ch": 6, "sec": ""}, {"q": "The residue field of the degree-f unramified extension is:", "options": ["𝔽ₚ", "𝔽_{p^f}", "ℚₚ", "ℤ/fℤ"], "correct": 1, "explain": ["Too small.", "Correct! p^f elements.", "Not a residue field.", "No."], "ch": 6, "sec": ""}, {"q": "The p-adic exp(x) converges when:", "options": ["v(x) > 1/(p−1)", "v(x) < 0", "|x|ₚ > 1", "always"], "correct": 0, "explain": ["Correct! v(x) > 1/(p−1).", "No, diverges.", "No.", "No, restricted domain."], "ch": 6, "sec": ""}, {"q": "A uniformizer π in a degree-e totally ramified extension satisfies:", "options": ["v(π)=e", "v(π)=1/e", "v(π)=1", "v(π)=p"], "correct": 1, "explain": ["No, inverse.", "Correct! v(π)=1/e.", "That is ℚₚ itself.", "No."], "ch": 6, "sec": ""}, {"q": "[ℚₚ(ζₚ):ℚₚ] equals:", "options": ["p", "p−1", "p+1", "2"], "correct": 1, "explain": ["No.", "Correct! Degree p−1.", "No.", "Only for p=3."], "ch": 6, "sec": ""}, {"q": "ℚₚ(ζₚ) is:", "options": ["Unramified", "Totally ramified (e=p−1)", "Of degree p", "Trivial"], "correct": 1, "explain": ["No, e>1.", "Correct! e=p−1, f=1, π=ζ−1.", "No, degree p−1.", "No."], "ch": 6, "sec": ""}, {"q": "The algebraic closure ℚ̄ₚ is:", "options": ["Complete", "NOT complete", "Finite", "Equal to ℂₚ"], "correct": 1, "explain": ["No — that is the surprise.", "Correct! Must complete it to get ℂₚ.", "No, infinite degree.", "No, ℂₚ is its completion."], "ch": 6, "sec": ""}, {"q": "ℂₚ is characterized as:", "options": ["Only complete", "Only algebraically closed", "Both complete AND algebraically closed", "Neither"], "correct": 2, "explain": ["Not enough.", "Not enough.", "Correct! The p-adic analogue of ℂ.", "No."], "ch": 6, "sec": ""}], "ch7": [{"q": "Over ℂ_p, exp(x) converges exactly when:", "options": ["v_p(x) > 1/(p−1)", "v_p(x) < 0", "|x|_p > 1", "always"], "correct": 0, "explain": ["Correct! Same domain bound as over ℚ_p.", "No, that diverges.", "No.", "No, the domain is restricted."], "ch": 7, "sec": ""}, {"q": "log(1+x) converges over ℂ_p when:", "options": ["v_p(x) > 0 (x ∈ P)", "v_p(x) < 0", "x = 0 only", "never"], "correct": 0, "explain": ["Correct! Need x in the maximal ideal.", "No.", "No, it converges on all of P.", "No."], "ch": 7, "sec": ""}, {"q": "The map log_p : U₁ = 1+P → ℂ_p is:", "options": ["Only injective", "Surjective (onto)", "The zero map", "Undefined"], "correct": 1, "explain": ["It is surjective — the key new feature.", "Correct! Every element of ℂ_p is a logarithm.", "No.", "No, it is well defined."], "ch": 7, "sec": ""}, {"q": "On the disc D, the maps exp and log are:", "options": ["Equal", "Mutually inverse isometries", "Discontinuous", "Constant"], "correct": 1, "explain": ["No.", "Correct! Inverse isometries between 1+D and D.", "No, they are isometries.", "No."], "ch": 7, "sec": ""}, {"q": "The Gauss norm of f = Σ a_i X^i at radius c is:", "options": ["Σ |a_i| c^i", "max_i |a_i| c^i", "|a_0|", "min_i |a_i|"], "correct": 1, "explain": ["No, it is a max not a sum.", "Correct! ‖f‖_c = max_i |a_i| c^i.", "Only the constant term.", "No."], "ch": 7, "sec": ""}, {"q": "A fundamental property of the Gauss norm is that it is:", "options": ["Additive", "Multiplicative", "Archimedean", "Not a norm"], "correct": 1, "explain": ["No.", "Correct! ‖fg‖_c = ‖f‖_c ‖g‖_c.", "No, it is non-archimedean.", "It is a genuine norm."], "ch": 7, "sec": ""}, {"q": "The Weierstrass Preparation Theorem factors f as:", "options": ["g + h", "g·h, g distinguished poly, h a unit", "f²", "a single monomial"], "correct": 1, "explain": ["No, it is a product.", "Correct! deg g counts zeros in the disc.", "No.", "No."], "ch": 7, "sec": ""}, {"q": "If the Gauss norm maximum is attained last at index N, then in B(0,c) the function f has:", "options": ["No zeros", "Exactly N zeros", "Infinitely many zeros", "N+1 zeros"], "correct": 1, "explain": ["No.", "Correct! N = degree of the distinguished factor.", "No, finitely many.", "No."], "ch": 7, "sec": ""}, {"q": "A power series f = Σ a_n X^n over ℂ_p is ENTIRE iff:", "options": ["v_p(a_n)/n → +∞", "a_n → 0", "v_p(a_n) → 0", "f is a polynomial"], "correct": 0, "explain": ["Correct! Valuations must grow faster than linearly.", "Necessary but not sufficient.", "That gives radius 1.", "No, entire ⊋ polynomial."], "ch": 7, "sec": ""}, {"q": "If v_p(a_n) = 2n, the radius of convergence is:", "options": ["∞", "p²", "1", "p"], "correct": 1, "explain": ["No, only finite.", "Correct! ρ = p^(lim v/n) = p². Not entire.", "No.", "No."], "ch": 7, "sec": ""}, {"q": "If v_p(a_n) = n², the function is:", "options": ["Not entire", "Entire", "A polynomial", "Divergent everywhere"], "correct": 1, "explain": ["No, n²/n = n → ∞.", "Correct! Entire (infinite radius).", "No.", "No."], "ch": 7, "sec": ""}, {"q": "An entire function over ℂ_p admits:", "options": ["No factorization", "A (possibly infinite) product over its zeros", "Only finite degree", "A unique zero"], "correct": 1, "explain": ["No.", "Correct! f = a·∏(1 − X/λ_i).", "No.", "No."], "ch": 7, "sec": ""}, {"q": "The Newton polygon of f = Σ a_i X^i is:", "options": ["The graph of f", "The lower convex hull of (i, v_p(a_i))", "The upper hull", "A tangent line"], "correct": 1, "explain": ["No.", "Correct! Lower convex hull of the valuation points.", "No, the LOWER hull.", "No."], "ch": 7, "sec": ""}, {"q": "A Newton-polygon segment of slope m corresponds to roots of:", "options": ["Valuation m", "Valuation −m (|root| = p^m)", "Valuation 0", "Valuation p"], "correct": 1, "explain": ["Sign error.", "Correct! v(root) = −m, so |root| = p^m.", "No.", "No."], "ch": 7, "sec": ""}, {"q": "The horizontal length of a Newton-polygon segment equals:", "options": ["The degree of f", "The number of roots of that valuation", "The number of coefficients", "Always 1"], "correct": 1, "explain": ["No, that is the total length.", "Correct! Counts roots of that absolute value.", "No.", "No."], "ch": 7, "sec": ""}, {"q": "Across all segments, the Newton-polygon segment lengths sum to:", "options": ["1", "deg f", "v_p(a_0)", "the number of slopes"], "correct": 1, "explain": ["No.", "Correct! They partition the degree of f.", "No.", "No."], "ch": 7, "sec": ""}]};
+const CHS = [5, 6, 7];
+const CH_NAMES = {"5": "Chapter 5 — Elementary Analysis in ℚₚ", "6": "Chapter 6 — Vector Spaces & Field Extensions", "7": "Chapter 7 — Analysis in ℂₚ"};
+const PASS_PCT = 70;
+
+let examTimer=null, examTimeLeft=0, currentExam=[], examActive=false;
+
+function toggleDark(){document.body.classList.toggle('dark');
+  try{localStorage.setItem('padic_dark',document.body.classList.contains('dark')?'1':'0');}catch(e){}}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function totalQuestions(){let n=0;CHS.forEach(c=>n+=BANK['ch'+c].length);return n;}
+
+function buildExam(){
+  const lenVal=document.getElementById('lenSel').value;
+  const shuffleOpts=document.getElementById('shuffleOpts').checked;
+  let pool=[];
+  CHS.forEach(c=>{BANK['ch'+c].forEach(q=>pool.push(Object.assign({},q)));});
+  // per-question option ordering
+  pool.forEach(q=>{
+    let order=q.options.map((_,i)=>i);
+    if(shuffleOpts) order=shuffle(order);
+    q._opts=order.map(i=>q.options[i]);
+    q._exp=order.map(i=>(q.explain&&q.explain[i])||'');
+    q._correct=order.indexOf(q.correct);
+  });
+  shuffle(pool);
+  if(lenVal!=='all'){pool=pool.slice(0,Math.min(+lenVal,pool.length));}
+  pool.sort((a,b)=>a.ch-b.ch);
+  currentExam=pool;
+  return pool;
+}
+
+function startExam(){
+  const pool=buildExam();
+  if(!pool.length)return;
+  examActive=true;
+  const timed=document.getElementById('timedMode').checked;
+  let html='';
+  let lastCh=null;
+  pool.forEach((q,qi)=>{
+    if(q.ch!==lastCh){html+='<div class="part-header">'+CH_NAMES[q.ch]+'</div>';lastCh=q.ch;}
+    html+='<div class="quiz-q" id="q_'+qi+'">'+
+      '<div class="q-tag">Q'+(qi+1)+(q.sec?' · §'+q.sec:' · Ch '+q.ch)+'</div>'+
+      '<div class="q-text">'+q.q+'</div>'+
+      q._opts.map((o,oi)=>'<label><input type="radio" name="ex_'+qi+'" value="'+oi+'"> '+o+'</label>').join('')+
+      '</div>';
+  });
+  html+='<div class="exam-actions">'+
+    '<button class="quiz-btn" onclick="gradeExam()">Submit Exam</button>'+
+    '<button class="quiz-btn secondary" onclick="resetExam()">Reset</button></div>'+
+    '<div id="examResult"></div>';
+  document.getElementById('examBody').innerHTML=html;
+  document.getElementById('setupPanel').style.display='none';
+  const t=document.getElementById('timer');
+  if(timed){
+    const mins=Math.max(10,Math.round(pool.length*1.5));
+    examTimeLeft=mins*60;t.style.display='block';updateTimer();
+    examTimer=setInterval(()=>{examTimeLeft--;updateTimer();if(examTimeLeft<=0){clearInterval(examTimer);gradeExam();}},1000);
+  } else {t.style.display='none';}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updateTimer(){const m=Math.floor(examTimeLeft/60),s=examTimeLeft%60;
+  const t=document.getElementById('timer');t.textContent='⏱ '+m+':'+(s<10?'0':'')+s;
+  t.style.color=examTimeLeft<60?'#e53935':'var(--accent)';}
+
+function gradeExam(){
+  if(!examActive)return;examActive=false;
+  if(examTimer){clearInterval(examTimer);examTimer=null;}
+  document.getElementById('timer').style.display='none';
+  let score=0;
+  const perCh={};CHS.forEach(c=>perCh[c]={right:0,total:0});
+  currentExam.forEach((q,qi)=>{
+    perCh[q.ch].total++;
+    const sel=document.querySelector('input[name="ex_'+qi+'"]:checked');
+    const ok=sel&&+sel.value===q._correct;
+    if(ok){score++;perCh[q.ch].right++;}
+  });
+  const total=currentExam.length;
+  const pct=Math.round(score/total*100);
+  const passed=pct>=PASS_PCT;
+  let html='<div class="result-banner '+(passed?'pass':'fail')+'">'+(passed?'✓ Passed':'Keep studying')+
+    ' — '+score+' / '+total+' ('+pct+'%)</div>';
+  html+='<div class="perf-breakdown"><table><tr><th>Chapter</th><th>Score</th><th>%</th></tr>';
+  CHS.forEach(c=>{if(perCh[c].total){const p=Math.round(perCh[c].right/perCh[c].total*100);
+    html+='<tr><td>'+CH_NAMES[c]+'</td><td>'+perCh[c].right+' / '+perCh[c].total+'</td><td>'+p+'%</td></tr>';}});
+  html+='</table></div>';
+  html+='<h2 style="margin:20px 0 8px;color:var(--accent)">Review & Explanations</h2>';
+  currentExam.forEach((q,qi)=>{
+    const sel=document.querySelector('input[name="ex_'+qi+'"]:checked');
+    const ok=sel&&+sel.value===q._correct;
+    const yourAns=sel?q._opts[+sel.value]:'<em>(no answer)</em>';
+    html+='<div class="exam-explain"><div class="exam-explain-toggle" onclick="this.nextElementSibling.classList.toggle(\'open\')">'+
+      (ok?'✓':'✗')+' Q'+(qi+1)+' — '+(ok?'Correct':'Review')+'</div>'+
+      '<div class="exam-explain-body"><p style="margin-bottom:8px"><strong>Question:</strong> '+q.q+'</p>'+
+      '<p style="margin-bottom:8px"><strong>Your answer:</strong> '+yourAns+'</p>'+
+      q._opts.map((o,oi)=>'<div class="exam-explain-item '+(oi===q._correct?'opt-correct':'opt-wrong')+'">'+
+        ((q._exp[oi])||('<strong>'+o+'</strong>'))+'</div>').join('')+
+      '</div></div>';
+  });
+  document.getElementById('examResult').innerHTML=html;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function resetExam(){
+  if(examTimer){clearInterval(examTimer);examTimer=null;}
+  examActive=false;
+  document.getElementById('timer').style.display='none';
+  document.getElementById('examBody').innerHTML='';
+  document.getElementById('setupPanel').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+window.addEventListener('scroll',()=>{const b=document.getElementById('scrollTop');if(b)b.style.display=window.scrollY>400?'block':'none';});
+function initExam(){
+  try{if(localStorage.getItem('padic_dark')==='1')document.body.classList.add('dark');}catch(e){}
+  // populate length selector
+  const tot=totalQuestions();const sel=document.getElementById('lenSel');
+  [['15','Quick — 15 questions'],['30','Standard — 30 questions'],['all','Comprehensive — all '+tot+' questions']].forEach(([v,l])=>{
+    if(v==='all'||+v<tot){const o=document.createElement('option');o.value=v;o.textContent=l;sel.appendChild(o);}
+  });
+  sel.value=(tot>30)?'30':'all';
+  document.getElementById('totCount').textContent=tot;
+}
+document.addEventListener('DOMContentLoaded',initExam);
+
+</script>
+</body>
+</html>

@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Midterm Exam — Chapters 2–4 | p-adic Numbers Interactive Platform</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f8f9fa;--text:#1a1a2e;--text2:#555;--accent:#4361ee;
+  --def:#e3f2fd;--def-border:#1976d2;
+  --thm:#e8f5e9;--thm-border:#388e3c;
+  --lem:#fff9c4;--lem-border:#f9a825;
+  --proof:#f5f5f5;--proof-border:#9e9e9e;
+  --example:#e0f2f1;--example-border:#00897b;
+  --problem:#fff3e0;--problem-border:#ef6c00;
+  --plain:#f3e8ff;--plain-border:#8e44ad;
+  --sidebar-w:280px;--topbar-h:56px;
+  --card-radius:8px;--shadow:0 2px 8px rgba(0,0,0,.08);
+  --font-main:'Segoe UI',system-ui,-apple-system,sans-serif;
+  --font-mono:'Fira Code','Cascadia Code',monospace;
+  --transition:0.3s ease;
+}
+.dark{
+  --bg:#0f0f23;--bg2:#1a1a35;--text:#e0e0e0;--text2:#aaa;--accent:#7c8cf8;
+  --def:#1a2744;--def-border:#5c9ce6;
+  --thm:#1a3324;--thm-border:#66bb6a;
+  --lem:#332d1a;--lem-border:#fdd835;
+  --proof:#1e1e2f;--proof-border:#777;
+  --example:#1a302e;--example-border:#4db6ac;
+  --problem:#2e2114;--problem-border:#ffa726;
+  --plain:#2a1f3d;--plain-border:#b388e0;
+  --shadow:0 2px 8px rgba(0,0,0,.3);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-height:1.7;transition:background var(--transition),color var(--transition)}
+#sidebar{position:fixed;left:0;top:0;width:var(--sidebar-w);height:100vh;background:var(--bg2);border-right:1px solid rgba(128,128,128,.2);overflow-y:auto;z-index:100;transition:transform var(--transition),background var(--transition);padding-top:16px}
+#sidebar.closed{transform:translateX(calc(-1 * var(--sidebar-w)))}
+#sidebar h2{font-size:1.1rem;padding:8px 20px;color:var(--accent)}
+#sidebar ul{list-style:none}
+#sidebar li{margin:0}
+#sidebar li a{display:block;padding:8px 20px 8px 28px;color:var(--text);text-decoration:none;font-size:.9rem;border-left:3px solid transparent;transition:all .2s}
+#sidebar li a:hover,#sidebar li a.active{background:rgba(67,97,238,.1);border-left-color:var(--accent);color:var(--accent)}
+#sidebar li.sub a{padding-left:44px;font-size:.82rem}
+.sidebar-toggle{position:fixed;left:8px;top:8px;z-index:200;background:var(--accent);color:#fff;border:none;width:40px;height:40px;border-radius:8px;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow)}
+.sidebar-toggle:hover{opacity:.85}
+#topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:var(--bg2);border-bottom:1px solid rgba(128,128,128,.2);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:90;transition:left var(--transition),background var(--transition)}
+#topbar.full{left:0}
+#topbar .breadcrumb{font-size:.9rem;color:var(--text2)}
+#topbar .controls{display:flex;gap:12px;align-items:center}
+#topbar .controls button{background:none;border:1px solid rgba(128,128,128,.3);color:var(--text);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:.82rem;transition:all .2s}
+#topbar .controls button:hover{border-color:var(--accent);color:var(--accent)}
+.chapter-nav{background:var(--bg);border:1px solid rgba(128,128,128,.3);color:var(--text);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:.82rem;transition:all .2s;font-family:var(--font-main)}
+.chapter-nav:hover{border-color:var(--accent);color:var(--accent)}
+.dark-toggle{font-size:1.1rem!important;width:36px!important;padding:6px!important}
+.progress-bar{position:fixed;top:var(--topbar-h);left:var(--sidebar-w);right:0;height:3px;background:rgba(128,128,128,.15);z-index:89;transition:left var(--transition)}
+.progress-bar.full{left:0}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),#06d6a0);width:0;transition:width .4s}
+#main{margin-left:var(--sidebar-w);padding-top:calc(var(--topbar-h) + 16px);min-height:100vh;transition:margin-left var(--transition)}
+#main.full{margin-left:0}
+.section{display:none;padding:24px 32px 60px;max-width:900px;margin:0 auto}
+.section.active{display:block}
+.section h1{font-size:2rem;margin-bottom:8px;color:var(--accent)}
+.section h2{font-size:1.5rem;margin:32px 0 12px;border-bottom:2px solid var(--accent);padding-bottom:6px}
+.section h3{font-size:1.2rem;margin:24px 0 8px;color:var(--text)}
+.section p,.section li{margin-bottom:8px}
+.block{border-left:4px solid;border-radius:var(--card-radius);padding:18px 22px;margin:18px 0;box-shadow:var(--shadow);transition:background var(--transition)}
+.block-def{background:var(--def);border-color:var(--def-border)}
+.block-thm{background:var(--thm);border-color:var(--thm-border)}
+.block-lem{background:var(--lem);border-color:var(--lem-border)}
+.block-proof{background:var(--proof);border-color:var(--proof-border);font-size:.92rem}
+.block-example{background:var(--example);border-color:var(--example-border)}
+.block-problem{background:var(--problem);border-color:var(--problem-border)}
+.block .label{font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.block-def .label{color:var(--def-border)}
+.block-plain{background:var(--plain);border-color:var(--plain-border)}
+.block-plain .label{color:var(--plain-border)}
+.block-thm .label{color:var(--thm-border)}
+.block-lem .label{color:var(--lem-border)}
+.block-proof .label{color:var(--proof-border)}
+.block-example .label{color:var(--example-border)}
+.block-problem .label{color:var(--problem-border)}
+.math{font-family:var(--font-mono);background:rgba(128,128,128,.08);padding:2px 6px;border-radius:4px;font-size:.9em}
+.math-block{display:block;text-align:center;margin:14px 0;padding:12px;background:rgba(128,128,128,.05);border-radius:6px;overflow-x:auto;font-family:var(--font-mono);font-size:.92em}
+.interactive-viz{border:2px solid var(--accent);border-radius:var(--card-radius);padding:20px;margin:20px 0;background:rgba(67,97,238,.03)}
+.interactive-viz h4{color:var(--accent);margin-bottom:12px}
+.interactive-viz .controls-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.interactive-viz label{font-size:.88rem;min-width:90px}
+.interactive-viz input[type=range]{flex:1;min-width:120px;accent-color:var(--accent)}
+.interactive-viz select{padding:5px 8px;border-radius:4px;font-size:.88rem;border:1px solid rgba(128,128,128,.3);background:var(--bg);color:var(--text)}
+.interactive-viz input[type=text]{padding:5px 8px;border-radius:4px;font-size:.88rem;border:1px solid rgba(128,128,128,.3);background:var(--bg);color:var(--text);width:100px}
+.interactive-viz .val{font-weight:700;min-width:50px;text-align:center;color:var(--accent);font-size:.9rem}
+.interactive-viz .viz-output{margin:12px 0;padding:14px;background:rgba(128,128,128,.06);border-radius:6px;font-family:var(--font-mono);font-size:.88rem;line-height:1.6}
+.interactive-viz .viz-svg{text-align:center;margin:10px 0}
+.interactive-viz button{padding:6px 14px;border:none;border-radius:6px;cursor:pointer;font-size:.82rem;background:var(--accent);color:#fff;transition:opacity .2s;margin:4px}
+.interactive-viz button:hover{opacity:.85}
+.problem-set{margin:20px 0}
+.problem-card{background:var(--problem);border-left:4px solid var(--problem-border);border-radius:var(--card-radius);padding:18px;margin:14px 0;box-shadow:var(--shadow)}
+.problem-card .diff{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.75rem;font-weight:700;color:#fff;margin-bottom:10px}
+.diff-easy{background:#4caf50}.diff-medium{background:#ff9800}.diff-hard{background:#f44336}
+.problem-card .q{margin-bottom:12px;font-size:.95rem}
+.problem-card input[type=text]{width:200px;padding:8px 12px;border:2px solid rgba(128,128,128,.3);border-radius:6px;font-size:.9rem;background:var(--bg);color:var(--text);transition:border-color .2s}
+.problem-card input:focus{outline:none;border-color:var(--accent)}
+.problem-card button{padding:7px 16px;border:none;border-radius:6px;cursor:pointer;font-size:.82rem;margin:4px;transition:all .2s}
+.btn-check{background:var(--accent);color:#fff}.btn-check:hover{opacity:.85}
+.btn-rand{background:#9c27b0;color:#fff}.btn-rand:hover{opacity:.85}
+.btn-sol{background:#00897b;color:#fff}.btn-sol:hover{opacity:.85}
+.feedback{margin-top:8px;padding:8px 12px;border-radius:6px;font-size:.88rem;display:none}
+.feedback.correct{display:block;background:#c8e6c9;color:#2e7d32}
+.feedback.wrong{display:block;background:#ffcdd2;color:#c62828}
+.solution{display:none;margin-top:12px;padding:14px;background:rgba(0,137,123,.08);border-radius:6px;border-left:3px solid #00897b;font-size:.9rem}
+.quiz-container{margin:20px 0}
+.quiz-q{background:var(--bg2);border-radius:var(--card-radius);padding:18px;margin:14px 0;box-shadow:var(--shadow)}
+.quiz-q .q-text{font-weight:600;margin-bottom:12px}
+.quiz-q label{display:block;padding:8px 14px;margin:4px 0;border-radius:6px;cursor:pointer;transition:background .2s;font-size:.92rem}
+.quiz-q label:hover{background:rgba(67,97,238,.1)}
+.quiz-q input[type=radio]{margin-right:8px;accent-color:var(--accent)}
+.quiz-score{font-size:1.1rem;font-weight:700;padding:16px;background:var(--bg2);border-radius:var(--card-radius);margin:12px 0;text-align:center;box-shadow:var(--shadow)}
+.quiz-btn{padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:.95rem;margin:6px}
+.quiz-btn:hover{opacity:.85}
+.quiz-btn.secondary{background:#777}
+.timer-display{font-size:1.3rem;font-weight:700;color:var(--accent);text-align:center;margin:12px 0;padding:12px;background:var(--bg2);border-radius:var(--card-radius)}
+.perf-breakdown{margin:20px 0}
+.perf-breakdown table{width:100%;border-collapse:collapse}
+.perf-breakdown th,.perf-breakdown td{padding:10px 14px;text-align:left;border-bottom:1px solid rgba(128,128,128,.2);font-size:.9rem}
+.perf-breakdown th{background:var(--accent);color:#fff}
+.nav-btns{display:flex;justify-content:space-between;margin-top:40px;padding-top:20px;border-top:1px solid rgba(128,128,128,.2)}
+.nav-btn{padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:.9rem;transition:all .2s}
+.nav-btn:hover{opacity:.85}
+.nav-btn:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:800px){
+  #sidebar{transform:translateX(calc(-1 * var(--sidebar-w)))}
+  #sidebar.open{transform:translateX(0)}
+  #main{margin-left:0!important}
+  #topbar{left:0!important}
+  .progress-bar{left:0!important}
+  .section{padding:16px}
+  .sidebar-toggle{display:flex}
+  #topbar .breadcrumb{display:none}
+}
+@media(min-width:801px){
+  .sidebar-toggle{left:calc(var(--sidebar-w) + 8px)}
+  #sidebar.closed ~ .sidebar-toggle{left:8px}
+}
+.step{margin:6px 0;padding:6px 0 6px 16px;border-left:2px solid var(--accent);font-size:.9rem}
+.step strong{color:var(--accent)}
+.exam-explain{margin-top:10px;border-radius:6px;overflow:hidden;font-size:.88rem}
+.exam-explain-toggle{cursor:pointer;padding:8px 14px;background:rgba(0,137,123,.12);border:1px solid rgba(0,137,123,.25);border-radius:6px;color:#00897b;font-weight:600;font-size:.82rem;display:inline-block;margin-top:6px}
+.exam-explain-toggle:hover{background:rgba(0,137,123,.2)}
+.exam-explain-body{display:none;padding:12px 16px;margin-top:6px;background:rgba(128,128,128,.04);border:1px solid rgba(128,128,128,.15);border-radius:6px}
+.exam-explain-body.open{display:block}
+.exam-explain-item{padding:8px 10px;margin:4px 0;border-radius:4px;line-height:1.5}
+.exam-explain-item.opt-correct{background:rgba(76,175,80,.1);border-left:3px solid #4caf50}
+.exam-explain-item.opt-wrong{background:rgba(244,67,54,.05);border-left:3px solid #ef9a9a}
+
+
+.exam-wrap{max-width:920px;margin:0 auto;padding:24px 32px 80px}
+.exam-hero{background:linear-gradient(135deg,var(--accent),#06d6a0);color:#fff;border-radius:12px;padding:30px 34px;margin-bottom:24px;box-shadow:var(--shadow)}
+.exam-hero h1{font-size:1.9rem;margin-bottom:10px}
+.exam-hero p{font-size:1rem;opacity:.95;max-width:680px}
+.exam-coverage{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.exam-coverage span{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);padding:5px 12px;border-radius:20px;font-size:.82rem}
+.exam-card{background:var(--bg2);border-radius:var(--card-radius);padding:22px 26px;margin-bottom:22px;box-shadow:var(--shadow)}
+.exam-card h2{font-size:1.15rem;color:var(--accent);margin-bottom:12px}
+.exam-card ul{margin-left:20px;font-size:.92rem;color:var(--text2)}
+.exam-card li{margin:5px 0}
+.setup-row{display:flex;flex-wrap:wrap;gap:24px;align-items:center;margin:14px 0}
+.setup-row label{font-size:.92rem;font-weight:600}
+.setup-row select{padding:7px 12px;border-radius:6px;border:1px solid rgba(128,128,128,.4);background:var(--bg);color:var(--text);font-size:.9rem;font-family:var(--font-main)}
+.part-header{font-size:1.15rem;font-weight:700;color:var(--accent);margin:30px 0 6px;padding-bottom:8px;border-bottom:2px solid var(--accent)}
+.q-tag{display:inline-block;font-size:.72rem;background:rgba(67,97,238,.12);color:var(--accent);padding:2px 9px;border-radius:12px;margin-bottom:8px;font-weight:600}
+.exam-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.scroll-top-btn{position:fixed;right:20px;bottom:20px;background:var(--accent);color:#fff;border:none;width:46px;height:46px;border-radius:50%;cursor:pointer;font-size:1.3rem;box-shadow:var(--shadow);display:none;z-index:50}
+.result-banner{font-size:1.5rem;font-weight:800;text-align:center;padding:24px;border-radius:12px;margin:14px 0;color:#fff}
+.result-banner.pass{background:linear-gradient(135deg,#388e3c,#66bb6a)}
+.result-banner.fail{background:linear-gradient(135deg,#e65100,#ff9800)}
+@media(max-width:700px){.exam-wrap{padding:16px}.exam-hero{padding:22px}}
+
+</style>
+</head>
+<body>
+
+<header id="topbar" class="full">
+  <div class="breadcrumb">Midterm Exam</div>
+  <div class="controls">
+    <select class="chapter-nav" onchange="if(this.value)window.location.href=this.value">
+      <option value="">Go to chapter…</option>
+      <option value="index_chapter_2.html">Chapter 2</option>
+      <option value="index_chapter_3.html">Chapter 3</option>
+      <option value="index_chapter_4.html">Chapter 4</option>
+      <option value="index_chapter_5.html">Chapter 5</option>
+      <option value="index_chapter_6.html">Chapter 6</option>
+      <option value="index_chapter_7.html">Chapter 7</option>
+      <option value="midterm.html" selected>★ Midterm (Ch 2–4)</option>
+      <option value="final.html">★ Final (Ch 5–7)</option>
+    </select>
+    <button class="dark-toggle" onclick="toggleDark()" title="Toggle dark mode">◐</button>
+  </div>
+</header>
+
+<main id="main" class="full">
+<div class="exam-wrap">
+
+  <div class="exam-hero">
+    <h1>Midterm Exam — Chapters 2–4</h1>
+    <p>A cumulative assessment of the foundations of p-adic numbers: absolute values on fields, the classification of absolute values on ℚ and completions, and the structure of ℚₚ including p-adic integers, expansions, and Hensel’s Lemma.</p>
+    <div class="exam-coverage"><span>Chapter 2 — Foundations: Absolute Values</span><span>Chapter 3 — The p-adic Numbers</span><span>Chapter 4 — Exploring ℚₚ</span></div>
+  </div>
+
+  <div class="exam-card" id="setupPanel">
+    <h2>How this exam works</h2>
+    <ul>
+      <li>Questions are drawn from a bank of <strong id="totCount">0</strong> vetted multiple-choice questions spanning every covered section.</li>
+      <li>Choose a length below. Questions are <strong>randomized</strong> each attempt, and answer choices can be shuffled too.</li>
+      <li>Covers absolute-value axioms & topology (Ch 2), Ostrowski’s theorem, the product formula & completions (Ch 3), and Zₚ, p-adic expansions, Hensel’s Lemma & the local–global principle (Ch 4).</li>
+      <li>After submitting you get an overall score, a <strong>per-chapter breakdown</strong>, and an expandable explanation for every question.</li>
+      <li>Passing mark: <strong>70%</strong>. Your dark/light preference is remembered.</li>
+    </ul>
+    <div class="setup-row">
+      <label>Exam length:
+        <select id="lenSel"></select>
+      </label>
+      <label><input type="checkbox" id="shuffleOpts" checked> Shuffle answer choices</label>
+      <label><input type="checkbox" id="timedMode"> Timed mode (~1.5 min/question)</label>
+    </div>
+    <div class="exam-actions">
+      <button class="quiz-btn" onclick="startExam()">▶ Start Exam</button>
+    </div>
+  </div>
+
+  <div class="timer-display" id="timer" style="display:none">⏱ 00:00</div>
+  <div id="examBody"></div>
+
+</div>
+</main>
+
+<button class="scroll-top-btn" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+
+const BANK = {"ch2": [{"q": "The p-adic absolute value |·|_p is defined as:", "options": ["p^(v_p(x))", "p^(-v_p(x))", "v_p(x)/p", "log_p(x)"], "correct": 1, "explain": ["❌ <strong>p^(v_p(x))</strong> — This is the INVERSE of the correct definition. It would make highly divisible numbers LARGE, defeating the purpose of the p-adic absolute value where divisibility by p should make things SMALL.", "✅ <strong>p^(−v_p(x))</strong> — Correct! The negative exponent ensures that the MORE times p divides x, the SMALLER |x|_p becomes. For example, |25|₅ = 5^(−2) = 1/25.", "❌ <strong>v_p(x)/p</strong> — This is just dividing the valuation by p, which has no mathematical basis. The absolute value must satisfy multiplicativity |xy| = |x|·|y|, which this formula fails.", "❌ <strong>log_p(x)</strong> — The logarithm is not even guaranteed to be positive (e.g., log_p(1/2) < 0 for p ≥ 3), and it doesn't satisfy the absolute value axioms."], "ch": 2, "sec": "2.1"}, {"q": "v_p(0) is defined as:", "options": ["0", "1", "-∞", "+∞"], "correct": 3, "explain": ["❌ <strong>0</strong> — This would mean 0 is NOT divisible by p at all, like saying v₅(7) = 0. But 0 is divisible by EVERY power of p (0 = p^n · 0 for any n).", "❌ <strong>1</strong> — This would mean 0 is divisible by p exactly once, like v₅(5) = 1. But 0 = p² · 0 = p³ · 0 = ..., so 0 is divisible by arbitrarily high powers.", "❌ <strong>−∞</strong> — This would make |0|_p = p^(+∞) = ∞, meaning 0 would have infinite size. But axiom (i) requires |0| = 0, not ∞.", "✅ <strong>+∞</strong> — Correct! Since 0 is divisible by p^n for ALL n, v_p(0) = +∞. This gives |0|_p = p^(−∞) = 0, satisfying the axiom |x| = 0 ⟺ x = 0."], "ch": 2, "sec": "2.1"}, {"q": "v₃(54) = ?", "options": ["1", "2", "3", "6"], "correct": 2, "explain": ["❌ <strong>1</strong> — If v₃(54) = 1, that means 54 = 3¹ × 18. But 18 = 2 × 9 = 2 × 3², so 3 divides 18 further. We haven't fully extracted all factors of 3.", "❌ <strong>2</strong> — 54 = 2 × 27, and 27 = 3³. So 54 = 2 · 3³. Dividing by 3² gives 6, which is still divisible by 3. So v₃ must be greater than 2.", "✅ <strong>3</strong> — Correct! 54 = 2 × 27 = 2 × 3³. Since 2 is not divisible by 3, we stop here: v₃(54) = 3. Verify: 54/3 = 18, 18/3 = 6, 6/3 = 2 — three divisions.", "❌ <strong>6</strong> — 3⁶ = 729, which is much larger than 54. So 3⁶ certainly does not divide 54. The answer is 3, not 6."], "ch": 2, "sec": "2.1"}, {"q": "|1| for any absolute value is always:", "options": ["0", "1", "Depends", "∞"], "correct": 1, "explain": ["❌ <strong>0</strong> — By axiom (i), |x| = 0 ⟺ x = 0. Since 1 ≠ 0, we must have |1| ≠ 0.", "✅ <strong>1</strong> — Correct! From multiplicativity: |1| = |1·1| = |1|·|1| = |1|². The only positive solution to t = t² is t = 1.", "❌ <strong>Depends</strong> — No! The proof |1|² = |1| ⟹ |1| = 1 works for ANY absolute value on ANY field. It's universal.", "❌ <strong>∞</strong> — An absolute value maps to ℝ₊ (non-negative reals). If |1| = ∞, then |x| = |1·x| = ∞·|x| would be infinite for all x ≠ 0, contradicting the definition."], "ch": 2, "sec": "2.2"}, {"q": "An absolute value on ℚ is non-archimedean iff |n| ≤ 1 for all n ∈ ℤ. (T/F)", "options": ["True", "False"], "correct": 0, "explain": ["✅ <strong>True</strong> — This is exactly Theorem 2.2.4! The ⇒ direction follows from induction: |n| = |1+1+…+1| ≤ max{|1|,…} = 1. The ⇐ direction uses the binomial theorem trick with m→∞.", "❌ <strong>False</strong> — This IS true. Theorem 2.2.4 establishes this as a complete characterization. The condition |n| ≤ 1 for all integers is both necessary AND sufficient for an absolute value to be non-archimedean."], "ch": 2, "sec": "2.2"}, {"q": "Theorem 2.2.4 proof uses which key technique?", "options": ["Zorn's lemma", "Binomial expansion + m→∞", "Compactness", "Hensel's lemma"], "correct": 1, "explain": ["❌ <strong>Zorn's lemma</strong> — Zorn's lemma is used in algebra (e.g., proving every ideal is in a maximal ideal), not in this proof. The proof here is analytic, not set-theoretic.", "✅ <strong>Binomial expansion + m→∞</strong> — Correct! The proof expands |x+1|^m using the binomial theorem, bounds it using |n| ≤ 1, gets |x+1| ≤ (m+1)^(1/m) · max{1,|x|}, then lets m→∞ so (m+1)^(1/m) → 1.", "❌ <strong>Compactness</strong> — Compactness arguments (from topology or logic) are not used here. The proof is purely analytic/algebraic.", "❌ <strong>Hensel's lemma</strong> — Hensel's lemma is about lifting solutions from 𝔽_p to ℤ_p. It appears later in p-adic theory, not in this foundational proof."], "ch": 2, "sec": "2.2"}, {"q": "In an ultrametric, all triangles are:", "options": ["Right", "Scalene", "Isosceles", "Obtuse"], "correct": 2, "explain": ["❌ <strong>Right</strong> — \"Right\" refers to having a 90° angle, which is a Euclidean concept. Ultrametric spaces don't have angles in the traditional sense.", "❌ <strong>Scalene</strong> — A scalene triangle has all three sides of different lengths. The ultrametric inequality PREVENTS this: if all three sides had different lengths, the strongest-wins principle would force two to be equal.", "✅ <strong>Isosceles</strong> — Correct! (At least isosceles.) If sides have lengths a, b, c with a+b-side = c-side via (x−y)+(y−z)=(x−z), then if a ≠ b, strongest wins gives c = max(a,b), so two sides are equal. If a = b, already isosceles.", "❌ <strong>Obtuse</strong> — \"Obtuse\" refers to angle > 90°. There is no notion of angle measure in a general ultrametric space."], "ch": 2, "sec": "2.3"}, {"q": "In a non-archimedean field, every point in a ball is:", "options": ["On the boundary", "A center", "Outside the ball", "Isolated"], "correct": 1, "explain": ["❌ <strong>On the boundary</strong> — Actually, in non-archimedean geometry, balls have EMPTY boundaries! Every ball is both open and closed (clopen), so no point is \"on the boundary.\"", "✅ <strong>A center</strong> — Correct! If b ∈ B(a,r), then B(b,r) = B(a,r). The proof: if c ∈ B(a,r), then d(c,b) ≤ max{d(c,a), d(a,b)} < r, so c ∈ B(b,r). The reverse inclusion is symmetric.", "❌ <strong>Outside the ball</strong> — By definition, we said the point is IN the ball. It cannot simultaneously be outside.", "❌ <strong>Isolated</strong> — Isolated means no other points are nearby. But p-adic balls contain infinitely many points (e.g., B(0,1) in ℚ_p contains all of ℤ_p)."], "ch": 2, "sec": "2.3"}, {"q": "The \"strongest wins\" principle says |x+y| = max{|x|,|y|} when:", "options": ["|x| = |y|", "|x| ≠ |y|", "x = -y", "Always"], "correct": 1, "explain": ["❌ <strong>|x| = |y|</strong> — When |x| = |y|, we can only conclude |x+y| ≤ max{|x|,|y|} = |x|. Cancellation can occur: e.g., |5 + (−5)|₅ = |0|₅ = 0 < max{|5|₅, |5|₅} = 1.", "✅ <strong>|x| ≠ |y|</strong> — Correct! When the sizes differ, the smaller term can't \"cancel\" the bigger one. If |x| > |y|, then |x| = |(x+y) − y| ≤ max{|x+y|, |y|}, and since |x| > |y|, we must have |x+y| ≥ |x|. Combined with |x+y| ≤ max{|x|,|y|} = |x|, we get equality.", "❌ <strong>x = −y</strong> — If x = −y, then |x+y| = |0| = 0, while max{|x|,|y|} = |x| > 0 (assuming x ≠ 0). So equality FAILS here.", "❌ <strong>Always</strong> — Not always. When |x| = |y|, cancellation can make |x+y| strictly less than max{|x|,|y|}. Equality is only guaranteed when |x| ≠ |y|."], "ch": 2, "sec": "2.3"}, {"q": "A clopen set is:", "options": ["Closed only", "Open only", "Both open and closed", "Neither"], "correct": 2, "explain": ["❌ <strong>Closed only</strong> — \"Clopen\" is a portmanteau of \"closed\" AND \"open.\" A set that is closed but not open would just be called \"closed.\"", "❌ <strong>Open only</strong> — Similarly, a merely open set is not clopen. The term specifically means BOTH properties hold simultaneously.", "✅ <strong>Both open and closed</strong> — Correct! \"Clopen\" = closed + open. In ℝ, only ∅ and ℝ are clopen. But in p-adic spaces, EVERY ball is clopen — a dramatic difference from Euclidean topology.", "❌ <strong>Neither</strong> — This is the opposite of the correct answer. A set that is neither open nor closed has no special name related to \"clopen.\""], "ch": 2, "sec": "2.3"}, {"q": "The valuation ring 𝒪 = {x : |x| ≤ 1} is a:", "options": ["Field", "Local ring", "Vector space", "Group"], "correct": 1, "explain": ["❌ <strong>Field</strong> — 𝒪 is NOT a field because elements with |x| < 1 (in the ideal 𝒫) are not invertible IN 𝒪 (their inverses have |1/x| > 1, falling outside 𝒪).", "✅ <strong>Local ring</strong> — Correct! 𝒪 has a unique maximal ideal 𝒫 = {x : |x| < 1}. A ring with exactly one maximal ideal is called a local ring. The units of 𝒪 are exactly {x : |x| = 1}.", "❌ <strong>Vector space</strong> — 𝒪 is a ring (has multiplication), not just a vector space. It could be viewed as a module over itself, but \"vector space\" requires a field of scalars, and 𝒪 is not a field.", "❌ <strong>Group</strong> — Under addition, (𝒪, +) is a group, but saying 𝒪 is \"a group\" ignores its rich multiplicative structure. The key property is that it's a LOCAL RING."], "ch": 2, "sec": "2.4"}, {"q": "For |·|_p on ℚ, the residue field is:", "options": ["ℚ_p", "ℤ_p", "𝔽_p", "ℝ"], "correct": 2, "explain": ["❌ <strong>ℚ_p</strong> — ℚ_p is the completion of ℚ with respect to |·|_p. It's a much larger field, not the residue field. The residue field is a QUOTIENT 𝒪/𝒫, which is finite.", "❌ <strong>ℤ_p</strong> — ℤ_p (the p-adic integers) is the valuation ring of ℚ_p, not the residue field. It's an infinite ring, whereas the residue field has exactly p elements.", "✅ <strong>𝔽_p</strong> — Correct! The residue field is 𝒪/𝒫 = ℤ₍ₚ₎/pℤ₍ₚ₎ ≅ ℤ/pℤ = 𝔽_p, the finite field with p elements {0, 1, …, p−1}.", "❌ <strong>ℝ</strong> — ℝ has nothing to do with the p-adic residue field. ℝ is the completion of ℚ under the usual (archimedean) absolute value, a completely different construction."], "ch": 2, "sec": "2.4"}, {"q": "Elements of 𝒪 with |x| = 1 are:", "options": ["In the maximal ideal", "Zero divisors", "Units (invertible)", "Nilpotent"], "correct": 2, "explain": ["❌ <strong>In the maximal ideal</strong> — The maximal ideal 𝒫 = {x : |x| < 1}. Since |x| = 1, x is NOT in 𝒫 (1 is not strictly less than 1).", "❌ <strong>Zero divisors</strong> — 𝒪 is an integral domain (subring of a field), so it has NO zero divisors at all. If xy = 0, then x = 0 or y = 0.", "✅ <strong>Units (invertible)</strong> — Correct! If |x| = 1, then |1/x| = 1/|x| = 1, so 1/x ∈ 𝒪. This means x has an inverse in 𝒪, making it a unit.", "❌ <strong>Nilpotent</strong> — x is nilpotent means x^n = 0 for some n. Since 𝒪 ⊂ 𝕜 (a field), x^n = 0 implies x = 0. But |x| = 1 means x ≠ 0."], "ch": 2, "sec": "2.4"}, {"q": "ℤ₍₅₎ consists of rationals a/b where:", "options": ["5 | a", "5 | b", "5 ∤ b", "a = b"], "correct": 2, "explain": ["❌ <strong>5 | a</strong> — This would be the valuation IDEAL pℤ₍ₚ₎, not the valuation ring. Requiring 5 | a gives elements with |a/b|₅ < 1 (assuming 5 ∤ b).", "❌ <strong>5 | b</strong> — If 5 divides the denominator, then |a/b|₅ = 5^(v₅(a)−v₅(b)) ≥ 5^(−v₅(a)+1) which can be > 1. These elements are OUTSIDE 𝒪.", "✅ <strong>5 ∤ b</strong> — Correct! ℤ₍₅₎ = {a/b ∈ ℚ : 5 does not divide b}. This ensures |a/b|₅ = 5^(−v₅(a)+v₅(b)) = 5^(−v₅(a)) ≤ 1, so x ∈ 𝒪.", "❌ <strong>a = b</strong> — This would just give the single element 1 (or the set {1}), which is not a ring. The localization ℤ₍₅₎ contains infinitely many elements."], "ch": 2, "sec": "2.4"}, {"q": "A totally disconnected space has connected components that are:", "options": ["Intervals", "Open sets", "Single points", "Empty"], "correct": 2, "explain": ["❌ <strong>Intervals</strong> — Intervals [a,b] with a < b are connected subsets of ℝ. In a totally disconnected space, no such non-trivial connected subsets exist.", "❌ <strong>Open sets</strong> — While single points may or may not be open, the key property is that components are singletons. Calling them \"open sets\" is misleading and not the defining property.", "✅ <strong>Single points</strong> — Correct! By definition, a space is totally disconnected iff its only connected subsets are singletons {x}. In ℚ_p, you can always split any set with ≥ 2 points into two disjoint clopen pieces.", "❌ <strong>Empty</strong> — The empty set is trivially connected, but it's not a \"connected component.\" Every point forms its own connected component, which is non-empty."], "ch": 2, "sec": "2.3"}, {"q": "|p^n|_p → ? as n → ∞", "options": ["∞", "1", "p", "0"], "correct": 3, "explain": ["❌ <strong>∞</strong> — In the USUAL absolute value, |p^n| = p^n → ∞. But in the p-adic absolute value, the behavior is exactly opposite!", "❌ <strong>1</strong> — |p^n|_p = p^(−n). For n = 0 we get 1, but as n increases, p^(−n) decreases toward 0, not staying at 1.", "❌ <strong>p</strong> — |p^n|_p = p^(−n), which is a DECREASING sequence, not a constant p. |p^1|_p = 1/p, |p^2|_p = 1/p², etc.", "✅ <strong>0</strong> — Correct! |p^n|_p = p^(−v_p(p^n)) = p^(−n) → 0 as n → ∞. Huge powers of p are p-adically tiny!"], "ch": 2, "sec": "2.1"}, {"q": "The trivial absolute value is:", "options": ["Archimedean", "Non-archimedean", "Neither", "Both"], "correct": 1, "explain": ["❌ <strong>Archimedean</strong> — The trivial absolute value gives |x| = 1 for all x ≠ 0. Check the ultrametric inequality: |x+y| ≤ 1 = max{|x|,|y|}. It PASSES, so it is non-archimedean, not archimedean.", "✅ <strong>Non-archimedean</strong> — Correct! |x+y| is either 0 (if x+y=0) or 1, while max{|x|,|y|} = 1 (assuming x+y ≠ 0 means at least one is nonzero). So |x+y| ≤ max{|x|,|y|} holds trivially.", "❌ <strong>Neither</strong> — Every absolute value is either archimedean or non-archimedean. The trivial absolute value satisfies the ultrametric inequality, so it is non-archimedean.", "❌ <strong>Both</strong> — An absolute value cannot be both. \"Archimedean\" means the ultrametric inequality FAILS for some pair; \"non-archimedean\" means it ALWAYS holds. These are mutually exclusive."], "ch": 2, "sec": "2.1"}, {"q": "Two balls in an ultrametric space:", "options": ["Always overlap", "Are nested or disjoint", "Are always equal", "Have the same radius"], "correct": 1, "explain": ["❌ <strong>Always overlap</strong> — Disjoint balls exist: e.g., B(0, 1/5) and B(3, 1/5) in the 5-adic metric are disjoint since d(0,3) = 1 > 1/5.", "✅ <strong>Are nested or disjoint</strong> — Correct! If two balls share even ONE point, then (since every point is a center) they must be comparable: the smaller one is contained in the larger. No partial overlaps exist.", "❌ <strong>Are always equal</strong> — Balls of different radii can coexist. B(0, 1/5) ⊂ B(0, 1) — they're nested, not equal.", "❌ <strong>Have the same radius</strong> — There is no constraint on radii. Balls of any radii can exist independently."], "ch": 2, "sec": "2.3"}], "ch3": [{"q": "Ostrowski's Theorem classifies all non-trivial absolute values on ℚ as equivalent to:", "options": ["Only |·|₍∞₎", "Some |·|ₚ or |·|₍∞₎", "A new exotic value", "The trivial value"], "correct": 1, "explain": ["❌ <strong>Only |·|₍∞₎</strong> — This misses the entire family of p-adic absolute values. The usual absolute value is just ONE point (the \"infinite prime\") in a list that also includes one |·|ₚ for every prime.", "✅ <strong>Some |·|ₚ or |·|₍∞₎</strong> — Correct! Ostrowski proves the complete list: every non-trivial absolute value on ℚ is equivalent to the p-adic one for some prime p, or to the usual archimedean one (p = ∞).", "❌ <strong>A new exotic value</strong> — The whole point of Ostrowski is that NO exotic absolute values exist on ℚ. Every possibility collapses onto the known list.", "❌ <strong>The trivial value</strong> — The theorem is explicitly about NON-trivial absolute values; the trivial one is excluded by hypothesis."], "ch": 3, "sec": "3.1"}, {"q": "The product formula states ∏ₚ≤∞ |x|ₚ = ?", "options": ["0", "1", "∞", "x"], "correct": 1, "explain": ["❌ <strong>0</strong> — A product of strictly positive numbers (for x ≠ 0) can never be 0. Each |x|ₚ > 0.", "✅ <strong>1</strong> — Correct! The finite primes contribute pᵢ^(−aᵢ) and the infinite place contributes the magnitude ∏pᵢ^(aᵢ); they cancel exactly, giving 1. It is a conservation law.", "❌ <strong>∞</strong> — Only finitely many factors differ from 1, and their product is finite (in fact exactly 1), never infinite.", "❌ <strong>x</strong> — The product is a single fixed number (1) independent of x, not x itself."], "ch": 3, "sec": "3.1"}, {"q": "Two absolute values are equivalent if and only if they induce the same:", "options": ["Numerical values", "Topology", "Prime", "Field"], "correct": 1, "explain": ["❌ <strong>Numerical values</strong> — Equivalent absolute values generally give DIFFERENT numbers (|x|₁ = |x|₂^α). Equality of values is far too strong.", "✅ <strong>Topology</strong> — Correct! Equivalence means the same open sets / the same notion of convergence. Proposition 3.1.3 gives several equivalent characterizations, all amounting to \"same topology\".", "❌ <strong>Prime</strong> — Equivalence is about topology, not about sharing a prime; |·|ₚ and |·|ₚ^α use the same p but that is a consequence, not the definition.", "❌ <strong>Field</strong> — All these absolute values live on the same field ℚ already; that is not what distinguishes equivalence."], "ch": 3, "sec": "3.1"}, {"q": "In Ostrowski's proof, the non-archimedean case forces the critical integer n₀ (smallest with |n₀|<1) to be:", "options": ["Composite", "Prime", "A square", "Even"], "correct": 1, "explain": ["❌ <strong>Composite</strong> — If n₀ = ab with a,b < n₀, then by minimality |a| = |b| = 1, so |n₀| = 1 — contradicting |n₀| < 1. So it cannot be composite.", "✅ <strong>Prime</strong> — Correct! The minimality argument rules out any non-trivial factorization, so n₀ must be prime. That prime IS the p of the resulting |·|ₚ.", "❌ <strong>A square</strong> — A perfect square is composite, hence excluded by the same minimality contradiction.", "❌ <strong>Even</strong> — There is no parity constraint; n₀ can be any prime (2, 3, 5, …). Being even would only single out p = 2."], "ch": 3, "sec": "3.1"}, {"q": "Equivalent absolute values satisfy |x|₁ = |x|₂^α where α is:", "options": ["Any real", "Strictly positive", "Negative", "Exactly 1"], "correct": 1, "explain": ["❌ <strong>Any real</strong> — α = 0 would make |x|₁ ≡ 1 (the trivial value), and negative α would invert the ordering. Neither preserves the absolute-value axioms.", "✅ <strong>Strictly positive</strong> — Correct! A positive exponent rescales sizes while preserving \"< 1 vs > 1\", hence the topology. This is condition (iv) of Proposition 3.1.3.", "❌ <strong>Negative</strong> — A negative α would swap \"large\" and \"small\", reversing convergence — not an equivalence.", "❌ <strong>Exactly 1</strong> — α = 1 gives literally equal absolute values, a special case. Equivalence allows any α > 0."], "ch": 3, "sec": "3.1"}, {"q": "The field of p-adic numbers ℚₚ is constructed as the quotient:", "options": ["ℤ/pℤ", "𝒞/𝒩", "ℝ/ℚ", "𝒪/𝒫"], "correct": 1, "explain": ["❌ <strong>ℤ/pℤ</strong> — That is the finite field 𝔽ₚ with p elements, NOT the infinite field ℚₚ.", "✅ <strong>𝒞/𝒩</strong> — Correct! ℚₚ = (ring of Cauchy sequences 𝒞) modulo (ideal of null sequences 𝒩). Definition 3.2.9.", "❌ <strong>ℝ/ℚ</strong> — This is not even a ring quotient in the relevant sense and has nothing to do with the p-adic construction.", "❌ <strong>𝒪/𝒫</strong> — That quotient is the residue field 𝔽ₚ (from Chapter 2), not ℚₚ."], "ch": 3, "sec": "3.2"}, {"q": "𝒩, the set of null sequences, is what kind of ideal of 𝒞?", "options": ["Principal", "Maximal", "Prime but not maximal", "Not an ideal"], "correct": 1, "explain": ["❌ <strong>Principal</strong> — Whether it is principal is irrelevant; the key structural fact proved (Lemma 3.2.8) is maximality.", "✅ <strong>Maximal</strong> — Correct! Lemma 3.2.8 shows 𝒩 is maximal: any Cauchy sequence not in 𝒩 is eventually invertible, so the ideal it generates together with 𝒩 is all of 𝒞.", "❌ <strong>Prime but not maximal</strong> — It is maximal (and maximal ⇒ prime). \"Not maximal\" is false, which is exactly why the quotient is a field.", "❌ <strong>Not an ideal</strong> — 𝒩 is closed under addition and absorbs multiplication by Cauchy sequences, so it is genuinely an ideal."], "ch": 3, "sec": "3.2"}, {"q": "Because 𝒩 is maximal, the quotient 𝒞/𝒩 is automatically a:", "options": ["Group", "Field", "Ring with zero divisors", "Module"], "correct": 1, "explain": ["❌ <strong>Group</strong> — It is a group under addition, but the strong conclusion from maximality is much more: it is a field.", "✅ <strong>Field</strong> — Correct! A commutative ring modulo a maximal ideal is always a field. That is precisely why ℚₚ is a field, not merely a ring.", "❌ <strong>Ring with zero divisors</strong> — Fields have NO zero divisors. Maximality of 𝒩 is exactly what kills them.", "❌ <strong>Module</strong> — \"Module\" is not the structural upgrade maximality provides; the point is the field property."], "ch": 3, "sec": "3.2"}, {"q": "Proposition 3.2.12 asserts that ℚ is ___ inside ℚₚ:", "options": ["Closed", "Dense", "Open", "Finite-index"], "correct": 1, "explain": ["❌ <strong>Closed</strong> — If ℚ were closed in ℚₚ it would equal its completion, i.e. already be complete — false (Lemma 3.2.3).", "✅ <strong>Dense</strong> — Correct! Every p-adic number is a limit of rationals: represent it by a Cauchy sequence and use the constant sequence x̃_N for large N to get within ε.", "❌ <strong>Open</strong> — ℚ is not open in ℚₚ; every neighborhood of a rational also contains irrational p-adics.", "❌ <strong>Finite-index</strong> — ℚ is an infinite-index subfield/subgroup; density, not index, is the relevant property."], "ch": 3, "sec": "3.2"}, {"q": "A sequence in a non-archimedean field is Cauchy if and only if:", "options": ["It is bounded", "|xₙ₊₁ − xₙ| → 0", "It is increasing", "It has a rational limit"], "correct": 1, "explain": ["❌ <strong>It is bounded</strong> — Boundedness is necessary but nowhere near sufficient for Cauchy, even in the p-adic world.", "✅ <strong>|xₙ₊₁ − xₙ| → 0</strong> — Correct! This is Lemma 3.2.2: the ultrametric inequality makes \"consecutive differences vanish\" equivalent to Cauchy — a property that FAILS in ℝ.", "❌ <strong>It is increasing</strong> — Monotonicity is not even well-defined for p-adic numbers (no compatible order).", "❌ <strong>It has a rational limit</strong> — Cauchy sequences often fail to have rational limits (that is the whole motivation for completing ℚ)."], "ch": 3, "sec": "3.2"}, {"q": "Theorem 3.2.13 establishes that ℚₚ is:", "options": ["Complete", "Algebraically closed", "Finite", "Archimedean"], "correct": 0, "explain": ["✅ <strong>Complete</strong> — Correct! Every Cauchy sequence in ℚₚ converges within ℚₚ. The proof uses density of ℚ to replace classes by nearby rationals.", "❌ <strong>Algebraically closed</strong> — ℚₚ is NOT algebraically closed (e.g. it lacks some roots); its algebraic closure is a further, infinite extension.", "❌ <strong>Finite</strong> — ℚₚ is uncountably infinite, like ℝ.", "❌ <strong>Archimedean</strong> — ℚₚ is the prototypical NON-archimedean field; its absolute value satisfies the ultrametric inequality."], "ch": 3, "sec": "3.2"}, {"q": "Theorem 3.2.14 says ℚₚ is unique up to:", "options": ["Set equality", "Unique isomorphism preserving |·|", "Choice of Cauchy sequences", "Relabeling primes"], "correct": 1, "explain": ["❌ <strong>Set equality</strong> — Different constructions give literally different sets; uniqueness is up to isomorphism, not equality.", "✅ <strong>Unique isomorphism preserving |·|</strong> — Correct! Any two fields satisfying (embeds ℚ, dense, complete) are isomorphic by a unique absolute-value-preserving map — so we can forget the messy construction and use only the three properties.", "❌ <strong>Choice of Cauchy sequences</strong> — The quotient by 𝒩 already washes out the choice of representative sequence; that is internal, not the uniqueness statement.", "❌ <strong>Relabeling primes</strong> — Each prime p gives its OWN ℚₚ; uniqueness is for a fixed p, not across different primes."], "ch": 3, "sec": "3.2"}], "ch4": [{"q": "Zₚ is the valuation ring in ℚₚ. What does this mean?", "options": ["Zₚ={x:|x|ₚ≤1}", "Zₚ={x:|x|ₚ<1}", "Zₚ={x:|x|ₚ=1}", "Zₚ=ℚₚ"], "correct": 0, "explain": ["Correct! Valuation ring = closed unit ball.", "No, that's the maximal ideal pZₚ.", "No, that's the units Zₚ×.", "No, ℚₚ is the fraction field."], "ch": 4, "sec": ""}, {"q": "Every x∈ℚₚ can be written uniquely as Σbₙpⁿ with bₙ∈{0,...,p-1}. What is the name of this representation?", "options": ["Decimal expansion", "p-adic expansion", "Binary expansion", "Taylor series"], "correct": 1, "explain": ["No, that's base-10.", "Yes! Base-p expansion (Theorem 4.3.1).", "No, that's base-2.", "No, Taylor series are different."], "ch": 4, "sec": ""}, {"q": "Hensel's Lemma requires which condition on f'(α)?", "options": ["f'(α)=0 mod p", "f'(α)≠0 mod p", "f'(α)>0", "f'(α) continuous"], "correct": 1, "explain": ["No, that's a double root (Hensel fails).", "Correct! Simple root condition.", "No, p-adics have no ordering.", "No, continuity is always true."], "ch": 4, "sec": ""}, {"q": "Does √2 exist in ℚ₃?", "options": ["Yes", "No", "Only if 2 is a QR mod 3", "Unknown"], "correct": 1, "explain": ["No! 2 is not a QR mod 3 (squares mod 3 are 0,1).", "Correct! 2 ≢ square mod 3.", "Correct reasoning, and 2 is NOT a QR mod 3.", "It's known."], "ch": 4, "sec": ""}, {"q": "Is Zₚ compact?", "options": ["No", "Yes", "Only for p=2", "Only for odd p"], "correct": 1, "explain": ["Incorrect, Corollary 4.2.7 proves it.", "Correct! Zₚ is compact for all p.", "No, all p work.", "No, all p work."], "ch": 4, "sec": ""}, {"q": "ℚₚ is dense in:", "options": ["ℝ", "ℂ", "Zₚ", "Itself (ℚₚ)"], "correct": 3, "explain": ["No, different completions.", "No.", "No, ℚ is dense in Zₚ (and ℚₚ).", "Correct! Any complete metric space is dense in itself."], "ch": 4, "sec": ""}, {"q": "The series 1+p+p²+⋯ in ℚₚ equals:", "options": ["Diverges", "1/(1-p)", "1/(p-1)", "-1"], "correct": 1, "explain": ["No, terms→0 ⇒ converges.", "Yes! Geometric series formula.", "Wrong sign.", "No, that's a different series."], "ch": 4, "sec": ""}, {"q": "If f(X)=X²-a and α²≡a (mod p), f'(α)≠0 mod p, then:", "options": ["√a exists in Zₚ", "√a exists in ℚₚ", "√a does not exist", "Need more info"], "correct": 0, "explain": ["Correct! Hensel lifts α to a root in Zₚ.", "Well, yes, but specifically in Zₚ.", "No, Hensel guarantees existence.", "No, conditions are sufficient."], "ch": 4, "sec": ""}, {"q": "The p-adic valuation vₚ extends to ℚₚ with values in:", "options": ["ℤ", "ℤ∪{∞}", "ℝ", "ℚₚ"], "correct": 1, "explain": ["Almost, but vₚ(0)=∞.", "Correct! vₚ:ℚₚ→ℤ∪{∞}.", "No, it's integer-valued.", "No."], "ch": 4, "sec": ""}, {"q": "Zₚ/pⁿZₚ is isomorphic to:", "options": ["ℤ/pⁿℤ", "ℚₚ", "Zₚ", "pℤₚ"], "correct": 0, "explain": ["Correct! (Corollary 4.2.5)", "No, that's the fraction field.", "No, that's the whole ring.", "No, that's the maximal ideal."], "ch": 4, "sec": ""}, {"q": "Topologically, the ring of p-adic integers Zₚ is homeomorphic to:", "options": ["The interval [0,1]", "The Cantor set", "The circle S¹", "ℝ"], "correct": 1, "explain": ["No, [0,1] is connected; Zₚ is totally disconnected.", "Correct! (Theorem 4.4.1/4.4.2) Zₚ is a Cantor set.", "No, the circle is connected.", "No, ℝ is connected."], "ch": 4, "sec": ""}, {"q": "How many square classes does ℚₚ× have when p is an odd prime?", "options": ["2", "4", "8", "infinitely many"], "correct": 1, "explain": ["No, that's ℝ×.", "Correct! ℚₚ×/(ℚₚ×)² has order 4 for odd p.", "No, 8 is the count for p=2.", "No, it is finite."], "ch": 4, "sec": ""}, {"q": "For an odd prime p, a p-adic unit u is a square in ℚₚ if and only if:", "options": ["u≡1 (mod p)", "u is a quadratic residue mod p", "u is divisible by p", "u>0"], "correct": 1, "explain": ["Too strong; QR is the right condition.", "Correct! Reduce mod p and apply Hensel.", "No, units are not divisible by p.", "No, ℚₚ has no ordering."], "ch": 4, "sec": ""}, {"q": "Hensel's Lemma for polynomials lets you lift a factorization f̄=ḡh̄ mod p provided ḡ and h̄ are:", "options": ["equal", "relatively prime in 𝔽ₚ[X]", "both irreducible", "both linear"], "correct": 1, "explain": ["No, equal factors give a repeated factor (fails).", "Correct! Coprimality mod p is the key hypothesis (Thm 4.7.2).", "Not required.", "Not required."], "ch": 4, "sec": ""}, {"q": "The local–global (Hasse) principle for quadratic forms states a form has a nontrivial rational zero iff it has one over:", "options": ["ℂ", "ℝ and every ℚₚ", "ℤ", "some single ℚₚ"], "correct": 1, "explain": ["No, ℂ is too weak (always solvable).", "Correct! Hasse–Minkowski (Theorem 4.8.2).", "No, ℤ-solubility is different.", "No, need ALL places simultaneously."], "ch": 4, "sec": ""}, {"q": "Does the local–global principle hold for every polynomial equation?", "options": ["Yes, always", "No — there are counterexamples (e.g. higher-degree forms)", "Only for p=2", "Only for linear equations"], "correct": 1, "explain": ["No, it can fail beyond quadratics.", "Correct! It holds for quadratic forms but fails in general (Selmer's cubic).", "Not a p-specific statement.", "It does hold for these but the claim \"every\" is false."], "ch": 4, "sec": ""}]};
+const CHS = [2, 3, 4];
+const CH_NAMES = {"2": "Chapter 2 — Foundations: Absolute Values", "3": "Chapter 3 — The p-adic Numbers", "4": "Chapter 4 — Exploring ℚₚ"};
+const PASS_PCT = 70;
+
+let examTimer=null, examTimeLeft=0, currentExam=[], examActive=false;
+
+function toggleDark(){document.body.classList.toggle('dark');
+  try{localStorage.setItem('padic_dark',document.body.classList.contains('dark')?'1':'0');}catch(e){}}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function totalQuestions(){let n=0;CHS.forEach(c=>n+=BANK['ch'+c].length);return n;}
+
+function buildExam(){
+  const lenVal=document.getElementById('lenSel').value;
+  const shuffleOpts=document.getElementById('shuffleOpts').checked;
+  let pool=[];
+  CHS.forEach(c=>{BANK['ch'+c].forEach(q=>pool.push(Object.assign({},q)));});
+  // per-question option ordering
+  pool.forEach(q=>{
+    let order=q.options.map((_,i)=>i);
+    if(shuffleOpts) order=shuffle(order);
+    q._opts=order.map(i=>q.options[i]);
+    q._exp=order.map(i=>(q.explain&&q.explain[i])||'');
+    q._correct=order.indexOf(q.correct);
+  });
+  shuffle(pool);
+  if(lenVal!=='all'){pool=pool.slice(0,Math.min(+lenVal,pool.length));}
+  pool.sort((a,b)=>a.ch-b.ch);
+  currentExam=pool;
+  return pool;
+}
+
+function startExam(){
+  const pool=buildExam();
+  if(!pool.length)return;
+  examActive=true;
+  const timed=document.getElementById('timedMode').checked;
+  let html='';
+  let lastCh=null;
+  pool.forEach((q,qi)=>{
+    if(q.ch!==lastCh){html+='<div class="part-header">'+CH_NAMES[q.ch]+'</div>';lastCh=q.ch;}
+    html+='<div class="quiz-q" id="q_'+qi+'">'+
+      '<div class="q-tag">Q'+(qi+1)+(q.sec?' · §'+q.sec:' · Ch '+q.ch)+'</div>'+
+      '<div class="q-text">'+q.q+'</div>'+
+      q._opts.map((o,oi)=>'<label><input type="radio" name="ex_'+qi+'" value="'+oi+'"> '+o+'</label>').join('')+
+      '</div>';
+  });
+  html+='<div class="exam-actions">'+
+    '<button class="quiz-btn" onclick="gradeExam()">Submit Exam</button>'+
+    '<button class="quiz-btn secondary" onclick="resetExam()">Reset</button></div>'+
+    '<div id="examResult"></div>';
+  document.getElementById('examBody').innerHTML=html;
+  document.getElementById('setupPanel').style.display='none';
+  const t=document.getElementById('timer');
+  if(timed){
+    const mins=Math.max(10,Math.round(pool.length*1.5));
+    examTimeLeft=mins*60;t.style.display='block';updateTimer();
+    examTimer=setInterval(()=>{examTimeLeft--;updateTimer();if(examTimeLeft<=0){clearInterval(examTimer);gradeExam();}},1000);
+  } else {t.style.display='none';}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updateTimer(){const m=Math.floor(examTimeLeft/60),s=examTimeLeft%60;
+  const t=document.getElementById('timer');t.textContent='⏱ '+m+':'+(s<10?'0':'')+s;
+  t.style.color=examTimeLeft<60?'#e53935':'var(--accent)';}
+
+function gradeExam(){
+  if(!examActive)return;examActive=false;
+  if(examTimer){clearInterval(examTimer);examTimer=null;}
+  document.getElementById('timer').style.display='none';
+  let score=0;
+  const perCh={};CHS.forEach(c=>perCh[c]={right:0,total:0});
+  currentExam.forEach((q,qi)=>{
+    perCh[q.ch].total++;
+    const sel=document.querySelector('input[name="ex_'+qi+'"]:checked');
+    const ok=sel&&+sel.value===q._correct;
+    if(ok){score++;perCh[q.ch].right++;}
+  });
+  const total=currentExam.length;
+  const pct=Math.round(score/total*100);
+  const passed=pct>=PASS_PCT;
+  let html='<div class="result-banner '+(passed?'pass':'fail')+'">'+(passed?'✓ Passed':'Keep studying')+
+    ' — '+score+' / '+total+' ('+pct+'%)</div>';
+  html+='<div class="perf-breakdown"><table><tr><th>Chapter</th><th>Score</th><th>%</th></tr>';
+  CHS.forEach(c=>{if(perCh[c].total){const p=Math.round(perCh[c].right/perCh[c].total*100);
+    html+='<tr><td>'+CH_NAMES[c]+'</td><td>'+perCh[c].right+' / '+perCh[c].total+'</td><td>'+p+'%</td></tr>';}});
+  html+='</table></div>';
+  html+='<h2 style="margin:20px 0 8px;color:var(--accent)">Review & Explanations</h2>';
+  currentExam.forEach((q,qi)=>{
+    const sel=document.querySelector('input[name="ex_'+qi+'"]:checked');
+    const ok=sel&&+sel.value===q._correct;
+    const yourAns=sel?q._opts[+sel.value]:'<em>(no answer)</em>';
+    html+='<div class="exam-explain"><div class="exam-explain-toggle" onclick="this.nextElementSibling.classList.toggle(\'open\')">'+
+      (ok?'✓':'✗')+' Q'+(qi+1)+' — '+(ok?'Correct':'Review')+'</div>'+
+      '<div class="exam-explain-body"><p style="margin-bottom:8px"><strong>Question:</strong> '+q.q+'</p>'+
+      '<p style="margin-bottom:8px"><strong>Your answer:</strong> '+yourAns+'</p>'+
+      q._opts.map((o,oi)=>'<div class="exam-explain-item '+(oi===q._correct?'opt-correct':'opt-wrong')+'">'+
+        ((q._exp[oi])||('<strong>'+o+'</strong>'))+'</div>').join('')+
+      '</div></div>';
+  });
+  document.getElementById('examResult').innerHTML=html;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function resetExam(){
+  if(examTimer){clearInterval(examTimer);examTimer=null;}
+  examActive=false;
+  document.getElementById('timer').style.display='none';
+  document.getElementById('examBody').innerHTML='';
+  document.getElementById('setupPanel').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+window.addEventListener('scroll',()=>{const b=document.getElementById('scrollTop');if(b)b.style.display=window.scrollY>400?'block':'none';});
+function initExam(){
+  try{if(localStorage.getItem('padic_dark')==='1')document.body.classList.add('dark');}catch(e){}
+  // populate length selector
+  const tot=totalQuestions();const sel=document.getElementById('lenSel');
+  [['15','Quick — 15 questions'],['30','Standard — 30 questions'],['all','Comprehensive — all '+tot+' questions']].forEach(([v,l])=>{
+    if(v==='all'||+v<tot){const o=document.createElement('option');o.value=v;o.textContent=l;sel.appendChild(o);}
+  });
+  sel.value=(tot>30)?'30':'all';
+  document.getElementById('totCount').textContent=tot;
+}
+document.addEventListener('DOMContentLoaded',initExam);
+
+</script>
+</body>
+</html>
