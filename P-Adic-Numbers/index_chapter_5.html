@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 5 — Elementary Analysis in ℚₚ | Interactive Platform</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f8f9fa;--text:#1a1a2e;--text2:#555;--accent:#4361ee;
+  --def:#e3f2fd;--def-border:#1976d2;
+  --thm:#e8f5e9;--thm-border:#388e3c;
+  --lem:#fff9c4;--lem-border:#f9a825;
+  --proof:#f5f5f5;--proof-border:#9e9e9e;
+  --example:#e0f2f1;--example-border:#00897b;
+  --problem:#fff3e0;--problem-border:#ef6c00;
+  --sidebar-w:280px;--topbar-h:56px;
+  --card-radius:8px;--shadow:0 2px 8px rgba(0,0,0,.08);
+  --font-main:'Segoe UI',system-ui,-apple-system,sans-serif;
+  --font-mono:'Fira Code','Cascadia Code',monospace;
+  --transition:0.3s ease;
+}
+.dark{
+  --bg:#0f0f23;--bg2:#1a1a35;--text:#e0e0e0;--text2:#aaa;--accent:#7c8cf8;
+  --def:#1a2744;--def-border:#5c9ce6;
+  --thm:#1a3324;--thm-border:#66bb6a;
+  --lem:#332d1a;--lem-border:#fdd835;
+  --proof:#1e1e2f;--proof-border:#777;
+  --example:#1a302e;--example-border:#4db6ac;
+  --problem:#2e2114;--problem-border:#ffa726;
+  --shadow:0 2px 8px rgba(0,0,0,.3);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-height:1.7;transition:background var(--transition),color var(--transition)}
+#sidebar{position:fixed;left:0;top:0;width:var(--sidebar-w);height:100vh;background:var(--bg2);border-right:1px solid rgba(128,128,128,.2);overflow-y:auto;z-index:100;transition:transform var(--transition),background var(--transition);padding-top:16px}
+#sidebar.closed{transform:translateX(calc(-1 * var(--sidebar-w)))}
+#sidebar h2{font-size:1.1rem;padding:8px 20px;color:var(--accent)}
+#sidebar ul{list-style:none}
+#sidebar li{margin:0}
+#sidebar li a{display:block;padding:8px 20px 8px 28px;color:var(--text);text-decoration:none;font-size:.9rem;border-left:3px solid transparent;transition:all .2s}
+#sidebar li a:hover,#sidebar li a.active{background:rgba(67,97,238,.1);border-left-color:var(--accent);color:var(--accent)}
+#sidebar li.sub a{padding-left:44px;font-size:.82rem}
+.sidebar-toggle{position:fixed;left:8px;top:8px;z-index:200;background:var(--accent);color:#fff;border:none;width:40px;height:40px;border-radius:8px;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow)}
+.sidebar-toggle:hover{opacity:.85}
+#topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:var(--bg2);border-bottom:1px solid rgba(128,128,128,.2);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:90;transition:left var(--transition),background var(--transition)}
+#topbar.full{left:0}
+#topbar .breadcrumb{font-size:.9rem;color:var(--text2)}
+#topbar .controls{display:flex;gap:12px;align-items:center}
+#topbar .controls button{background:none;border:1px solid rgba(128,128,128,.3);color:var(--text);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:.82rem;transition:all .2s}
+#topbar .controls button:hover{border-color:var(--accent);color:var(--accent)}
+.chapter-nav{background:var(--bg);border:1px solid rgba(128,128,128,.3);color:var(--text);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:.82rem;transition:all .2s;font-family:var(--font-main)}
+.chapter-nav:hover{border-color:var(--accent);color:var(--accent)}
+.dark-toggle{font-size:1.1rem!important;width:36px!important;padding:6px!important}
+.progress-bar{position:fixed;top:var(--topbar-h);left:var(--sidebar-w);right:0;height:3px;background:rgba(128,128,128,.15);z-index:89;transition:left var(--transition)}
+.progress-bar.full{left:0}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),#06d6a0);width:0;transition:width .4s}
+#main{margin-left:var(--sidebar-w);padding-top:calc(var(--topbar-h) + 16px);min-height:100vh;transition:margin-left var(--transition)}
+#main.full{margin-left:0}
+.section{display:none;padding:24px 32px 60px;max-width:900px;margin:0 auto}
+.section.active{display:block}
+.section h1{font-size:2rem;margin-bottom:8px;color:var(--accent)}
+.section h2{font-size:1.5rem;margin:32px 0 12px;border-bottom:2px solid var(--accent);padding-bottom:6px}
+.section h3{font-size:1.2rem;margin:24px 0 8px;color:var(--text)}
+.section p,.section li{margin-bottom:8px}
+.block{border-left:4px solid;border-radius:var(--card-radius);padding:18px 22px;margin:18px 0;box-shadow:var(--shadow);transition:background var(--transition)}
+.block-def{background:var(--def);border-color:var(--def-border)}
+.block-thm{background:var(--thm);border-color:var(--thm-border)}
+.block-lem{background:var(--lem);border-color:var(--lem-border)}
+.block-proof{background:var(--proof);border-color:var(--proof-border);font-size:.92rem}
+.block-example{background:var(--example);border-color:var(--example-border)}
+.block-problem{background:var(--problem);border-color:var(--problem-border)}
+.block .label{font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.block-def .label{color:var(--def-border)}
+.block-thm .label{color:var(--thm-border)}
+.block-lem .label{color:var(--lem-border)}
+.block-proof .label{color:var(--proof-border)}
+.block-example .label{color:var(--example-border)}
+.block-problem .label{color:var(--problem-border)}
+.math{font-family:var(--font-mono);background:rgba(128,128,128,.08);padding:2px 6px;border-radius:4px;font-size:.9em}
+.math-block{display:block;text-align:center;margin:14px 0;padding:12px;background:rgba(128,128,128,.05);border-radius:6px;overflow-x:auto;font-family:var(--font-mono);font-size:.92em}
+.interactive-viz{border:2px solid var(--accent);border-radius:var(--card-radius);padding:20px;margin:20px 0;background:rgba(67,97,238,.03)}
+.interactive-viz h4{color:var(--accent);margin-bottom:12px}
+.interactive-viz .controls-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.interactive-viz label{font-size:.88rem;min-width:90px}
+.interactive-viz input[type=range]{flex:1;min-width:120px;accent-color:var(--accent)}
+.interactive-viz select{padding:5px 8px;border-radius:4px;font-size:.88rem;border:1px solid rgba(128,128,128,.3);background:var(--bg);color:var(--text)}
+.interactive-viz input[type=text]{padding:5px 8px;border-radius:4px;font-size:.88rem;border:1px solid rgba(128,128,128,.3);background:var(--bg);color:var(--text);width:100px}
+.interactive-viz .val{font-weight:700;min-width:50px;text-align:center;color:var(--accent);font-size:.9rem}
+.interactive-viz .viz-output{margin:12px 0;padding:14px;background:rgba(128,128,128,.06);border-radius:6px;font-family:var(--font-mono);font-size:.88rem;line-height:1.6}
+.interactive-viz .viz-svg{text-align:center;margin:10px 0}
+.interactive-viz button{padding:6px 14px;border:none;border-radius:6px;cursor:pointer;font-size:.82rem;background:var(--accent);color:#fff;transition:opacity .2s;margin:4px}
+.interactive-viz button:hover{opacity:.85}
+.problem-set{margin:20px 0}
+.problem-card{background:var(--problem);border-left:4px solid var(--problem-border);border-radius:var(--card-radius);padding:18px;margin:14px 0;box-shadow:var(--shadow)}
+.problem-card .diff{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.75rem;font-weight:700;color:#fff;margin-bottom:10px}
+.diff-easy{background:#4caf50}.diff-medium{background:#ff9800}.diff-hard{background:#f44336}
+.problem-card .q{margin-bottom:12px;font-size:.95rem}
+.problem-card input[type=text]{width:200px;padding:8px 12px;border:2px solid rgba(128,128,128,.3);border-radius:6px;font-size:.9rem;background:var(--bg);color:var(--text);transition:border-color .2s}
+.problem-card input:focus{outline:none;border-color:var(--accent)}
+.problem-card button{padding:7px 16px;border:none;border-radius:6px;cursor:pointer;font-size:.82rem;margin:4px;transition:all .2s}
+.btn-check{background:var(--accent);color:#fff}.btn-check:hover{opacity:.85}
+.btn-rand{background:#9c27b0;color:#fff}.btn-rand:hover{opacity:.85}
+.btn-sol{background:#00897b;color:#fff}.btn-sol:hover{opacity:.85}
+.feedback{margin-top:8px;padding:8px 12px;border-radius:6px;font-size:.88rem;display:none}
+.feedback.correct{display:block;background:#c8e6c9;color:#2e7d32}
+.feedback.wrong{display:block;background:#ffcdd2;color:#c62828}
+.solution{display:none;margin-top:12px;padding:14px;background:rgba(0,137,123,.08);border-radius:6px;border-left:3px solid #00897b;font-size:.9rem}
+.quiz-container{margin:20px 0}
+.quiz-q{background:var(--bg2);border-radius:var(--card-radius);padding:18px;margin:14px 0;box-shadow:var(--shadow)}
+.quiz-q .q-text{font-weight:600;margin-bottom:12px}
+.quiz-q label{display:block;padding:8px 14px;margin:4px 0;border-radius:6px;cursor:pointer;transition:background .2s;font-size:.92rem}
+.quiz-q label:hover{background:rgba(67,97,238,.1)}
+.quiz-q input[type=radio]{margin-right:8px;accent-color:var(--accent)}
+.quiz-score{font-size:1.1rem;font-weight:700;padding:16px;background:var(--bg2);border-radius:var(--card-radius);margin:12px 0;text-align:center;box-shadow:var(--shadow)}
+.quiz-btn{padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:.95rem;margin:6px}
+.quiz-btn:hover{opacity:.85}
+.quiz-btn.secondary{background:#777}
+.timer-display{font-size:1.3rem;font-weight:700;color:var(--accent);text-align:center;margin:12px 0;padding:12px;background:var(--bg2);border-radius:var(--card-radius)}
+.perf-breakdown{margin:20px 0}
+.perf-breakdown table{width:100%;border-collapse:collapse}
+.perf-breakdown th,.perf-breakdown td{padding:10px 14px;text-align:left;border-bottom:1px solid rgba(128,128,128,.2);font-size:.9rem}
+.perf-breakdown th{background:var(--accent);color:#fff}
+.nav-btns{display:flex;justify-content:space-between;margin-top:40px;padding-top:20px;border-top:1px solid rgba(128,128,128,.2)}
+.nav-btn{padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:.9rem;transition:all .2s}
+.nav-btn:hover{opacity:.85}
+.nav-btn:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:800px){
+  #sidebar{transform:translateX(calc(-1 * var(--sidebar-w)))}
+  #sidebar.open{transform:translateX(0)}
+  #main{margin-left:0!important}
+  #topbar{left:0!important}
+  .progress-bar{left:0!important}
+  .section{padding:16px}
+  .sidebar-toggle{display:flex}
+  #topbar .breadcrumb{display:none}
+}
+@media(min-width:801px){
+  .sidebar-toggle{left:calc(var(--sidebar-w) + 8px)}
+  #sidebar.closed ~ .sidebar-toggle{left:8px}
+}
+.step{margin:6px 0;padding:6px 0 6px 16px;border-left:2px solid var(--accent);font-size:.9rem}
+.step strong{color:var(--accent)}
+.exam-explain{margin-top:10px;border-radius:6px;overflow:hidden;font-size:.88rem}
+.exam-explain-toggle{cursor:pointer;padding:8px 14px;background:rgba(0,137,123,.12);border:1px solid rgba(0,137,123,.25);border-radius:6px;color:#00897b;font-weight:600;font-size:.82rem;display:inline-block;margin-top:6px}
+.exam-explain-toggle:hover{background:rgba(0,137,123,.2)}
+.exam-explain-body{display:none;padding:12px 16px;margin-top:6px;background:rgba(128,128,128,.04);border:1px solid rgba(128,128,128,.15);border-radius:6px}
+.exam-explain-body.open{display:block}
+.exam-explain-item{padding:8px 10px;margin:4px 0;border-radius:4px;line-height:1.5}
+.exam-explain-item.opt-correct{background:rgba(76,175,80,.1);border-left:3px solid #4caf50}
+.exam-explain-item.opt-wrong{background:rgba(244,67,54,.05);border-left:3px solid #ef9a9a}
+</style>
+</head>
+<body>
+
+<nav id="sidebar">
+  <h2>Chapter 5 — Analysis in ℚₚ</h2>
+  <ul>
+    <li><a href="#intro" class="nav-link active" data-section="intro">Introduction</a></li>
+    <li><a href="#s51" class="nav-link" data-section="s51">5.1 — Sequences & Series</a></li>
+    <li><a href="#s54" class="nav-link" data-section="s54">5.4 — Power Series</a></li>
+    <li><a href="#s57" class="nav-link" data-section="s57">5.7 — exp & log</a></li>
+    <li><a href="#s58" class="nav-link" data-section="s58">5.8 — Structure of Zₚ×</a></li>
+    <li><a href="#exam" class="nav-link" data-section="exam">Chapter Exam</a></li>
+    <li style="margin-top:14px;border-top:1px solid rgba(128,128,128,.2);padding-top:10px">
+      <a href="index_chapter_4.html">← Jump to another chapter</a>
+    </li>
+  </ul>
+</nav>
+
+<header id="topbar">
+  <div class="breadcrumb" id="breadcrumb">Introduction</div>
+  <div class="controls">
+    <select class="chapter-nav" onchange="if(this.value)window.location.href=this.value">
+      <option value="">Switch chapter...</option>
+      <option value="index_chapter_2.html">Chapter 2</option>
+      <option value="index_chapter_3.html">Chapter 3</option>
+      <option value="index_chapter_4.html">Chapter 4</option>
+      <option value="index_chapter_5.html" selected>Chapter 5</option>
+    </select>
+    <button class="dark-toggle" onclick="toggleDark()" title="Toggle dark mode">◐</button>
+    <button onclick="prevSection()">← Prev</button>
+    <button onclick="nextSection()">Next →</button>
+  </div>
+</header>
+<button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<main id="main">
+
+<section class="section active" id="intro">
+  <h1>Chapter 5 — Elementary Analysis in ℚₚ</h1>
+  <p>Just as we study calculus and analysis in ℝ, we can develop <strong>p-adic analysis</strong> in ℚₚ. The ultrametric property makes many things <em>simpler</em> than in real analysis: a series converges if and only if its terms tend to zero (no comparison test needed!). We explore sequences, power series, the p-adic exponential and logarithm, and the structure of the unit group Zₚ×.</p>
+  <div class="block block-def"><div class="label">Roadmap</div>
+    <ul style="list-style:none;padding-left:0">
+      <li><strong>§5.1</strong> — Convergence of sequences and series: <span class="math">Σaₙ</span> converges ⟺ <span class="math">aₙ → 0</span>.</li>
+      <li><strong>§5.4</strong> — Power series: sharp radii of convergence, Strassman's Theorem (finitely many zeros).</li>
+      <li><strong>§5.7</strong> — p-adic exp and log: local functions with restricted domains.</li>
+      <li><strong>§5.8</strong> — Structure of Zₚ×: roots of unity × principal units.</li>
+    </ul>
+  </div>
+  <div class="nav-btns"><button class="nav-btn" disabled>← Prev</button><button class="nav-btn" onclick="goSection('s51')">Next →</button></div>
+</section>
+
+<section class="section" id="s51">
+  <h1>5.1 — Sequences and Series</h1>
+  <p>ℚₚ is complete, so every Cauchy sequence converges. The ultrametric property drastically simplifies convergence tests.</p>
+  
+  <div class="block block-lem"><div class="label">Lemma 5.1.1 (Cauchy Criterion)</div>
+    <p>A sequence (aₙ) in ℚₚ is Cauchy ⟺ <span class="math">lim |aₙ₊₁ - aₙ|ₚ = 0</span>.</p>
+    <p>(In ℝ, must check <em>all</em> pairs; in ℚₚ, <strong>consecutive terms</strong> suffice!)</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Corollary 5.1.2 (THE Series Test)</div>
+    <p><strong>Σaₙ converges in ℚₚ ⟺ aₙ → 0.</strong></p>
+    <p>Moreover, if Σaₙ converges, then</p>
+    <span class="math-block">|Σaₙ|ₚ ≤ max |aₙ|ₚ</span>
+    <p>(The sum is no bigger than the largest term!)</p>
+  </div>
+
+  <div class="block block-example"><div class="label">Contrast with ℝ</div>
+    <p>In ℝ, <span class="math">aₙ → 0</span> is <strong>necessary</strong> but <strong>not sufficient</strong> for Σaₙ to converge (e.g., Σ 1/n diverges).</p>
+    <p>In ℚₚ, it's <strong>both necessary and sufficient</strong>. Convergence is <em>much easier</em> to check!</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: Series Convergence Checker</h4>
+    <p>Check whether Σpⁿ converges in ℚₚ (easy: |pⁿ|ₚ → 0 ⟺ n → +∞).</p>
+    <div class="controls-row">
+      <label for="s51p">p =</label>
+      <select id="s51p"><option>2</option><option selected>3</option><option>5</option><option>7</option></select>
+      <label for="s51k">Series: Σ p^k / k^n</label>
+      <input type="range" id="s51k" min="1" max="5" value="1" oninput="calcSeries()">
+      <span class="val" id="s51kVal">1</span>
+    </div>
+    <button onclick="calcSeries()">Check Convergence</button>
+    <div class="viz-output" id="s51out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s51problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz51"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('intro')">← Prev</button><button class="nav-btn" onclick="goSection('s54')">Next →</button></div>
+</section>
+
+<section class="section" id="s54">
+  <h1>5.4 — Power Series</h1>
+  <p>Power series f(X) = Σaₙ Xⁿ in ℚₚ have a radius of convergence r, determined by the Cauchy-Hadamard formula.</p>
+  
+  <div class="block block-def"><div class="label">Definition (Radius of Convergence)</div>
+    <p>For f(X) = Σaₙ Xⁿ, the <strong>radius of convergence</strong> is</p>
+    <span class="math-block">1/r = lim sup |aₙ|ₚ^(1/n)</span>
+    <p>f(x) converges if |x|ₚ < r, diverges if |x|ₚ > r.</p>
+  </div>
+
+  <div class="block block-example"><div class="label">Example: Geometric Series</div>
+    <p><span class="math">1/(1 - pX) = 1 + pX + p²X² + ⋯</span> converges for |X|ₚ < 1/p (i.e., |pX|ₚ < 1).</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Strassman's Theorem 5.6.1</div>
+    <p>Let f(X) = Σaₙ Xⁿ converge on |X|ₚ ≤ r. If not all aₙ ≡ 0 (mod p), let N = max{n : |aₙ|ₚ rⁿ is maximal}.</p>
+    <p>Then f has <strong>at most N zeros</strong> in {x : |x|ₚ ≤ r}.</p>
+    <p>(Contrast: in ℂ, nonconstant power series have infinitely many zeros!)</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: Radius of Convergence</h4>
+    <p>Compute radius for Σ(xⁿ / n!).</p>
+    <div class="controls-row">
+      <label for="s54p">p =</label>
+      <select id="s54p"><option>2</option><option selected>3</option><option>5</option><option>7</option></select>
+      <label for="s54n">terms</label>
+      <input type="range" id="s54n" min="5" max="15" value="10" oninput="calcRadius()">
+      <span class="val" id="s54nVal">10</span>
+    </div>
+    <button onclick="calcRadius()">Compute</button>
+    <div class="viz-output" id="s54out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s54problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz54"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s51')">← Prev</button><button class="nav-btn" onclick="goSection('s57')">Next →</button></div>
+</section>
+
+<section class="section" id="s57">
+  <h1>5.7 — Exponential and Logarithm</h1>
+  <p>The p-adic exponential and logarithm are defined by familiar power series, but have <strong>restricted domains</strong> (not global homomorphisms like in ℂ).</p>
+  
+  <div class="block block-def"><div class="label">p-adic Exponential</div>
+    <p><span class="math">exp(x) = Σ xⁿ/n!</span></p>
+    <p><strong>Converges</strong> for:</p>
+    <ul style="margin-left:20px">
+      <li>p > 2 (odd): <span class="math">|x|ₚ < p^(-1/(p-1))</span></li>
+      <li>p = 2: <span class="math">|x|₂ < 1/4</span></li>
+    </ul>
+    <p><strong>Properties:</strong> exp(0) = 1; exp(x+y) = exp(x)·exp(y) <strong>only on restricted domain</strong>.</p>
+  </div>
+
+  <div class="block block-def"><div class="label">p-adic Logarithm</div>
+    <p><span class="math">log(1+x) = Σ (-1)^(n-1) xⁿ/n</span></p>
+    <p><strong>Converges</strong> for:</p>
+    <ul style="margin-left:20px">
+      <li>p ≠ 2: <span class="math">|x|ₚ < 1</span></li>
+      <li>p = 2: <span class="math">|x|₂ < 1/2</span></li>
+    </ul>
+    <p><strong>Properties:</strong> log(1) = 0; log((1+x)(1+y)) = log(1+x) + log(1+y) <strong>on appropriate domain</strong>.</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: p-adic exp & log</h4>
+    <p>Compute exp(x) and log(1+x) in ℚₚ (first few terms).</p>
+    <div class="controls-row">
+      <label for="s57x">x (integer) =</label>
+      <input type="number" id="s57x" value="3" style="width:70px">
+      <label for="s57p">p =</label>
+      <select id="s57p"><option>3</option><option selected>5</option><option>7</option></select>
+      <label for="s57terms">terms</label>
+      <input type="range" id="s57terms" min="3" max="8" value="5" oninput="calcExpLog()">
+      <span class="val" id="s57termsVal">5</span>
+    </div>
+    <button onclick="calcExpLog()">Compute</button>
+    <div class="viz-output" id="s57out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s57problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz57"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s54')">← Prev</button><button class="nav-btn" onclick="goSection('s58')">Next →</button></div>
+</section>
+
+<section class="section" id="s58">
+  <h1>5.8 — The Structure of Zₚ×</h1>
+  <p>The unit group Zₚ× = {x ∈ Zₚ : |x|ₚ = 1} has a beautiful structure involving roots of unity.</p>
+  
+  <div class="block block-thm"><div class="label">Theorem 5.8.1</div>
+    <p>For <strong>p odd</strong>:</p>
+    <span class="math-block">Zₚ× ≅ μ_{p-1} × (1 + pZₚ)</span>
+    <p>where μ_{p-1} = {ζ : ζ^(p-1) = 1} (roots of unity), and 1 + pZₚ ≅ Zₚ (via log).</p>
+    <p>For <strong>p = 2</strong>:</p>
+    <span class="math-block">Z₂× ≅ {±1} × (1 + 4Z₂)</span>
+    <p>(Z₂× is <strong>not cyclic</strong>, unlike Zₚ× for odd p.)</p>
+  </div>
+
+  <div class="block block-example"><div class="label">Example: Z₅×</div>
+    <p>μ₄ = {1, 2, 3, 4} (mod 5 roots of unity, cyclic of order 4).</p>
+    <p>1 + 5Z₅ = {1 + 5a : a ∈ Z₅} ≅ Z₅ (principal units).</p>
+    <p>Z₅× ≅ ℤ/4ℤ × Z₅.</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: Roots of Unity in Zₚ</h4>
+    <p>Find (p-1)-st roots of unity mod p.</p>
+    <div class="controls-row">
+      <label for="s58p">p =</label>
+      <select id="s58p" onchange="calcRootsUnity()"><option>3</option><option>5</option><option selected>7</option><option>11</option></select>
+    </div>
+    <button onclick="calcRootsUnity()">Find Roots</button>
+    <div class="viz-output" id="s58out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s58problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz58"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s57')">← Prev</button><button class="nav-btn" onclick="goSection('exam')">Next →</button></div>
+</section>
+
+<section class="section" id="exam">
+  <h1>Chapter 5 Exam</h1>
+  <p>Comprehensive assessment of p-adic analysis: series, power series, exp/log, and Zₚ×. Each question has expandable per-option explanations.</p>
+  <div style="margin:16px 0">
+    <label><input type="checkbox" id="timedMode"> Timed mode (20 min)</label>
+  </div>
+  <div class="timer-display" id="timer" style="display:none">20:00</div>
+  <button class="quiz-btn" onclick="startExam()">Start Exam</button>
+  <div id="examBody"></div>
+</section>
+
+</main>
+
+<script>
+const SECTIONS = ['intro','s51','s54','s57','s58','exam'];
+function goSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id); if(!el)return;
+  el.classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(a=>a.classList.toggle('active',a.dataset.section===id));
+  const bc=document.getElementById('breadcrumb');
+  const link=document.querySelector('.nav-link[data-section="'+id+'"]');
+  if(bc&&link)bc.textContent=link.textContent;
+  updateProgress(id);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function curIndex(){const a=document.querySelector('.section.active');return a?SECTIONS.indexOf(a.id):0;}
+function nextSection(){const i=curIndex();if(i<SECTIONS.length-1)goSection(SECTIONS[i+1]);}
+function prevSection(){const i=curIndex();if(i>0)goSection(SECTIONS[i-1]);}
+function updateProgress(id){const i=SECTIONS.indexOf(id);const pct=((i+1)/SECTIONS.length)*100;const f=document.getElementById('progressFill');if(f)f.style.width=pct+'%';}
+function toggleSidebar(){
+  const sb=document.getElementById('sidebar'),mn=document.getElementById('main'),tb=document.getElementById('topbar'),pb=document.querySelector('.progress-bar');
+  const wide=window.innerWidth>800;
+  if(wide){sb.classList.toggle('closed');mn.classList.toggle('full');tb.classList.toggle('full');pb.classList.toggle('full');}
+  else{sb.classList.toggle('open');}
+}
+function toggleDark(){document.body.classList.toggle('dark');}
+
+function vp(n,p){if(n===0)return Infinity;let v=0;n=Math.abs(n);while(n%p===0){n/=p;v++;}return v;}
+function padicAbs(n,p){const v=vp(n,p);return v===Infinity?0:Math.pow(p,-v);}
+function factorial(n){let r=1;for(let i=2;i<=n;i++)r*=i;return r;}
+
+function calcSeries(){
+  const p=+document.getElementById('s51p').value;
+  const k=+document.getElementById('s51k').value;
+  document.getElementById('s51kVal').textContent=k;
+  const terms=[];
+  for(let n=1;n<=10;n++){
+    const term=Math.pow(p,n)/Math.pow(n,k);
+    const abs=padicAbs(Math.pow(p,n),p)/Math.pow(n,k);
+    terms.push({n,abs});
+  }
+  const converges = k>=1;
+  document.getElementById('s51out').innerHTML=
+    'Series: Σ p<sup>n</sup> / n<sup>'+k+'</sup><br>'+
+    'General term aₙ = p<sup>n</sup> / n<sup>'+k+'</sup><br>'+
+    '|aₙ|<sub>'+p+'</sub> = p<sup>-n</sup> / n<sup>'+k+'</sup> → 0 as n → ∞<br>'+
+    '<strong>'+(converges?'✓ CONVERGES':'✗ Needs check')+'</strong> (terms → 0 ⟹ converges in ℚₚ)';
+}
+
+function calcRadius(){
+  const p=+document.getElementById('s54p').value;
+  const n=+document.getElementById('s54n').value;
+  document.getElementById('s54nVal').textContent=n;
+  let maxRatio=0;
+  for(let k=1;k<=n;k++){
+    const ak=1/factorial(k);
+    const absAk=padicAbs(1,p)/padicAbs(factorial(k),p);
+    const ratio=Math.pow(absAk,1/k);
+    if(ratio>maxRatio)maxRatio=ratio;
+  }
+  const r = maxRatio>0 ? 1/maxRatio : Infinity;
+  document.getElementById('s54out').innerHTML=
+    'Power series: Σ xⁿ/n!<br>'+
+    'Checked '+n+' terms.<br>'+
+    '1/r = lim sup |aₙ|<sub>p</sub><sup>1/n</sup> ≈ '+maxRatio.toFixed(4)+'<br>'+
+    'Radius of convergence: <strong>r ≈ '+r.toFixed(4)+'</strong><br>'+
+    'Converges for |x|<sub>'+p+'</sub> < r.';
+}
+
+function calcExpLog(){
+  const x=+document.getElementById('s57x').value;
+  const p=+document.getElementById('s57p').value;
+  const terms=+document.getElementById('s57terms').value;
+  document.getElementById('s57termsVal').textContent=terms;
+  let expSum='',logSum='';
+  for(let n=0;n<terms;n++){
+    expSum+=(n>0?'+':'')+x+'<sup>'+n+'</sup>/'+factorial(n)+'!';
+  }
+  for(let n=1;n<=terms;n++){
+    logSum+=(n>1?'+':'')+'(-1)<sup>'+(n-1)+'</sup>·'+x+'<sup>'+n+'</sup>/'+n;
+  }
+  document.getElementById('s57out').innerHTML=
+    'x = '+x+', p = '+p+'<br>'+
+    '<strong>exp('+x+'):</strong> '+expSum+' + ⋯<br>'+
+    '<strong>log(1+'+x+'):</strong> '+logSum+' + ⋯<br>'+
+    '(Check convergence: need |x|<sub>p</sub> small enough!)';
+}
+
+function calcRootsUnity(){
+  const p=+document.getElementById('s58p').value;
+  const roots=[];
+  for(let a=1;a<p;a++){
+    let pw=1;
+    for(let k=0;k<p-1;k++)pw=(pw*a)%p;
+    if(pw===1)roots.push(a);
+  }
+  document.getElementById('s58out').innerHTML=
+    'p = '+p+', looking for (p-1)='+(p-1)+'-th roots of unity mod p.<br>'+
+    'Roots: {'+roots.join(', ')+'}<br>'+
+    'These form μ<sub>'+(p-1)+'</sub>, the cyclic group of order '+(p-1)+'.';
+}
+
+function genProblems51(){
+  return {
+    easy:[
+      {q:'Σaₙ converges in ℚₚ iff aₙ → ? (write 0)',ans:'0',sol:'<div class="step">aₙ → 0 (Corollary 5.1.2).</div>'},
+      {q:'In ℝ, does Σ1/n converge? (yes/no)',ans:'no',sol:'<div class="step">No, harmonic series diverges (but aₙ→0!).</div>'}
+    ],
+    medium:[
+      {q:'Does Σpⁿ converge in ℚₚ? (yes/no)',ans:'yes',sol:'<div class="step">Yes, |pⁿ|ₚ=p⁻ⁿ→0.</div>'},
+      {q:'|Σaₙ|ₚ ≤ ? (write max)',ans:'max',sol:'<div class="step">≤ max|aₙ|ₚ (ultrametric for series).</div>'}
+    ],
+    hard:[
+      {q:'Is aₙ→0 sufficient for Σaₙ to converge in ℝ? (yes/no)',ans:'no',sol:'<div class="step">No (e.g. harmonic), but YES in ℚₚ!</div>'}
+    ]
+  };
+}
+
+function genProblems54(){
+  return {
+    easy:[
+      {q:'Radius formula: 1/r = lim sup |aₙ|ₚ^(1/?) (write n)',ans:'n',sol:'<div class="step">1/r = lim sup |aₙ|ₚ^(1/n).</div>'},
+      {q:'Does 1+pX+p²X²+⋯ converge for |X|ₚ=1? (yes/no)',ans:'no',sol:'<div class="step">No, need |pX|ₚ<1 ⟹ |X|ₚ<1/p.</div>'}
+    ],
+    medium:[
+      {q:'Strassman: power series has how many zeros? (write finite)',ans:'finite',sol:'<div class="step">At most N (finitely many), not ∞ like in ℂ.</div>'},
+      {q:'In ℂ, sin(x) has infinitely many zeros. In ℚₚ? (write finite)',ans:'finite',sol:'<div class="step">Finitely many (Strassman).</div>'}
+    ],
+    hard:[
+      {q:'If not all aₙ≡0 mod p, max zeros in |x|ₚ≤r is at most ? (write N)',ans:'n',sol:'<div class="step">N = max{n:|aₙ|ₚrⁿ maximal} (Strassman).</div>'}
+    ]
+  };
+}
+
+function genProblems57(){
+  return {
+    easy:[
+      {q:'exp(0) = ? (write 1)',ans:'1',sol:'<div class="step">exp(0)=1 (by definition).</div>'},
+      {q:'log(1) = ? (write 0)',ans:'0',sol:'<div class="step">log(1)=0 (by definition).</div>'}
+    ],
+    medium:[
+      {q:'For p>2, exp converges for |x|ₚ < p^(-1/(p-?)). (write 1)',ans:'1',sol:'<div class="step">p^(-1/(p-1)).</div>'},
+      {q:'Is exp a global homomorphism in ℚₚ? (yes/no)',ans:'no',sol:'<div class="step">No, only local (restricted domain).</div>'}
+    ],
+    hard:[
+      {q:'For p=2, log(1+x) converges for |x|₂ < 1/?. (write 2)',ans:'2',sol:'<div class="step">|x|₂<1/2 (stricter than odd p).</div>'}
+    ]
+  };
+}
+
+function genProblems58(){
+  return {
+    easy:[
+      {q:'For p odd, Zₚ× contains μ_{p-?} roots of unity. (write 1)',ans:'1',sol:'<div class="step">μ_{p-1}.</div>'},
+      {q:'Is Z₂× cyclic? (yes/no)',ans:'no',sol:'<div class="step">No, Z₂× ≅ {±1} × (1+4Z₂).</div>'}
+    ],
+    medium:[
+      {q:'1+pZₚ ≅ ? (as additive group; write Zp)',ans:'zp',sol:'<div class="step">≅ Zₚ (via log).</div>'},
+      {q:'For p odd, Zₚ× ≅ μ_{p-1} × ? (write 1+pZp)',ans:'1+pzp',sol:'<div class="step">× (1+pZₚ).</div>'}
+    ],
+    hard:[
+      {q:'Z₅× is cyclic? (yes/no)',ans:'no',sol:'<div class="step">No! Z₅× ≅ ℤ/4ℤ × Z₅ (not cyclic, product).</div>'}
+    ]
+  };
+}
+
+function renderProblems(containerId,bank){
+  const c=document.getElementById(containerId);if(!c)return;
+  c.innerHTML='';
+  ['easy','medium','hard'].forEach(diff=>{
+    (bank[diff]||[]).forEach((p,i)=>{
+      const id=containerId+'_'+diff+'_'+i;
+      const card=document.createElement('div');card.className='problem-card';
+      card.innerHTML=
+        '<span class="diff diff-'+diff+'">'+diff+'</span>'+
+        '<div class="q">'+p.q+'</div>'+
+        '<input type="text" id="'+id+'_in" placeholder="Your answer">'+
+        '<button class="btn-check" onclick="checkProblem(\''+id+'\')">Check</button>'+
+        '<button class="btn-sol" onclick="toggleSol(\''+id+'\')">Solution</button>'+
+        '<div class="feedback" id="'+id+'_fb"></div>'+
+        '<div class="solution" id="'+id+'_sol">'+p.sol+'</div>';
+      card._ans=p.ans;
+      c.appendChild(card);
+    });
+  });
+}
+function normalize(s){return (s||'').toString().trim().toLowerCase().replace(/\s+/g,'').replace(/[₀₁₂₃₄₅₆₇₈₉]/g,d=>['0','1','2','3','4','5','6','7','8','9']['₀₁₂₃₄₅₆₇₈₉'.indexOf(d)]);}
+function checkProblem(id){
+  const inp=document.getElementById(id+'_in'),fb=document.getElementById(id+'_fb');
+  const card=inp.closest('.problem-card');
+  const ok=normalize(inp.value)===normalize(card._ans);
+  fb.className='feedback '+(ok?'correct':'wrong');
+  fb.textContent=ok?'✓ Correct!':'Not quite — try again or view solution.';
+}
+function toggleSol(id){const s=document.getElementById(id+'_sol');s.style.display=s.style.display==='block'?'none':'block';}
+
+const quizData={
+  s51:[
+    {q:'A series Σaₙ in ℚₚ converges iff:',options:['Σ|aₙ|<∞','aₙ→0','aₙ monotone','aₙ bounded'],correct:1},
+    {q:'In ℝ, Σ1/n diverges even though 1/n→0. In ℚₚ?',options:['Also diverges','Converges','Depends on p','Unknown'],correct:1},
+    {q:'If Σaₙ converges in ℚₚ, |Σaₙ|ₚ ≤ ?',options:['Σ|aₙ|ₚ','max|aₙ|ₚ','1','∞'],correct:1}
+  ],
+  s54:[
+    {q:'Radius of convergence formula:',options:['1/r=limsup|aₙ|^n','1/r=limsup|aₙ|^(1/n)','r=limsup|aₙ|','r=1/limsup|aₙ|'],correct:1},
+    {q:'Strassman: power series in ℚₚ has how many zeros?',options:['Infinitely many','At most N (finite)','Exactly p','None'],correct:1},
+    {q:'Compared to ℂ, p-adic power series have:',options:['More zeros','Fewer zeros','Same number','Depends'],correct:1}
+  ],
+  s57:[
+    {q:'The p-adic exp is defined by:',options:['Σxⁿ','Σxⁿ/n!','Σxⁿ/n','eˣ'],correct:1},
+    {q:'Is exp(x+y)=exp(x)·exp(y) globally in ℚₚ?',options:['Yes','No, only locally','Only for p=2','Yes, for all x,y'],correct:1},
+    {q:'For p=5, exp converges for |x|₅<?',options:['1','1/5','5^(-1/4)','∞'],correct:2}
+  ],
+  s58:[
+    {q:'For p odd, Zₚ× decomposes as:',options:['Cyclic','μ_{p-1}×(1+pZₚ)','ℤₚ','{±1}×Zₚ'],correct:1},
+    {q:'Is Z₂× cyclic?',options:['Yes','No','Only Z₃× is','All Zₚ× are cyclic'],correct:1},
+    {q:'μ_{p-1} is the group of:',options:['Units','(p-1)-th roots of unity','Principal units','All roots'],correct:1}
+  ]
+};
+
+function genQuiz(containerId,key){
+  const c=document.getElementById(containerId);if(!c)return;
+  const qs=quizData[key]||[];
+  c.innerHTML=qs.map((q,qi)=>
+    '<div class="quiz-q"><div class="q-text">'+(qi+1)+'. '+q.q+'</div>'+
+    q.options.map((o,oi)=>'<label><input type="radio" name="'+key+'_'+qi+'" value="'+oi+'"> '+o+'</label>').join('')+
+    '</div>').join('')+
+    '<button class="quiz-btn" onclick="gradeQuiz(\''+containerId+'\',\''+key+'\')">Submit Quiz</button>'+
+    '<div class="quiz-score" id="'+containerId+'_score" style="display:none"></div>';
+}
+function gradeQuiz(containerId,key){
+  const qs=quizData[key]||[];let score=0;
+  qs.forEach((q,qi)=>{const sel=document.querySelector('input[name="'+key+'_'+qi+'"]:checked');if(sel&&+sel.value===q.correct)score++;});
+  const sc=document.getElementById(containerId+'_score');
+  sc.style.display='block';
+  sc.textContent='Score: '+score+' / '+qs.length+(score===qs.length?' 🎉 Perfect!':'');
+}
+
+const examPool=[
+  {q:'The main convergence test in ℚₚ is:',
+   options:['Comparison test','aₙ→0','Ratio test','Integral test'],correct:1,
+   explain:['No, not needed in ℚₚ.','Yes! Σaₙ converges ⟺ aₙ→0.','No, easier test exists.','No, integration is different.']},
+  {q:'In ℝ, Σ1/n diverges. In ℚₚ?',
+   options:['Also diverges','Converges','Depends on p','Unknown'],correct:1,
+   explain:['No! In ℚₚ, 1/n→0 ⇒ Σ1/n converges.','Correct! 1/n→0 ⇒ converges.','No, works for all p.','It\'s known.']},
+  {q:'If Σaₙ converges in ℚₚ, then |Σaₙ|ₚ ≤ ?',
+   options:['Σ|aₙ|ₚ','max|aₙ|ₚ','1','min|aₙ|ₚ'],correct:1,
+   explain:['No, ultrametric is stronger.','Correct! Ultrametric inequality for series.','No, unbounded.','No.']},
+  {q:'Strassman\'s Theorem says power series in ℚₚ have:',
+   options:['Infinitely many zeros','At most N zeros (finite)','No zeros','Exactly p zeros'],correct:1,
+   explain:['No, that\'s ℂ!','Yes! At most N (finitely many).','Not necessarily.','No.']},
+  {q:'The p-adic exp(x) is defined by:',
+   options:['eˣ (usual)','Σxⁿ/n!','Σxⁿ','log⁻¹(x)'],correct:1,
+   explain:['No, series definition.','Correct!','No, missing factorial.','Wrong direction.']},
+  {q:'Is exp(x+y)=exp(x)·exp(y) for all x,y ∈ ℚₚ?',
+   options:['Yes','No, only locally','Only for p=2','Yes, if |x|,|y|<1'],correct:1,
+   explain:['No, restricted domain!','Correct! Only on restricted domain.','No, all p.','Close, but need vₚ≥1/(p-1).']},
+  {q:'For p odd, Zₚ× is isomorphic to:',
+   options:['ℤₚ','μ_{p-1}×(1+pZₚ)','Cyclic group','ℚₚ×'],correct:1,
+   explain:['No, that\'s additive.','Correct! Roots of unity × principal units.','No, it\'s a product.','No, that\'s bigger.']},
+  {q:'Is Z₂× cyclic?',
+   options:['Yes','No','Only if extended','All Zₚ× are cyclic'],correct:1,
+   explain:['No! Z₂×≅{±1}×(1+4Z₂).','Correct! Not cyclic (unlike odd p).','Not standard.','False, Z₂× exception.']},
+  {q:'The p-adic log converges for |x|ₚ<?',
+   options:['1 (p≠2)','p','1/p','∞'],correct:0,
+   explain:['Correct! (and 1/2 for p=2)','No, smaller.','No, larger.','No, finite radius.']},
+  {q:'1+pZₚ (principal units) is isomorphic as additive group to:',
+   options:['Zₚ','μ_{p-1}','ℤ/pℤ','ℚₚ'],correct:0,
+   explain:['Correct! Via log.','No, that\'s roots of unity.','No, that\'s multiplicative mod p.','No, too big.']},
+];
+
+let examTimer=null,examTimeLeft=0;
+function startExam(){
+  const timed=document.getElementById('timedMode').checked;
+  const body=document.getElementById('examBody');
+  body.innerHTML=examPool.map((q,qi)=>
+    '<div class="quiz-q"><div class="q-text">'+(qi+1)+'. '+q.q+'</div>'+
+    q.options.map((o,oi)=>'<label><input type="radio" name="ex_'+qi+'" value="'+oi+'"> '+o+'</label>').join('')+
+    '</div>').join('')+
+    '<button class="quiz-btn" onclick="gradeExam()">Submit Exam</button>'+
+    '<button class="quiz-btn secondary" onclick="resetExam()">Reset</button>'+
+    '<div id="examResult"></div>';
+  const t=document.getElementById('timer');
+  if(timed){examTimeLeft=20*60;t.style.display='block';updateTimer();examTimer=setInterval(()=>{examTimeLeft--;updateTimer();if(examTimeLeft<=0){clearInterval(examTimer);gradeExam();}},1000);}
+  else{t.style.display='none';}
+}
+function updateTimer(){const m=Math.floor(examTimeLeft/60),s=examTimeLeft%60;document.getElementById('timer').textContent=m+':'+(s<10?'0':'')+s;}
+function gradeExam(){
+  if(examTimer){clearInterval(examTimer);examTimer=null;}
+  let score=0;
+  examPool.forEach((q,qi)=>{const sel=document.querySelector('input[name="ex_'+qi+'"]:checked');if(sel&&+sel.value===q.correct)score++;});
+  const pct=Math.round(score/examPool.length*100);
+  let html='<div class="quiz-score">Final Score: '+score+' / '+examPool.length+' ('+pct+'%)</div>';
+  html+='<div class="perf-breakdown"><table><tr><th>#</th><th>Result</th></tr>';
+  examPool.forEach((q,qi)=>{const sel=document.querySelector('input[name="ex_'+qi+'"]:checked');const ok=sel&&+sel.value===q.correct;
+    html+='<tr><td>'+(qi+1)+'</td><td>'+(ok?'✓ Correct':'✗ Incorrect')+'</td></tr>';});
+  html+='</table></div>';
+  examPool.forEach((q,qi)=>{
+    html+='<div class="exam-explain"><div class="exam-explain-toggle" onclick="this.nextElementSibling.classList.toggle(\'open\')">Q'+(qi+1)+' explanation</div>'+
+      '<div class="exam-explain-body">'+
+      q.options.map((o,oi)=>'<div class="exam-explain-item '+(oi===q.correct?'opt-correct':'opt-wrong')+'"><strong>'+o+':</strong> '+((q.explain&&q.explain[oi])||'')+'</div>').join('')+
+      '</div></div>';
+  });
+  document.getElementById('examResult').innerHTML=html;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function resetExam(){if(examTimer){clearInterval(examTimer);examTimer=null;}document.getElementById('timer').style.display='none';document.getElementById('examBody').innerHTML='';}
+
+function initAll(){
+  document.querySelectorAll('.nav-link').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();goSection(a.dataset.section);}));
+  calcSeries();
+  renderProblems('s51problems',genProblems51());
+  renderProblems('s54problems',genProblems54());
+  renderProblems('s57problems',genProblems57());
+  renderProblems('s58problems',genProblems58());
+  genQuiz('quiz51','s51');
+  genQuiz('quiz54','s54');
+  genQuiz('quiz57','s57');
+  genQuiz('quiz58','s58');
+  updateProgress('intro');
+}
+document.addEventListener('DOMContentLoaded',initAll);
+</script>
+</body>
+</html>

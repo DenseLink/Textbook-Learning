@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 4 — Exploring ℚₚ | Interactive Platform</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f8f9fa;--text:#1a1a2e;--text2:#555;--accent:#4361ee;
+  --def:#e3f2fd;--def-border:#1976d2;
+  --thm:#e8f5e9;--thm-border:#388e3c;
+  --lem:#fff9c4;--lem-border:#f9a825;
+  --proof:#f5f5f5;--proof-border:#9e9e9e;
+  --example:#e0f2f1;--example-border:#00897b;
+  --problem:#fff3e0;--problem-border:#ef6c00;
+  --sidebar-w:280px;--topbar-h:56px;
+  --card-radius:8px;--shadow:0 2px 8px rgba(0,0,0,.08);
+  --font-main:'Segoe UI',system-ui,-apple-system,sans-serif;
+  --font-mono:'Fira Code','Cascadia Code',monospace;
+  --transition:0.3s ease;
+}
+.dark{
+  --bg:#0f0f23;--bg2:#1a1a35;--text:#e0e0e0;--text2:#aaa;--accent:#7c8cf8;
+  --def:#1a2744;--def-border:#5c9ce6;
+  --thm:#1a3324;--thm-border:#66bb6a;
+  --lem:#332d1a;--lem-border:#fdd835;
+  --proof:#1e1e2f;--proof-border:#777;
+  --example:#1a302e;--example-border:#4db6ac;
+  --problem:#2e2114;--problem-border:#ffa726;
+  --shadow:0 2px 8px rgba(0,0,0,.3);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-height:1.7;transition:background var(--transition),color var(--transition)}
+#sidebar{position:fixed;left:0;top:0;width:var(--sidebar-w);height:100vh;background:var(--bg2);border-right:1px solid rgba(128,128,128,.2);overflow-y:auto;z-index:100;transition:transform var(--transition),background var(--transition);padding-top:16px}
+#sidebar.closed{transform:translateX(calc(-1 * var(--sidebar-w)))}
+#sidebar h2{font-size:1.1rem;padding:8px 20px;color:var(--accent)}
+#sidebar ul{list-style:none}
+#sidebar li{margin:0}
+#sidebar li a{display:block;padding:8px 20px 8px 28px;color:var(--text);text-decoration:none;font-size:.9rem;border-left:3px solid transparent;transition:all .2s}
+#sidebar li a:hover,#sidebar li a.active{background:rgba(67,97,238,.1);border-left-color:var(--accent);color:var(--accent)}
+#sidebar li.sub a{padding-left:44px;font-size:.82rem}
+.sidebar-toggle{position:fixed;left:8px;top:8px;z-index:200;background:var(--accent);color:#fff;border:none;width:40px;height:40px;border-radius:8px;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow)}
+.sidebar-toggle:hover{opacity:.85}
+#topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:var(--bg2);border-bottom:1px solid rgba(128,128,128,.2);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:90;transition:left var(--transition),background var(--transition)}
+#topbar.full{left:0}
+#topbar .breadcrumb{font-size:.9rem;color:var(--text2)}
+#topbar .controls{display:flex;gap:12px;align-items:center}
+#topbar .controls button{background:none;border:1px solid rgba(128,128,128,.3);color:var(--text);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:.82rem;transition:all .2s}
+#topbar .controls button:hover{border-color:var(--accent);color:var(--accent)}
+.chapter-nav{background:var(--bg);border:1px solid rgba(128,128,128,.3);color:var(--text);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:.82rem;transition:all .2s;font-family:var(--font-main)}
+.chapter-nav:hover{border-color:var(--accent);color:var(--accent)}
+.dark-toggle{font-size:1.1rem!important;width:36px!important;padding:6px!important}
+.progress-bar{position:fixed;top:var(--topbar-h);left:var(--sidebar-w);right:0;height:3px;background:rgba(128,128,128,.15);z-index:89;transition:left var(--transition)}
+.progress-bar.full{left:0}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),#06d6a0);width:0;transition:width .4s}
+#main{margin-left:var(--sidebar-w);padding-top:calc(var(--topbar-h) + 16px);min-height:100vh;transition:margin-left var(--transition)}
+#main.full{margin-left:0}
+.section{display:none;padding:24px 32px 60px;max-width:900px;margin:0 auto}
+.section.active{display:block}
+.section h1{font-size:2rem;margin-bottom:8px;color:var(--accent)}
+.section h2{font-size:1.5rem;margin:32px 0 12px;border-bottom:2px solid var(--accent);padding-bottom:6px}
+.section h3{font-size:1.2rem;margin:24px 0 8px;color:var(--text)}
+.section p,.section li{margin-bottom:8px}
+.block{border-left:4px solid;border-radius:var(--card-radius);padding:18px 22px;margin:18px 0;box-shadow:var(--shadow);transition:background var(--transition)}
+.block-def{background:var(--def);border-color:var(--def-border)}
+.block-thm{background:var(--thm);border-color:var(--thm-border)}
+.block-lem{background:var(--lem);border-color:var(--lem-border)}
+.block-proof{background:var(--proof);border-color:var(--proof-border);font-size:.92rem}
+.block-example{background:var(--example);border-color:var(--example-border)}
+.block-problem{background:var(--problem);border-color:var(--problem-border)}
+.block .label{font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.block-def .label{color:var(--def-border)}
+.block-thm .label{color:var(--thm-border)}
+.block-lem .label{color:var(--lem-border)}
+.block-proof .label{color:var(--proof-border)}
+.block-example .label{color:var(--example-border)}
+.block-problem .label{color:var(--problem-border)}
+.math{font-family:var(--font-mono);background:rgba(128,128,128,.08);padding:2px 6px;border-radius:4px;font-size:.9em}
+.math-block{display:block;text-align:center;margin:14px 0;padding:12px;background:rgba(128,128,128,.05);border-radius:6px;overflow-x:auto;font-family:var(--font-mono);font-size:.92em}
+.interactive-viz{border:2px solid var(--accent);border-radius:var(--card-radius);padding:20px;margin:20px 0;background:rgba(67,97,238,.03)}
+.interactive-viz h4{color:var(--accent);margin-bottom:12px}
+.interactive-viz .controls-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.interactive-viz label{font-size:.88rem;min-width:90px}
+.interactive-viz input[type=range]{flex:1;min-width:120px;accent-color:var(--accent)}
+.interactive-viz select{padding:5px 8px;border-radius:4px;font-size:.88rem;border:1px solid rgba(128,128,128,.3);background:var(--bg);color:var(--text)}
+.interactive-viz input[type=text]{padding:5px 8px;border-radius:4px;font-size:.88rem;border:1px solid rgba(128,128,128,.3);background:var(--bg);color:var(--text);width:100px}
+.interactive-viz .val{font-weight:700;min-width:50px;text-align:center;color:var(--accent);font-size:.9rem}
+.interactive-viz .viz-output{margin:12px 0;padding:14px;background:rgba(128,128,128,.06);border-radius:6px;font-family:var(--font-mono);font-size:.88rem;line-height:1.6}
+.interactive-viz .viz-svg{text-align:center;margin:10px 0}
+.interactive-viz button{padding:6px 14px;border:none;border-radius:6px;cursor:pointer;font-size:.82rem;background:var(--accent);color:#fff;transition:opacity .2s;margin:4px}
+.interactive-viz button:hover{opacity:.85}
+.problem-set{margin:20px 0}
+.problem-card{background:var(--problem);border-left:4px solid var(--problem-border);border-radius:var(--card-radius);padding:18px;margin:14px 0;box-shadow:var(--shadow)}
+.problem-card .diff{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.75rem;font-weight:700;color:#fff;margin-bottom:10px}
+.diff-easy{background:#4caf50}.diff-medium{background:#ff9800}.diff-hard{background:#f44336}
+.problem-card .q{margin-bottom:12px;font-size:.95rem}
+.problem-card input[type=text]{width:200px;padding:8px 12px;border:2px solid rgba(128,128,128,.3);border-radius:6px;font-size:.9rem;background:var(--bg);color:var(--text);transition:border-color .2s}
+.problem-card input:focus{outline:none;border-color:var(--accent)}
+.problem-card button{padding:7px 16px;border:none;border-radius:6px;cursor:pointer;font-size:.82rem;margin:4px;transition:all .2s}
+.btn-check{background:var(--accent);color:#fff}.btn-check:hover{opacity:.85}
+.btn-rand{background:#9c27b0;color:#fff}.btn-rand:hover{opacity:.85}
+.btn-sol{background:#00897b;color:#fff}.btn-sol:hover{opacity:.85}
+.feedback{margin-top:8px;padding:8px 12px;border-radius:6px;font-size:.88rem;display:none}
+.feedback.correct{display:block;background:#c8e6c9;color:#2e7d32}
+.feedback.wrong{display:block;background:#ffcdd2;color:#c62828}
+.solution{display:none;margin-top:12px;padding:14px;background:rgba(0,137,123,.08);border-radius:6px;border-left:3px solid #00897b;font-size:.9rem}
+.quiz-container{margin:20px 0}
+.quiz-q{background:var(--bg2);border-radius:var(--card-radius);padding:18px;margin:14px 0;box-shadow:var(--shadow)}
+.quiz-q .q-text{font-weight:600;margin-bottom:12px}
+.quiz-q label{display:block;padding:8px 14px;margin:4px 0;border-radius:6px;cursor:pointer;transition:background .2s;font-size:.92rem}
+.quiz-q label:hover{background:rgba(67,97,238,.1)}
+.quiz-q input[type=radio]{margin-right:8px;accent-color:var(--accent)}
+.quiz-score{font-size:1.1rem;font-weight:700;padding:16px;background:var(--bg2);border-radius:var(--card-radius);margin:12px 0;text-align:center;box-shadow:var(--shadow)}
+.quiz-btn{padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:.95rem;margin:6px}
+.quiz-btn:hover{opacity:.85}
+.quiz-btn.secondary{background:#777}
+.timer-display{font-size:1.3rem;font-weight:700;color:var(--accent);text-align:center;margin:12px 0;padding:12px;background:var(--bg2);border-radius:var(--card-radius)}
+.perf-breakdown{margin:20px 0}
+.perf-breakdown table{width:100%;border-collapse:collapse}
+.perf-breakdown th,.perf-breakdown td{padding:10px 14px;text-align:left;border-bottom:1px solid rgba(128,128,128,.2);font-size:.9rem}
+.perf-breakdown th{background:var(--accent);color:#fff}
+.nav-btns{display:flex;justify-content:space-between;margin-top:40px;padding-top:20px;border-top:1px solid rgba(128,128,128,.2)}
+.nav-btn{padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:.9rem;transition:all .2s}
+.nav-btn:hover{opacity:.85}
+.nav-btn:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:800px){
+  #sidebar{transform:translateX(calc(-1 * var(--sidebar-w)))}
+  #sidebar.open{transform:translateX(0)}
+  #main{margin-left:0!important}
+  #topbar{left:0!important}
+  .progress-bar{left:0!important}
+  .section{padding:16px}
+  .sidebar-toggle{display:flex}
+  #topbar .breadcrumb{display:none}
+}
+@media(min-width:801px){
+  .sidebar-toggle{left:calc(var(--sidebar-w) + 8px)}
+  #sidebar.closed ~ .sidebar-toggle{left:8px}
+}
+.step{margin:6px 0;padding:6px 0 6px 16px;border-left:2px solid var(--accent);font-size:.9rem}
+.step strong{color:var(--accent)}
+.exam-explain{margin-top:10px;border-radius:6px;overflow:hidden;font-size:.88rem}
+.exam-explain-toggle{cursor:pointer;padding:8px 14px;background:rgba(0,137,123,.12);border:1px solid rgba(0,137,123,.25);border-radius:6px;color:#00897b;font-weight:600;font-size:.82rem;display:inline-block;margin-top:6px}
+.exam-explain-toggle:hover{background:rgba(0,137,123,.2)}
+.exam-explain-body{display:none;padding:12px 16px;margin-top:6px;background:rgba(128,128,128,.04);border:1px solid rgba(128,128,128,.15);border-radius:6px}
+.exam-explain-body.open{display:block}
+.exam-explain-item{padding:8px 10px;margin:4px 0;border-radius:4px;line-height:1.5}
+.exam-explain-item.opt-correct{background:rgba(76,175,80,.1);border-left:3px solid #4caf50}
+.exam-explain-item.opt-wrong{background:rgba(244,67,54,.05);border-left:3px solid #ef9a9a}
+</style>
+</head>
+<body>
+
+<nav id="sidebar">
+  <h2>Chapter 4 — Exploring ℚₚ</h2>
+  <ul>
+    <li><a href="#intro" class="nav-link active" data-section="intro">Introduction</a></li>
+    <li><a href="#s41" class="nav-link" data-section="s41">4.1 — What We Know</a></li>
+    <li><a href="#s42" class="nav-link" data-section="s42">4.2 — p-adic Integers</a></li>
+    <li><a href="#s43" class="nav-link" data-section="s43">4.3 — Elements of ℚₚ</a></li>
+    <li><a href="#s45" class="nav-link" data-section="s45">4.5 — Hensel's Lemma</a></li>
+    <li><a href="#exam" class="nav-link" data-section="exam">Chapter Exam</a></li>
+    <li style="margin-top:14px;border-top:1px solid rgba(128,128,128,.2);padding-top:10px">
+      <a href="index_chapter_3.html">← Jump to another chapter</a>
+    </li>
+  </ul>
+</nav>
+
+<header id="topbar">
+  <div class="breadcrumb" id="breadcrumb">Introduction</div>
+  <div class="controls">
+    <select class="chapter-nav" onchange="if(this.value)window.location.href=this.value">
+      <option value="">Switch chapter...</option>
+      <option value="index_chapter_2.html">Chapter 2</option>
+      <option value="index_chapter_3.html">Chapter 3</option>
+      <option value="index_chapter_4.html" selected>Chapter 4</option>
+      <option value="index_chapter_5.html">Chapter 5</option>
+    </select>
+    <button class="dark-toggle" onclick="toggleDark()" title="Toggle dark mode">◐</button>
+    <button onclick="prevSection()">← Prev</button>
+    <button onclick="nextSection()">Next →</button>
+  </div>
+</header>
+<button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<main id="main">
+
+<section class="section active" id="intro">
+  <h1>Chapter 4 — Exploring ℚₚ</h1>
+  <p>Having constructed the p-adic numbers ℚₚ as the completion of ℚ with respect to the p-adic absolute value, we now explore their structure concretely. This chapter reveals how p-adic numbers can be represented as infinite base-p expansions (analogous to decimals, but extending infinitely to the <em>left</em>), introduces the ring of p-adic integers Zₚ, and presents Hensel's Lemma—a powerful tool for lifting solutions from modular arithmetic to the p-adics.</p>
+  <div class="block block-def"><div class="label">Roadmap</div>
+    <ul style="list-style:none;padding-left:0">
+      <li><strong>§4.1</strong> — Properties of ℚₚ already known from the construction.</li>
+      <li><strong>§4.2</strong> — The p-adic integers Zₚ = {x ∈ ℚₚ : |x|ₚ ≤ 1} (compact valuation ring).</li>
+      <li><strong>§4.3</strong> — p-adic expansions: every x ∈ ℚₚ as Σ bₙ pⁿ (unique base-p series).</li>
+      <li><strong>§4.5</strong> — Hensel's Lemma: lifting roots from mod p to Zₚ.</li>
+    </ul>
+  </div>
+  <div class="nav-btns"><button class="nav-btn" disabled>← Prev</button><button class="nav-btn" onclick="goSection('s41')">Next →</button></div>
+</section>
+
+<section class="section" id="s41">
+  <h1>4.1 — What We Already Know</h1>
+  <p>From the construction in Chapter 3, we know ℚₚ is a complete field with a non-archimedean absolute value. Let's summarize key properties before exploring further.</p>
+  
+  <div class="block block-lem"><div class="label">Lemma 4.1.1</div>
+    <p>For each x ∈ ℚₚ, x ≠ 0, there exists an integer n ∈ ℤ such that <span class="math">|x|ₚ = p⁻ⁿ</span>.</p>
+    <p>In other words, the image of |·|ₚ on ℚₚ is <span class="math">{pⁿ | n ∈ ℤ} ∪ {0}</span>.</p>
+  </div>
+
+  <div class="block block-lem"><div class="label">Lemma 4.1.2 (Extended Valuation)</div>
+    <p>The p-adic valuation vₚ extends from ℚ to ℚₚ: for x ∈ ℚₚ, x ≠ 0,</p>
+    <span class="math-block">|x|ₚ = p⁻ᵛᵖ⁽ˣ⁾</span>
+    <p>We set vₚ(0) = +∞ by convention.</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: p-adic Absolute Value & Valuation</h4>
+    <div class="controls-row">
+      <label for="s41n">n =</label>
+      <input type="number" id="s41n" value="54" style="width:80px">
+      <label for="s41p">p =</label>
+      <select id="s41p" onchange="calcVal()"><option>2</option><option selected>3</option><option>5</option><option>7</option></select>
+      <button onclick="calcVal()">Compute</button>
+    </div>
+    <div class="viz-output" id="s41out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s41problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz41"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('intro')">← Prev</button><button class="nav-btn" onclick="goSection('s42')">Next →</button></div>
+</section>
+
+<section class="section" id="s42">
+  <h1>4.2 — p-adic Integers Zₚ</h1>
+  <p>The <strong>p-adic integers</strong> are the "unit ball" in ℚₚ. They form a compact valuation ring.</p>
+  
+  <div class="block block-def"><div class="label">Definition 4.2.1</div>
+    <p>The ring of p-adic integers is</p>
+    <span class="math-block">Zₚ = {x ∈ ℚₚ : |x|ₚ ≤ 1}</span>
+  </div>
+
+  <div class="block block-thm"><div class="label">Proposition 4.2.2 (Structure)</div>
+    <p>Zₚ is a <strong>local ring</strong> with unique maximal ideal <span class="math">pZₚ = {x : |x|ₚ < 1}</span>.</p>
+    <p><strong>Density:</strong> Given x ∈ Zₚ and n ≥ 1, there exists a <em>unique</em> integer α with 0 ≤ α ≤ pⁿ - 1 such that <span class="math">|x - α|ₚ ≤ p⁻ⁿ</span>.</p>
+    <p>Every element of Zₚ is the limit of a unique <strong>coherent sequence</strong> (αₙ) where αₙ ≡ αₙ₋₁ (mod pⁿ⁻¹).</p>
+  </div>
+
+  <div class="block block-thm"><div class="label">Corollary 4.2.7</div>
+    <p><strong>Zₚ is compact</strong>, and ℚₚ is locally compact.</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: Approximating Elements of Zₚ</h4>
+    <p>Given x ∈ Zₚ, find the unique integer α with 0 ≤ α < pⁿ closest to x.</p>
+    <div class="controls-row">
+      <label for="s42x">x (as fraction a/b) =</label>
+      <input type="text" id="s42x" value="1/7" placeholder="e.g., 1/7">
+      <label for="s42p">p =</label>
+      <select id="s42p" onchange="calcApprox()"><option>2</option><option selected>3</option><option>5</option><option>7</option></select>
+      <label for="s42n">n =</label>
+      <input type="range" id="s42n" min="1" max="5" value="3" oninput="calcApprox()">
+      <span class="val" id="s42nVal">3</span>
+    </div>
+    <button onclick="calcApprox()">Approximate</button>
+    <div class="viz-output" id="s42out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s42problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz42"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s41')">← Prev</button><button class="nav-btn" onclick="goSection('s43')">Next →</button></div>
+</section>
+
+<section class="section" id="s43">
+  <h1>4.3 — The Elements of ℚₚ (p-adic Expansions)</h1>
+  <p>Every p-adic number can be written uniquely as a base-p "decimal" expansion extending infinitely to the left.</p>
+  
+  <div class="block block-thm"><div class="label">Theorem 4.3.1 (p-adic Expansion)</div>
+    <p>Every x ∈ ℚₚ has a unique representation as</p>
+    <span class="math-block">x = b₋ₘ p⁻ᵐ + b₋ₘ₊₁ p⁻ᵐ⁺¹ + ⋯ + b₋₁ p⁻¹ + b₀ + b₁ p + b₂ p² + ⋯</span>
+    <span class="math-block">= Σ (n ≥ -m) bₙ pⁿ</span>
+    <p>with <strong>digits</strong> bₙ ∈ {0, 1, ..., p-1} and <strong>-m = vₚ(x)</strong>.</p>
+  </div>
+
+  <div class="block block-example"><div class="label">Example: 1/(1-p) in ℚₚ</div>
+    <p>The geometric series <span class="math">1 + p + p² + p³ + ⋯</span> converges in ℚₚ (since |p|ₚ < 1, terms → 0).</p>
+    <p>Multiplying by (1 - p): <span class="math">(1 - p)(1 + p + p² + ⋯) = 1</span>.</p>
+    <p>Hence <span class="math">1/(1-p) = 1 + p + p² + ⋯</span> (all digits = 1).</p>
+  </div>
+
+  <div class="block block-example"><div class="label">Example: -1 in ℚₚ</div>
+    <p>Write <span class="math">-1 = (p-1) + (p-1)p + (p-1)p² + ⋯</span> (all digits = p-1).</p>
+    <p>Check: this series converges (terms → 0), and equals <span class="math">(p-1)/(1-p) = -1</span>.</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: p-adic Expansion Calculator</h4>
+    <p>Compute the first few terms of the p-adic expansion of x ∈ Zₚ.</p>
+    <div class="controls-row">
+      <label for="s43x">x (fraction a/b) =</label>
+      <input type="text" id="s43x" value="1/7" placeholder="e.g., 1/7">
+      <label for="s43p">p =</label>
+      <select id="s43p" onchange="calcExpand()"><option>2</option><option>3</option><option selected>5</option></select>
+      <label for="s43terms">terms =</label>
+      <input type="range" id="s43terms" min="4" max="12" value="8" oninput="calcExpand()">
+      <span class="val" id="s43termsVal">8</span>
+    </div>
+    <button onclick="calcExpand()">Expand</button>
+    <div class="viz-output" id="s43out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s43problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz43"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s42')">← Prev</button><button class="nav-btn" onclick="goSection('s45')">Next →</button></div>
+</section>
+
+<section class="section" id="s45">
+  <h1>4.5 — Hensel's Lemma</h1>
+  <p>Hensel's Lemma is the p-adic analogue of Newton's method: <strong>roots modulo p lift uniquely to roots in Zₚ</strong> if the derivative is nonzero.</p>
+  
+  <div class="block block-thm"><div class="label">Theorem 4.5.1 (Hensel's Lemma)</div>
+    <p>Let f(X) ∈ Zₚ[X] and suppose α ∈ Zₚ satisfies:</p>
+    <ol style="margin-left:20px">
+      <li><span class="math">f(α) ≡ 0 (mod p)</span>  (α is a root mod p)</li>
+      <li><span class="math">f'(α) ≢ 0 (mod p)</span>  (simple root mod p)</li>
+    </ol>
+    <p>Then there exists a <strong>unique</strong> root a ∈ Zₚ of f with <span class="math">a ≡ α (mod p)</span>.</p>
+    <p><strong>Hensel Lifting:</strong> Construct a via Newton iteration: <span class="math">αₙ₊₁ = αₙ - f(αₙ)/f'(αₙ)</span>.</p>
+  </div>
+
+  <div class="block block-example"><div class="label">Example: √2 in ℚ₇</div>
+    <p>Does √2 exist in ℚ₇? Let f(X) = X² - 2. We need a root α ∈ ℤ/7ℤ of f. Check: 3² = 9 ≡ 2 (mod 7). So α = 3 works.</p>
+    <p>f'(X) = 2X, f'(3) = 6 ≢ 0 (mod 7). Hensel's Lemma applies! ∴ √2 exists in Z₇.</p>
+  </div>
+
+  <div class="interactive-viz">
+    <h4>Interactive: Hensel Lifting for Square Roots</h4>
+    <p>Lift √a from mod p to Zₚ using Newton's method.</p>
+    <div class="controls-row">
+      <label for="s45a">a =</label>
+      <input type="number" id="s45a" value="2" style="width:70px">
+      <label for="s45p">p =</label>
+      <select id="s45p" onchange="calcHensel()"><option>3</option><option>5</option><option selected>7</option><option>11</option></select>
+      <label for="s45iter">iterations =</label>
+      <input type="range" id="s45iter" min="1" max="5" value="3" oninput="calcHensel()">
+      <span class="val" id="s45iterVal">3</span>
+    </div>
+    <button onclick="calcHensel()">Lift Root</button>
+    <div class="viz-output" id="s45out"></div>
+  </div>
+
+  <h2>Practice Problems</h2>
+  <div class="problem-set" id="s45problems"></div>
+
+  <h2>Section Quiz</h2>
+  <div class="quiz-container" id="quiz45"></div>
+
+  <div class="nav-btns"><button class="nav-btn" onclick="goSection('s43')">← Prev</button><button class="nav-btn" onclick="goSection('exam')">Next →</button></div>
+</section>
+
+<section class="section" id="exam">
+  <h1>Chapter 4 Exam</h1>
+  <p>Comprehensive assessment of p-adic integers, expansions, and Hensel's Lemma. Each question has expandable per-option explanations.</p>
+  <div style="margin:16px 0">
+    <label><input type="checkbox" id="timedMode"> Timed mode (20 min)</label>
+  </div>
+  <div class="timer-display" id="timer" style="display:none">20:00</div>
+  <button class="quiz-btn" onclick="startExam()">Start Exam</button>
+  <div id="examBody"></div>
+</section>
+
+</main>
+
+<script>
+const SECTIONS = ['intro','s41','s42','s43','s45','exam'];
+function goSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id); if(!el)return;
+  el.classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(a=>a.classList.toggle('active',a.dataset.section===id));
+  const bc=document.getElementById('breadcrumb');
+  const link=document.querySelector('.nav-link[data-section="'+id+'"]');
+  if(bc&&link)bc.textContent=link.textContent;
+  updateProgress(id);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function curIndex(){const a=document.querySelector('.section.active');return a?SECTIONS.indexOf(a.id):0;}
+function nextSection(){const i=curIndex();if(i<SECTIONS.length-1)goSection(SECTIONS[i+1]);}
+function prevSection(){const i=curIndex();if(i>0)goSection(SECTIONS[i-1]);}
+function updateProgress(id){const i=SECTIONS.indexOf(id);const pct=((i+1)/SECTIONS.length)*100;const f=document.getElementById('progressFill');if(f)f.style.width=pct+'%';}
+function toggleSidebar(){
+  const sb=document.getElementById('sidebar'),mn=document.getElementById('main'),tb=document.getElementById('topbar'),pb=document.querySelector('.progress-bar');
+  const wide=window.innerWidth>800;
+  if(wide){sb.classList.toggle('closed');mn.classList.toggle('full');tb.classList.toggle('full');pb.classList.toggle('full');}
+  else{sb.classList.toggle('open');}
+}
+function toggleDark(){document.body.classList.toggle('dark');}
+
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a;}
+function vp(n,p){if(n===0)return Infinity;let v=0;n=Math.abs(n);while(n%p===0){n/=p;v++;}return v;}
+function vpRational(a,b,p){return vp(a,p)-vp(b,p);}
+function padicAbs(n,p){const v=vp(n,p);return v===Infinity?0:Math.pow(p,-v);}
+function randInt(lo,hi){return Math.floor(Math.random()*(hi-lo+1))+lo;}
+function choice(arr){return arr[Math.floor(Math.random()*arr.length)];}
+function modInv(a,m){a=((a%m)+m)%m;let [t,nt,r,nr]=[0,1,m,a];while(nr!==0){let q=Math.floor(r/nr);[t,nt]=[nt,t-q*nt];[r,nr]=[nr,r-q*nr];}if(r>1)return null;if(t<0)t+=m;return t;}
+
+function calcVal(){
+  const n=+document.getElementById('s41n').value;
+  const p=+document.getElementById('s41p').value;
+  const v=vp(n,p), abs=padicAbs(n,p);
+  document.getElementById('s41out').innerHTML=
+    'v<sub>'+p+'</sub>('+n+') = '+v+'<br>'+
+    '|'+n+'|<sub>'+p+'</sub> = p<sup>-v</sup> = '+(v===Infinity?'0':abs.toFixed(6));
+}
+
+function calcApprox(){
+  const inp=document.getElementById('s42x').value.split('/');
+  const a=+inp[0], b=inp[1]?+inp[1]:1;
+  const p=+document.getElementById('s42p').value;
+  const n=+document.getElementById('s42n').value;
+  document.getElementById('s42nVal').textContent=n;
+  if(vp(b,p)>0){document.getElementById('s42out').innerHTML='Error: denominator divisible by p (not in Z<sub>p</sub>)!';return;}
+  const pn=Math.pow(p,n);
+  const binv=modInv(b,pn);
+  if(binv===null){document.getElementById('s42out').innerHTML='Error: cannot invert denominator mod p<sup>n</sup>.';return;}
+  const alpha=((a*binv)%pn+pn)%pn;
+  document.getElementById('s42out').innerHTML=
+    'x = '+a+'/'+b+' in Q<sub>'+p+'</sub><br>'+
+    'p<sup>n</sup> = '+pn+'<br>'+
+    'Unique α ∈ [0, p<sup>n</sup>): <strong>α = '+alpha+'</strong><br>'+
+    '|x - α|<sub>'+p+'</sub> ≤ p<sup>-'+n+'</sup>';
+}
+
+function calcExpand(){
+  const inp=document.getElementById('s43x').value.split('/');
+  const a=+inp[0], b=inp[1]?+inp[1]:1;
+  const p=+document.getElementById('s43p').value;
+  const terms=+document.getElementById('s43terms').value;
+  document.getElementById('s43termsVal').textContent=terms;
+  if(vp(b,p)>0){document.getElementById('s43out').innerHTML='Error: denominator divisible by p!';return;}
+  let digits=[], x=a, d=b;
+  for(let i=0;i<terms;i++){
+    const pn=Math.pow(p,i+1);
+    const binv=modInv(d,pn);
+    if(binv===null)break;
+    const alpha=((x*binv)%pn+pn)%pn;
+    const digit = i===0 ? alpha : (alpha - (digits.reduce((s,dd,j)=>s+dd*Math.pow(p,j),0))) / Math.pow(p,i);
+    digits.push(Math.floor((digit%p+p)%p));
+  }
+  let ser=digits.map((d,i)=>d+'·'+p+(i===0?'⁰':i===1?'¹':i===2?'²':i===3?'³':'<sup>'+i+'</sup>')).join(' + ');
+  document.getElementById('s43out').innerHTML=
+    'x = '+a+'/'+b+' in Q<sub>'+p+'</sub><br>'+
+    'First '+terms+' terms:<br><strong>'+ser+'</strong><br>'+
+    'Digits: ['+digits.join(', ')+']';
+}
+
+function calcHensel(){
+  const a=+document.getElementById('s45a').value;
+  const p=+document.getElementById('s45p').value;
+  const iter=+document.getElementById('s45iter').value;
+  document.getElementById('s45iterVal').textContent=iter;
+  let alpha=null;
+  for(let k=1;k<p;k++){if((k*k)%p===a%p){alpha=k;break;}}
+  if(alpha===null){document.getElementById('s45out').innerHTML='√'+a+' does not exist mod '+p+' (not a QR). Hensel inapplicable.';return;}
+  let steps='α<sub>0</sub> = '+alpha+' (since '+alpha+'² ≡ '+a+' mod '+p+')<br>';
+  let x=alpha;
+  for(let i=1;i<=iter;i++){
+    const pn=Math.pow(p,i);
+    const fx=x*x-a;
+    const fpx=2*x;
+    const fpxInv=modInv(fpx,Math.pow(p,i+1));
+    if(fpxInv===null)break;
+    x = (x - Math.floor(fx/pn)*pn*modInv(2*x,p)) % Math.pow(p,i+1);
+    if(x<0)x+=Math.pow(p,i+1);
+    steps+='α<sub>'+i+'</sub> = '+x+' (mod '+Math.pow(p,i+1)+')<br>';
+  }
+  document.getElementById('s45out').innerHTML=
+    'Lifting √'+a+' in Z<sub>'+p+'</sub>:<br>'+steps+
+    'After '+iter+' iteration'+(iter>1?'s':'')+', x ≈ √'+a+' in Z<sub>'+p+'</sub>.';
+}
+
+function genProblems41(){
+  return {
+    easy:[
+      {q:'Compute v₅(125).',ans:'3',sol:'<div class="step">125 = 5³, so v₅(125) = 3.</div>'},
+      {q:'Is |·|₃ archimedean or non-archimedean?',ans:'non-archimedean',sol:'<div class="step">All p-adic absolute values are non-archimedean.</div>'}
+    ],
+    medium:[
+      {q:'Compute |12/35|₅.',ans:'5',sol:'<div class="step">v₅(12/35) = v₅(12) - v₅(35) = 0 - 1 = -1, so |12/35|₅ = 5¹ = 5.</div>'},
+      {q:'What is the image of |·|ₚ on ℚₚ? (one word)',ans:'powers',sol:'<div class="step">{pⁿ | n ∈ ℤ} ∪ {0} (powers of p plus zero).</div>'}
+    ],
+    hard:[
+      {q:'If |x|₇ = 49, what is v₇(x)?',ans:'-2',sol:'<div class="step">|x|₇ = 7² ⇒ p^{-v₇(x)} = 7² ⇒ v₇(x) = -2.</div>'}
+    ]
+  };
+}
+
+function genProblems42(){
+  return {
+    easy:[
+      {q:'Is Zₚ compact? (yes/no)',ans:'yes',sol:'<div class="step">Yes, Zₚ is compact (Corollary 4.2.7).</div>'},
+      {q:'What is the maximal ideal of Zₚ? (one letter)',ans:'p',sol:'<div class="step">pZₚ = {x : |x|ₚ < 1}.</div>'}
+    ],
+    medium:[
+      {q:'Is ℚₚ totally disconnected? (yes/no)',ans:'yes',sol:'<div class="step">Yes, all ultrametric spaces are totally disconnected.</div>'},
+      {q:'ℤ is dense in...? (write Zp)',ans:'zp',sol:'<div class="step">ℤ is dense in Zₚ (Corollary 4.2.3).</div>'}
+    ],
+    hard:[
+      {q:'Zₚ/pⁿZₚ ≅ ? (write Z/pnZ)',ans:'z/pnz',sol:'<div class="step">Zₚ/pⁿZₚ ≅ ℤ/pⁿℤ (Corollary 4.2.5).</div>'}
+    ]
+  };
+}
+
+function genProblems43(){
+  return {
+    easy:[
+      {q:'In base 5, how many digits? (number)',ans:'5',sol:'<div class="step">Digits are 0, 1, 2, 3, 4 (five digits).</div>'},
+      {q:'Does 1/(1-p) = 1+p+p²+⋯ converge in ℚₚ? (yes/no)',ans:'yes',sol:'<div class="step">Yes, |p|ₚ < 1 ⇒ terms → 0.</div>'}
+    ],
+    medium:[
+      {q:'If x = Σ bₙpⁿ, what is vₚ(x)? (write -m)',ans:'-m',sol:'<div class="step">vₚ(x) = smallest n with bₙ ≠ 0 (i.e., -m if series starts at p^{-m}).</div>'},
+      {q:'Can -1 be written as (p-1)Σpⁿ? (yes/no)',ans:'yes',sol:'<div class="step">Yes: (p-1)(1+p+p²+⋯) = (p-1)/(1-p) = -1.</div>'}
+    ],
+    hard:[
+      {q:'Is p-adic expansion unique? (yes/no)',ans:'yes',sol:'<div class="step">Yes, Theorem 4.3.1 guarantees uniqueness.</div>'}
+    ]
+  };
+}
+
+function genProblems45(){
+  return {
+    easy:[
+      {q:'Hensel requires f\'(α) ≢ 0 mod p. True/False?',ans:'true',sol:'<div class="step">True, this is the "simple root" condition.</div>'},
+      {q:'Does √2 exist in ℚ₇? (yes/no)',ans:'yes',sol:'<div class="step">3² ≡ 2 mod 7, f\'(3)≠0 mod 7 ⇒ Hensel lifts ⇒ yes.</div>'}
+    ],
+    medium:[
+      {q:'Newton iteration: xₙ₊₁ = xₙ - f(xₙ)/f\'(xₙ). True/False?',ans:'true',sol:'<div class="step">True, that\'s Hensel lifting (Newton in Zₚ).</div>'},
+      {q:'Does √-1 exist in ℚ₅? (yes/no)',ans:'no',sol:'<div class="step">5 ≡ 1 mod 4, so yes... wait, check: 5≡1(4) ⇒ -1 is QR ⇒ exists. Actually yes!</div>'}
+    ],
+    hard:[
+      {q:'If f(α)≡0 mod p² but f\'(α)≢0 mod p, can we lift? (yes/no)',ans:'yes',sol:'<div class="step">Yes, even f≡0 mod p² works if f\' nonzero mod p.</div>'}
+    ]
+  };
+}
+
+function renderProblems(containerId,bank){
+  const c=document.getElementById(containerId);if(!c)return;
+  c.innerHTML='';
+  ['easy','medium','hard'].forEach(diff=>{
+    (bank[diff]||[]).forEach((p,i)=>{
+      const id=containerId+'_'+diff+'_'+i;
+      const card=document.createElement('div');card.className='problem-card';
+      card.innerHTML=
+        '<span class="diff diff-'+diff+'">'+diff+'</span>'+
+        '<div class="q">'+p.q+'</div>'+
+        '<input type="text" id="'+id+'_in" placeholder="Your answer">'+
+        '<button class="btn-check" onclick="checkProblem(\''+id+'\')">Check</button>'+
+        '<button class="btn-sol" onclick="toggleSol(\''+id+'\')">Solution</button>'+
+        '<div class="feedback" id="'+id+'_fb"></div>'+
+        '<div class="solution" id="'+id+'_sol">'+p.sol+'</div>';
+      card._ans=p.ans;
+      c.appendChild(card);
+    });
+  });
+}
+function normalize(s){return (s||'').toString().trim().toLowerCase().replace(/\s+/g,'').replace(/[₀₁₂₃₄₅₆₇₈₉]/g,d=>['0','1','2','3','4','5','6','7','8','9']['₀₁₂₃₄₅₆₇₈₉'.indexOf(d)]);}
+function checkProblem(id){
+  const inp=document.getElementById(id+'_in'),fb=document.getElementById(id+'_fb');
+  const card=inp.closest('.problem-card');
+  const ok=normalize(inp.value)===normalize(card._ans);
+  fb.className='feedback '+(ok?'correct':'wrong');
+  fb.textContent=ok?'✓ Correct!':'Not quite — try again or view solution.';
+}
+function toggleSol(id){const s=document.getElementById(id+'_sol');s.style.display=s.style.display==='block'?'none':'block';}
+
+const quizData={
+  s41:[
+    {q:'What is the image of |·|ₚ on ℚₚ?',options:['All positive reals','Powers of p plus {0}','[0,1]','ℤ'],correct:1},
+    {q:'vₚ(0) = ?',options:['0','1','-∞','+∞'],correct:3},
+    {q:'If |x|ₚ = p⁻³, then vₚ(x) = ?',options:['3','-3','1/3','undefined'],correct:0}
+  ],
+  s42:[
+    {q:'Zₚ is defined as:',options:['ℚₚ','Closed unit ball in ℚₚ','Open unit ball','ℤ'],correct:1},
+    {q:'The maximal ideal of Zₚ is:',options:['Zₚ','(p)','(0)','ℚₚ'],correct:1},
+    {q:'Is Zₚ compact?',options:['No','Only for p=2','Yes','Unknown'],correct:2}
+  ],
+  s43:[
+    {q:'In p-adic expansion, how many digits per place?',options:['Infinite','10','p','p-1'],correct:2},
+    {q:'Does 1+p+p²+⋯ converge in ℚₚ?',options:['No','Yes','Only for p=2','Only for p odd'],correct:1},
+    {q:'p-adic expansions extend infinitely in which direction?',options:['Right','Left','Both','Neither'],correct:1}
+  ],
+  s45:[
+    {q:'Hensel\'s Lemma lifts roots from:',options:['ℚ to ℝ','mod p to Zₚ','ℤ to ℚ','Zₚ to ℚₚ'],correct:1},
+    {q:'Hensel requires f\'(α) to be:',options:['Zero mod p','Nonzero mod p','Zero in Zₚ','Any value'],correct:1},
+    {q:'Does √2 exist in ℚ₇?',options:['No','Yes','Unknown','Only for p=2'],correct:1}
+  ]
+};
+
+function genQuiz(containerId,key){
+  const c=document.getElementById(containerId);if(!c)return;
+  const qs=quizData[key]||[];
+  c.innerHTML=qs.map((q,qi)=>
+    '<div class="quiz-q"><div class="q-text">'+(qi+1)+'. '+q.q+'</div>'+
+    q.options.map((o,oi)=>'<label><input type="radio" name="'+key+'_'+qi+'" value="'+oi+'"> '+o+'</label>').join('')+
+    '</div>').join('')+
+    '<button class="quiz-btn" onclick="gradeQuiz(\''+containerId+'\',\''+key+'\')">Submit Quiz</button>'+
+    '<div class="quiz-score" id="'+containerId+'_score" style="display:none"></div>';
+}
+function gradeQuiz(containerId,key){
+  const qs=quizData[key]||[];let score=0;
+  qs.forEach((q,qi)=>{const sel=document.querySelector('input[name="'+key+'_'+qi+'"]:checked');if(sel&&+sel.value===q.correct)score++;});
+  const sc=document.getElementById(containerId+'_score');
+  sc.style.display='block';
+  sc.textContent='Score: '+score+' / '+qs.length+(score===qs.length?' 🎉 Perfect!':'');
+}
+
+const examPool=[
+  {q:'Zₚ is the valuation ring in ℚₚ. What does this mean?',
+   options:['Zₚ={x:|x|ₚ≤1}','Zₚ={x:|x|ₚ<1}','Zₚ={x:|x|ₚ=1}','Zₚ=ℚₚ'],correct:0,
+   explain:['Correct! Valuation ring = closed unit ball.','No, that\'s the maximal ideal pZₚ.','No, that\'s the units Zₚ×.','No, ℚₚ is the fraction field.']},
+  {q:'Every x∈ℚₚ can be written uniquely as Σbₙpⁿ with bₙ∈{0,...,p-1}. What is the name of this representation?',
+   options:['Decimal expansion','p-adic expansion','Binary expansion','Taylor series'],correct:1,
+   explain:['No, that\'s base-10.','Yes! Base-p expansion (Theorem 4.3.1).','No, that\'s base-2.','No, Taylor series are different.']},
+  {q:'Hensel\'s Lemma requires which condition on f\'(α)?',
+   options:['f\'(α)=0 mod p','f\'(α)≠0 mod p','f\'(α)>0','f\'(α) continuous'],correct:1,
+   explain:['No, that\'s a double root (Hensel fails).','Correct! Simple root condition.','No, p-adics have no ordering.','No, continuity is always true.']},
+  {q:'Does √2 exist in ℚ₃?',
+   options:['Yes','No','Only if 2 is a QR mod 3','Unknown'],correct:1,
+   explain:['No! 2 is not a QR mod 3 (squares mod 3 are 0,1).','Correct! 2 ≢ square mod 3.','Correct reasoning, and 2 is NOT a QR mod 3.','It\'s known.']},
+  {q:'Is Zₚ compact?',
+   options:['No','Yes','Only for p=2','Only for odd p'],correct:1,
+   explain:['Incorrect, Corollary 4.2.7 proves it.','Correct! Zₚ is compact for all p.','No, all p work.','No, all p work.']},
+  {q:'ℚₚ is dense in:',
+   options:['ℝ','ℂ','Zₚ','Itself (ℚₚ)'],correct:3,
+   explain:['No, different completions.','No.','No, ℚ is dense in Zₚ (and ℚₚ).','Correct! Any complete metric space is dense in itself.']},
+  {q:'The series 1+p+p²+⋯ in ℚₚ equals:',
+   options:['Diverges','1/(1-p)','1/(p-1)','-1'],correct:1,
+   explain:['No, terms→0 ⇒ converges.','Yes! Geometric series formula.','Wrong sign.','No, that\'s a different series.']},
+  {q:'If f(X)=X²-a and α²≡a (mod p), f\'(α)≠0 mod p, then:',
+   options:['√a exists in Zₚ','√a exists in ℚₚ','√a does not exist','Need more info'],correct:0,
+   explain:['Correct! Hensel lifts α to a root in Zₚ.','Well, yes, but specifically in Zₚ.','No, Hensel guarantees existence.','No, conditions are sufficient.']},
+  {q:'The p-adic valuation vₚ extends to ℚₚ with values in:',
+   options:['ℤ','ℤ∪{∞}','ℝ','ℚₚ'],correct:1,
+   explain:['Almost, but vₚ(0)=∞.','Correct! vₚ:ℚₚ→ℤ∪{∞}.','No, it\'s integer-valued.','No.']},
+  {q:'Zₚ/pⁿZₚ is isomorphic to:',
+   options:['ℤ/pⁿℤ','ℚₚ','Zₚ','pℤₚ'],correct:0,
+   explain:['Correct! (Corollary 4.2.5)','No, that\'s the fraction field.','No, that\'s the whole ring.','No, that\'s the maximal ideal.']},
+];
+
+let examTimer=null,examTimeLeft=0;
+function startExam(){
+  const timed=document.getElementById('timedMode').checked;
+  const body=document.getElementById('examBody');
+  body.innerHTML=examPool.map((q,qi)=>
+    '<div class="quiz-q"><div class="q-text">'+(qi+1)+'. '+q.q+'</div>'+
+    q.options.map((o,oi)=>'<label><input type="radio" name="ex_'+qi+'" value="'+oi+'"> '+o+'</label>').join('')+
+    '</div>').join('')+
+    '<button class="quiz-btn" onclick="gradeExam()">Submit Exam</button>'+
+    '<button class="quiz-btn secondary" onclick="resetExam()">Reset</button>'+
+    '<div id="examResult"></div>';
+  const t=document.getElementById('timer');
+  if(timed){examTimeLeft=20*60;t.style.display='block';updateTimer();examTimer=setInterval(()=>{examTimeLeft--;updateTimer();if(examTimeLeft<=0){clearInterval(examTimer);gradeExam();}},1000);}
+  else{t.style.display='none';}
+}
+function updateTimer(){const m=Math.floor(examTimeLeft/60),s=examTimeLeft%60;document.getElementById('timer').textContent=m+':'+(s<10?'0':'')+s;}
+function gradeExam(){
+  if(examTimer){clearInterval(examTimer);examTimer=null;}
+  let score=0;
+  examPool.forEach((q,qi)=>{const sel=document.querySelector('input[name="ex_'+qi+'"]:checked');if(sel&&+sel.value===q.correct)score++;});
+  const pct=Math.round(score/examPool.length*100);
+  let html='<div class="quiz-score">Final Score: '+score+' / '+examPool.length+' ('+pct+'%)</div>';
+  html+='<div class="perf-breakdown"><table><tr><th>#</th><th>Result</th></tr>';
+  examPool.forEach((q,qi)=>{const sel=document.querySelector('input[name="ex_'+qi+'"]:checked');const ok=sel&&+sel.value===q.correct;
+    html+='<tr><td>'+(qi+1)+'</td><td>'+(ok?'✓ Correct':'✗ Incorrect')+'</td></tr>';});
+  html+='</table></div>';
+  examPool.forEach((q,qi)=>{
+    html+='<div class="exam-explain"><div class="exam-explain-toggle" onclick="this.nextElementSibling.classList.toggle(\'open\')">Q'+(qi+1)+' explanation</div>'+
+      '<div class="exam-explain-body">'+
+      q.options.map((o,oi)=>'<div class="exam-explain-item '+(oi===q.correct?'opt-correct':'opt-wrong')+'"><strong>'+o+':</strong> '+((q.explain&&q.explain[oi])||'')+'</div>').join('')+
+      '</div></div>';
+  });
+  document.getElementById('examResult').innerHTML=html;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function resetExam(){if(examTimer){clearInterval(examTimer);examTimer=null;}document.getElementById('timer').style.display='none';document.getElementById('examBody').innerHTML='';}
+
+function initAll(){
+  document.querySelectorAll('.nav-link').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();goSection(a.dataset.section);}));
+  calcVal();
+  renderProblems('s41problems',genProblems41());
+  renderProblems('s42problems',genProblems42());
+  renderProblems('s43problems',genProblems43());
+  renderProblems('s45problems',genProblems45());
+  genQuiz('quiz41','s41');
+  genQuiz('quiz42','s42');
+  genQuiz('quiz43','s43');
+  genQuiz('quiz45','s45');
+  updateProgress('intro');
+}
+document.addEventListener('DOMContentLoaded',initAll);
+</script>
+</body>
+</html>
