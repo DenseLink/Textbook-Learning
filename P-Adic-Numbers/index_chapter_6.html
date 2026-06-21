@@ -14,6 +14,7 @@
   --proof:#f5f5f5;--proof-border:#9e9e9e;
   --example:#e0f2f1;--example-border:#00897b;
   --problem:#fff3e0;--problem-border:#ef6c00;
+  --plain:#f3e8ff;--plain-border:#8e44ad;
   --sidebar-w:280px;--topbar-h:56px;
   --card-radius:8px;--shadow:0 2px 8px rgba(0,0,0,.08);
   --font-main:'Segoe UI',system-ui,-apple-system,sans-serif;
@@ -28,6 +29,7 @@
   --proof:#1e1e2f;--proof-border:#777;
   --example:#1a302e;--example-border:#4db6ac;
   --problem:#2e2114;--problem-border:#ffa726;
+  --plain:#2a1f3d;--plain-border:#b388e0;
   --shadow:0 2px 8px rgba(0,0,0,.3);
 }
 html{scroll-behavior:smooth}
@@ -71,6 +73,8 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 .block-problem{background:var(--problem);border-color:var(--problem-border)}
 .block .label{font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .block-def .label{color:var(--def-border)}
+.block-plain{background:var(--plain);border-color:var(--plain-border)}
+.block-plain .label{color:var(--plain-border)}
 .block-thm .label{color:var(--thm-border)}
 .block-lem .label{color:var(--lem-border)}
 .block-proof .label{color:var(--proof-border)}
@@ -221,6 +225,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
   <h1>6.1 — Normed Vector Spaces over Complete Valued Fields</h1>
   <p>The algebraic theory of vector spaces over ℚₚ is identical to that over any field. What is new is the <strong>metric</strong> structure: we put a <em>norm</em> on the vector space. Throughout, <span class="math">k</span> is a complete valued field of characteristic 0 with a nontrivial absolute value (keep ℝ and ℚₚ in mind).</p>
 
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>A <strong>vector space</strong> is just a collection of objects you can add together and scale (stretch or shrink) by numbers — arrows in the plane are the classic example. Building one over ℚₚ instead of the usual real numbers changes nothing about the algebra. What's new is that we want to measure the <em>length</em> of a vector, and that length is now reported as a p-adic size.</p>
+<p>A <strong>norm</strong> is exactly that length-measuring rule: it assigns a size to every vector, behaving sensibly (scaling a vector scales its length, and the triangle inequality holds). Adding a norm is what lets us talk about vectors being "close" or sequences of vectors "converging," which is the whole point — it upgrades a bare algebraic space into one where we can do analysis.</p>
+  </div>
+
   <div class="block block-def"><div class="label">Definition 6.1.1 (Norm)</div>
     <p>A <strong>norm</strong> on a k-vector space V is a map <span class="math">‖·‖ : V → ℝ⁺</span> satisfying:</p>
     <ul>
@@ -284,6 +293,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
   <h1>6.2 — Finite-dimensional Normed Vector Spaces</h1>
   <p>The fundamental theorem of this section says that in finite dimensions there is essentially <strong>nothing to choose</strong>: every norm is equivalent to the sup-norm, so we know everything once we know Proposition 6.1.4.</p>
 
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>Here's a clean, almost magical fact about <strong>finite-dimensional</strong> spaces (ones spanned by a finite list of vectors): it doesn't matter <em>which</em> reasonable length-measuring rule you pick — they all agree about what's big, what's small, and what converges. We say the norms are all "equivalent."</p>
+<p>So unlike the messy infinite-dimensional situation, in finite dimensions there's effectively <strong>only one notion of size</strong>. You can always just use the simplest one (the "sup-norm," which takes the biggest coordinate) and lose nothing. This is what makes finite extensions of ℚₚ so well-behaved in everything that follows.</p>
+  </div>
+
   <div class="block block-thm"><div class="label">Theorem 6.2.1 (Main Theorem)</div>
     <p>Let V be a finite-dimensional vector space over a complete valued field k. Then <strong>any two norms on V are equivalent</strong>, and V is complete with respect to (the metric induced by) any norm.</p>
   </div>
@@ -340,6 +354,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 <section class="section" id="s63">
   <h1>6.3 — Extending the p-adic Absolute Value</h1>
   <p>We now extend <span class="math">|·|ₚ</span> to a finite extension <span class="math">K/ℚₚ</span> of degree <span class="math">n = [K : ℚₚ]</span>. The headline results: such an extension is <strong>unique</strong>, it is given by an explicit formula via the <em>field norm</em>, and assembling all of them builds the algebraic closure <span class="math">ℚ̄ₚ</span>.</p>
+
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>So far the p-adic size |·|ₚ lives on ℚₚ. But to find roots of polynomials we often must step into a <strong>bigger field</strong> (an "extension") — the p-adic echo of how you need complex numbers to solve x²+1=0. The natural worry: does our notion of size come along for the ride?</p>
+<p>The reassuring answer is yes, and in <em>exactly one</em> way. There's a unique sensible way to measure sizes in the bigger field, and there's even an explicit formula for it (using a tool called the <strong>field norm</strong>, which multiplies together all the "twisted copies" of a number). Stacking up all possible finite extensions builds the grand arena ℚ̄ₚ where every polynomial finally has its roots.</p>
+  </div>
 
   <div class="block block-thm"><div class="label">Corollary 6.3.2 (Uniqueness)</div>
     <p>There is <strong>at most one</strong> absolute value on K extending |·|ₚ. (Two such are equivalent as norms ⟹ define the same topology ⟹ equivalent absolute values ⟹ equal, since they agree on p.)</p>
@@ -404,6 +423,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 <section class="section" id="s64">
   <h1>6.4 — Finite Extensions of ℚₚ</h1>
   <p>We gather the structure of a finite extension <span class="math">K/ℚₚ</span> of degree n. The valuation becomes <em>fractional</em>, and the degree splits as <span class="math">n = e·f</span> into a ramification part and a residue part.</p>
+
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>When we move to a bigger field K of "degree n" over ℚₚ (think: n times roomier), that single number n secretly splits into two factors, <strong>n = e·f</strong>, each measuring a different kind of growth.</p>
+<p>The factor <strong>e</strong> (ramification) measures how much the size-scale got subdivided — p, which used to be the smallest step, may now be reachable in e finer steps, so valuations become fractions like 1/e. The factor <strong>f</strong> (residue degree) measures how much bigger the "leftover digit alphabet" got — the finite field of allowed first-digits grows. Together e and f account completely for how the extension sits over ℚₚ, and they're the key bookkeeping numbers for the rest of the chapter.</p>
+  </div>
 
   <div class="block block-def"><div class="label">Definition 6.4.1 (Valuation on K)</div>
     <p>For x ≠ 0, define <span class="math">vₚ(x)</span> by <span class="math">|x| = p^(−vₚ(x))</span>. Then</p>
@@ -470,6 +494,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
   <h1>6.5 — Classifying Extensions of ℚₚ</h1>
   <p>With invariants <span class="math">n = ef</span> in hand, we describe the two extreme cases — <strong>totally ramified</strong> (e = n) and <strong>unramified</strong> (e = 1). Together they essentially describe all extensions: every extension is an unramified extension followed by a totally ramified one.</p>
 
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>Using the two numbers e and f, we sort extensions into two pure types. <strong>Unramified</strong> (e = 1) means the size-scale didn't get subdivided at all — only the digit alphabet grew; these are the tame, predictable extensions. <strong>Totally ramified</strong> (e = n) is the opposite extreme — the whole growth went into finer subdivisions of the size-scale, and these are detected by a neat test on their defining polynomial (the "Eisenstein" condition).</p>
+<p>The beautiful punchline is that <em>every</em> extension is just one of each stacked together: do an unramified step, then a totally ramified step. Understanding the two pure cases therefore tells you about all of them — a complete classification.</p>
+  </div>
+
   <div class="block block-thm"><div class="label">Proposition 6.5.1 (Totally ramified ⟺ Eisenstein)</div>
     <p>If K/ℚₚ is totally ramified of degree n, then <span class="math">K = ℚₚ(π)</span> where the uniformizer π is a root of an <strong>Eisenstein polynomial</strong></p>
     <span class="math-block">f(X) = Xⁿ + aₙ₋₁Xⁿ⁻¹ + ⋯ + a₀,   p | aᵢ (i &lt; n),   p² ∤ a₀.</span>
@@ -522,6 +551,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
   <h1>6.6 — Analysis over Finite Extensions</h1>
   <p>Once K has an absolute value, we can do analysis exactly as in Chapter 5. Almost everything carries over <em>verbatim</em>, because the proofs used only estimates on absolute values. The one subtlety is <strong>ramification</strong>: arguments that used p as a uniformizer must now use π with <span class="math">vₚ(π) = 1/e</span>.</p>
 
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>Good news for anyone who slogged through Chapter 5: almost all of that analysis (limits, series, power series, exp and log) works in these bigger fields <strong>without change</strong>. The reason is that every proof there really only leaned on properties of the absolute value, and those properties survive the move.</p>
+<p>The single thing to watch is <strong>ramification</strong>. Previously p was the basic "small step" (uniformizer). In a ramified extension the smallest step is now a finer element called π, with size p^(−1/e) rather than p⁻¹. So wherever an old argument used p, you swap in π and adjust the bookkeeping by the factor e — and everything else goes through.</p>
+  </div>
+
   <div class="block block-thm"><div class="label">Almost everything extends</div>
     <p>Over a finite extension K, with the extended |·|:</p>
     <ul>
@@ -572,6 +606,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
   <h1>6.7 — Example: Adjoining a p-th Root of Unity</h1>
   <p>A concrete application that ties everything together. Let <span class="math">K = ℚₚ(ζ)</span> with ζ a primitive p-th root of unity (p ≠ 2), so ζ is a root of the <strong>cyclotomic polynomial</strong></p>
   <span class="math-block">Φₚ(X) = (Xᵖ − 1)/(X − 1) = Xᵖ⁻¹ + Xᵖ⁻² + ⋯ + X + 1.</span>
+
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>This section is a worked example that pulls the whole chapter together. We take ℚₚ and throw in ζ, a <strong>p-th root of unity</strong> (a number whose p-th power is 1 — geometrically a corner of a regular p-gon). The resulting field ℚₚ(ζ) is a specific, important extension, and the cyclotomic polynomial above is the equation ζ satisfies.</p>
+<p>The payoff is that we can compute its invariants explicitly: this extension turns out to be <strong>totally ramified</strong> of degree p−1, with the element (ζ−1) serving as the new smallest step (uniformizer). It's a satisfying check that all the abstract machinery — e, f, ramification, Eisenstein — produces concrete, verifiable answers in a case that matters throughout number theory.</p>
+  </div>
 
   <div class="block block-lem"><div class="label">Lemma 6.7.1 (Φₚ is irreducible)</div>
     <p>Apply Eisenstein to <span class="math">F(X) = Φₚ(X + 1)</span>: modulo p, <span class="math">F(X) ≡ Xᵖ⁻¹</span>, so all lower coefficients are divisible by p, and <span class="math">F(0) = Φₚ(1) = p</span> (not divisible by p²). Hence Φₚ is irreducible.</p>
@@ -626,6 +665,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 <section class="section" id="s68">
   <h1>6.8 — On to ℂₚ</h1>
   <p>The grand finale: we show <span class="math">ℚ̄ₚ</span> is <strong>not</strong> complete, complete it once more, and prove the result stays algebraically closed. The completion is <span class="math">ℂₚ</span> — the p-adic analogue of the complex numbers.</p>
+
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>One last twist. After building ℚ̄ₚ (where every polynomial has a root), we discover it has a flaw the real story doesn't: it's <strong>not complete</strong> — some Cauchy sequences have no limit, so there are "holes" again. The fix is to fill in the holes one more time (take the completion), producing a field called <strong>ℂₚ</strong>.</p>
+<p>The miracle is that this final patching doesn't reintroduce missing roots — ℂₚ stays <em>algebraically closed</em>. So ℂₚ is simultaneously complete <em>and</em> algebraically closed, making it the true p-adic counterpart of the complex numbers ℂ. That's the mountaintop this whole book has been climbing toward.</p>
+  </div>
 
   <div class="block block-thm"><div class="label">Theorem 6.8.2 (Krasner's Lemma)</div>
     <p>Let K be non-archimedean complete of characteristic 0, and let <span class="math">a = a₁, a₂, …, aₙ</span> be the conjugates of a over K. If b is closer to a than any other conjugate,</p>
@@ -888,12 +932,12 @@ function calcTower(){
 /* ---------- Problem banks ---------- */
 function genProblems61(){return{
   easy:[
-    {q:'A norm on a K-vector space satisfies ‖λv‖ = |λ|·‖?‖ (write v)',ans:'v',sol:'<div class="step">‖λv‖ = |λ|·‖v‖ (homogeneity).</div>'},
+    {q:'A norm on a K-vector space satisfies ‖λv‖ = |λ|·‖?‖ — fill in the blank (a single letter)',ans:'v',sol:'<div class="step">‖λv‖ = |λ|·‖v‖ (homogeneity).</div>'},
     {q:'Is the sup norm on K² a valid norm? (yes/no)',ans:'yes',sol:'<div class="step">Yes, it satisfies all norm axioms.</div>'}
   ],
   medium:[
     {q:'A space with a norm coming from |·| over a complete field K — is K² complete? (yes/no)',ans:'yes',sol:'<div class="step">Yes, finite-dimensional spaces over a complete field are complete.</div>'},
-    {q:'The field K must be ? for the theory to work (write complete)',ans:'complete',sol:'<div class="step">Complete (with respect to its absolute value).</div>'}
+    {q:'The field K must have which property for the theory to work? (one word)',ans:'complete',sol:'<div class="step">Complete (with respect to its absolute value).</div>'}
   ],
   hard:[
     {q:'Does the ultrametric inequality pass to the sup norm on Kⁿ? (yes/no)',ans:'yes',sol:'<div class="step">Yes: ‖x+y‖<sub>∞</sub> ≤ max(‖x‖<sub>∞</sub>,‖y‖<sub>∞</sub>).</div>'}
@@ -901,11 +945,11 @@ function genProblems61(){return{
 };}
 function genProblems62(){return{
   easy:[
-    {q:'On a finite-dimensional space over a complete field, any two norms are ? (write equivalent)',ans:'equivalent',sol:'<div class="step">Equivalent (Theorem 6.2.1).</div>'},
-    {q:'Equivalent norms define the same ? (write topology)',ans:'topology',sol:'<div class="step">Topology.</div>'}
+    {q:'On a finite-dimensional space over a complete field, any two norms are related how? (one word)',ans:'equivalent',sol:'<div class="step">Equivalent (Theorem 6.2.1).</div>'},
+    {q:'Equivalent norms define the same what? (one word)',ans:'topology',sol:'<div class="step">Topology.</div>'}
   ],
   medium:[
-    {q:'‖x‖<sub>∞</sub> ≤ ‖x‖₁ ≤ n·‖x‖<sub>∞</sub> on Kⁿ — what is the upper constant? (write n)',ans:'n',sol:'<div class="step">c₂ = n (dimension).</div>'},
+    {q:'‖x‖<sub>∞</sub> ≤ ‖x‖₁ ≤ ?·‖x‖<sub>∞</sub> on Kⁿ — what is the upper constant? (a single letter, the dimension)',ans:'n',sol:'<div class="step">c₂ = n (dimension).</div>'},
     {q:'Is every finite-dimensional subspace closed? (yes/no)',ans:'yes',sol:'<div class="step">Yes, a consequence of completeness.</div>'}
   ],
   hard:[
@@ -914,11 +958,11 @@ function genProblems62(){return{
 };}
 function genProblems63(){return{
   easy:[
-    {q:'The extension of |·|ₚ to a finite extension is given by the field ? (write norm)',ans:'norm',sol:'<div class="step">|x| = |N(x)|ₚ^(1/n).</div>'},
-    {q:'For x = a+b√m, N(x) = a² − m·? (write b^2)',ans:'b^2',sol:'<div class="step">N(x) = a² − m b².</div>'}
+    {q:'The extension of |·|ₚ to a finite extension is given by which field operation? (one word)',ans:'norm',sol:'<div class="step">|x| = |N(x)|ₚ^(1/n).</div>'},
+    {q:'For x = a+b√m, N(x) = a² − m·? — fill in the blank (an expression in b)',ans:'b^2',sol:'<div class="step">N(x) = a² − m b².</div>'}
   ],
   medium:[
-    {q:'On a degree-n extension, the exponent on |N(x)|ₚ is 1/? (write n)',ans:'n',sol:'<div class="step">1/n.</div>'},
+    {q:'On a degree-n extension, the exponent on |N(x)|ₚ is 1/? — fill in the blank (a single letter)',ans:'n',sol:'<div class="step">1/n.</div>'},
     {q:'Is the extension of the absolute value unique? (yes/no)',ans:'yes',sol:'<div class="step">Yes, unique on a complete field (Theorem 6.3).</div>'}
   ],
   hard:[
@@ -927,67 +971,67 @@ function genProblems63(){return{
 };}
 function genProblems64(){return{
   easy:[
-    {q:'The fundamental identity is n = e·? (write f)',ans:'f',sol:'<div class="step">n = e·f.</div>'},
-    {q:'e is called the ? index (write ramification)',ans:'ramification',sol:'<div class="step">Ramification index.</div>'}
+    {q:'The fundamental identity is n = e·? — fill in the blank (a single letter)',ans:'f',sol:'<div class="step">n = e·f.</div>'},
+    {q:'e is called the ? index — fill in the blank (one word)',ans:'ramification',sol:'<div class="step">Ramification index.</div>'}
   ],
   medium:[
-    {q:'If e = 1 the extension is called ? (write unramified)',ans:'unramified',sol:'<div class="step">Unramified.</div>'},
-    {q:'If f = 1 the extension is ? ramified (write totally)',ans:'totally',sol:'<div class="step">Totally ramified.</div>'}
+    {q:'If e = 1 the extension is called what? (one word)',ans:'unramified',sol:'<div class="step">Unramified.</div>'},
+    {q:'If f = 1 the extension is ? ramified — fill in the blank (one word)',ans:'totally',sol:'<div class="step">Totally ramified.</div>'}
   ],
   hard:[
-    {q:'For x ∈ K, vₚ(x) = (1/n)·vₚ(N(x)). The value group of K is (1/?)ℤ (write e)',ans:'e',sol:'<div class="step">(1/e)ℤ — uniformizer has valuation 1/e.</div>'}
+    {q:'For x ∈ K, vₚ(x) = (1/n)·vₚ(N(x)). The value group of K is (1/?)ℤ — fill in the blank (a single letter)',ans:'e',sol:'<div class="step">(1/e)ℤ — uniformizer has valuation 1/e.</div>'}
   ]
 };}
 function genProblems65(){return{
   easy:[
-    {q:'There is a unique ? extension of each degree (write unramified)',ans:'unramified',sol:'<div class="step">Unramified extension — unique per degree.</div>'},
-    {q:'The residue field of the degree-f unramified ext is 𝔽 with p^? elements (write f)',ans:'f',sol:'<div class="step">𝔽_{p^f}.</div>'}
+    {q:'There is a unique ? extension of each degree — fill in the blank (one word)',ans:'unramified',sol:'<div class="step">Unramified extension — unique per degree.</div>'},
+    {q:'The residue field of the degree-f unramified ext is 𝔽 with p^? elements — fill in the exponent (a single letter)',ans:'f',sol:'<div class="step">𝔽_{p^f}.</div>'}
   ],
   medium:[
-    {q:'Roots of unity of order prime to p in the degree-f unramified ext: p^f − ? (write 1)',ans:'1',sol:'<div class="step">p^f − 1 (Teichmüller reps).</div>'},
-    {q:'Unramified extensions are generated by roots of unity of order prime to ? (write p)',ans:'p',sol:'<div class="step">Prime to p.</div>'}
+    {q:'Roots of unity of order prime to p in the degree-f unramified ext: p^f − ? (enter a number)',ans:'1',sol:'<div class="step">p^f − 1 (Teichmüller reps).</div>'},
+    {q:'Unramified extensions are generated by roots of unity of order prime to which number? (a single letter)',ans:'p',sol:'<div class="step">Prime to p.</div>'}
   ],
   hard:[
-    {q:'The unramified extension of degree f corresponds to the residue extension 𝔽_{p^f}/𝔽_p which is ? (write galois)',ans:'galois',sol:'<div class="step">Galois (cyclic), matching the unramified ext.</div>'}
+    {q:'The unramified extension of degree f corresponds to the residue extension 𝔽_{p^f}/𝔽_p which has what property? (one word, named after a mathematician)',ans:'galois',sol:'<div class="step">Galois (cyclic), matching the unramified ext.</div>'}
   ]
 };}
 function genProblems66(){return{
   easy:[
-    {q:'exp(x) converges when v(x) > 1/(p−?) (write 1)',ans:'1',sol:'<div class="step">v(x) > 1/(p−1).</div>'},
-    {q:'A uniformizer π in a degree-e ramified ext has v(π) = 1/? (write e)',ans:'e',sol:'<div class="step">v(π) = 1/e.</div>'}
+    {q:'exp(x) converges when v(x) > 1/(p−?) — fill in the blank (enter a number)',ans:'1',sol:'<div class="step">v(x) > 1/(p−1).</div>'},
+    {q:'A uniformizer π in a degree-e ramified ext has v(π) = 1/? — fill in the blank (a single letter)',ans:'e',sol:'<div class="step">v(π) = 1/e.</div>'}
   ],
   medium:[
-    {q:'Larger ramification e makes the exp convergence domain ? (write smaller)',ans:'smaller',sol:'<div class="step">Smaller — v(π)=1/e shrinks.</div>'},
+    {q:'Larger ramification e makes the exp convergence domain bigger or smaller? (one word)',ans:'smaller',sol:'<div class="step">Smaller — v(π)=1/e shrinks.</div>'},
     {q:'Does the valuation extend uniquely to the finite extension? (yes/no)',ans:'yes',sol:'<div class="step">Yes (from §6.3).</div>'}
   ],
   hard:[
-    {q:'exp(π) converges iff 1/e > 1/(p−1), i.e. e < p−? (write 1)',ans:'1',sol:'<div class="step">e < p−1 needed (strictly).</div>'}
+    {q:'exp(π) converges iff 1/e > 1/(p−1), i.e. e < p−? — fill in the blank (enter a number)',ans:'1',sol:'<div class="step">e < p−1 needed (strictly).</div>'}
   ]
 };}
 function genProblems67(){return{
   easy:[
-    {q:'[ℚₚ(ζₚ):ℚₚ] = p − ? (write 1)',ans:'1',sol:'<div class="step">Degree p−1.</div>'},
-    {q:'A uniformizer of ℚₚ(ζₚ) is ζ − ? (write 1)',ans:'1',sol:'<div class="step">π = ζ − 1.</div>'}
+    {q:'[ℚₚ(ζₚ):ℚₚ] = p − ? (enter a number)',ans:'1',sol:'<div class="step">Degree p−1.</div>'},
+    {q:'A uniformizer of ℚₚ(ζₚ) is ζ − ? (enter a number)',ans:'1',sol:'<div class="step">π = ζ − 1.</div>'}
   ],
   medium:[
-    {q:'ℚₚ(ζₚ) is totally ramified, so f = ? (write 1)',ans:'1',sol:'<div class="step">f = 1, e = p−1.</div>'},
-    {q:'|ζ − 1| = p^(−1/(p−?)) (write 1)',ans:'1',sol:'<div class="step">p^(−1/(p−1)).</div>'}
+    {q:'ℚₚ(ζₚ) is totally ramified, so f = ? (enter a number)',ans:'1',sol:'<div class="step">f = 1, e = p−1.</div>'},
+    {q:'|ζ − 1| = p^(−1/(p−?)) — fill in the blank (enter a number)',ans:'1',sol:'<div class="step">p^(−1/(p−1)).</div>'}
   ],
   hard:[
-    {q:'Number of roots of unity in ℚₚ(ζₚ): p·(p−?) (write 1)',ans:'1',sol:'<div class="step">p(p−1).</div>'}
+    {q:'Number of roots of unity in ℚₚ(ζₚ): p·(p−?) — fill in the blank (enter a number)',ans:'1',sol:'<div class="step">p(p−1).</div>'}
   ]
 };}
 function genProblems68(){return{
   easy:[
-    {q:'ℚₚ is complete but not algebraically ? (write closed)',ans:'closed',sol:'<div class="step">Not algebraically closed.</div>'},
+    {q:'ℚₚ is complete but not algebraically what? (one word)',ans:'closed',sol:'<div class="step">Not algebraically closed.</div>'},
     {q:'ℂₚ is the completion of ℚ̄ₚ — is it algebraically closed? (yes/no)',ans:'yes',sol:'<div class="step">Yes, and complete too.</div>'}
   ],
   medium:[
     {q:'Is ℚ̄ₚ (algebraic closure of ℚₚ) complete? (yes/no)',ans:'no',sol:'<div class="step">No — completing it gives ℂₚ.</div>'},
-    {q:'ℂₚ is the p-adic analogue of which classical field? (write C)',ans:'c',sol:'<div class="step">ℂ (the complex numbers).</div>'}
+    {q:'ℂₚ is the p-adic analogue of which classical field? (name the field)',ans:'c',sol:'<div class="step">ℂ (the complex numbers).</div>'}
   ],
   hard:[
-    {q:'Building ℂₚ requires alternately completing and taking the algebraic ? (write closure)',ans:'closure',sol:'<div class="step">Algebraic closure, then completion.</div>'}
+    {q:'Building ℂₚ requires alternately completing and taking the algebraic what? (one word)',ans:'closure',sol:'<div class="step">Algebraic closure, then completion.</div>'}
   ]
 };}
 

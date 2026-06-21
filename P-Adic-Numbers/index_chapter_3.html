@@ -15,6 +15,7 @@
   --proof:#f5f5f5;--proof-border:#9e9e9e;
   --example:#e0f2f1;--example-border:#00897b;
   --problem:#fff3e0;--problem-border:#ef6c00;
+  --plain:#f3e8ff;--plain-border:#8e44ad;
   --sidebar-w:280px;--topbar-h:56px;
   --card-radius:8px;--shadow:0 2px 8px rgba(0,0,0,.08);
   --font-main:'Segoe UI',system-ui,-apple-system,sans-serif;
@@ -29,6 +30,7 @@
   --proof:#1e1e2f;--proof-border:#777;
   --example:#1a302e;--example-border:#4db6ac;
   --problem:#2e2114;--problem-border:#ffa726;
+  --plain:#2a1f3d;--plain-border:#b388e0;
   --shadow:0 2px 8px rgba(0,0,0,.3);
 }
 html{scroll-behavior:smooth}
@@ -80,6 +82,8 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 .block-problem{background:var(--problem);border-color:var(--problem-border)}
 .block .label{font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .block-def .label{color:var(--def-border)}
+.block-plain{background:var(--plain);border-color:var(--plain-border)}
+.block-plain .label{color:var(--plain-border)}
 .block-thm .label{color:var(--thm-border)}
 .block-lem .label{color:var(--lem-border)}
 .block-proof .label{color:var(--proof-border)}
@@ -289,6 +293,12 @@ ul.compact li{margin-bottom:4px}
 
 <p>We already know three kinds of absolute value on ℚ: the <strong>trivial</strong> one, the <strong>usual</strong> one <span class="math">|·|<sub>∞</sub></span> (from ℝ), and for each prime <span class="math">p</span> the <strong>p-adic</strong> one <span class="math">|·|<sub>p</sub></span>. It is convenient to treat <span class="math">∞</span> as an "infinite prime" so we can write <span class="math">|·|<sub>p</sub></span> for all primes <span class="math">p ≤ ∞</span>. The goal of this section: prove these are <em>all</em> of them (up to equivalence) and discover how they fit together via the product formula.</p>
 
+<div class="block block-plain">
+  <div class="label">💡 In Plain English</div>
+  <p>How many fundamentally different ways are there to measure the size of a rational number? You'd guess infinitely many, or maybe just the ordinary one. The remarkable answer (Ostrowski's theorem) is: essentially just <strong>two families</strong> — the everyday "real" absolute value, and one p-adic absolute value for each prime p. That's the complete list, up to harmless rescaling.</p>
+<p>Even more beautiful is how they cooperate. The <strong>product formula</strong> says that if you take any nonzero rational number and multiply together all of its sizes — the real one and every p-adic one — you always get exactly 1. The different measuring sticks aren't independent; they're locked together in a single elegant balance, with each prime contributing its share.</p>
+</div>
+
 <div class="block block-def">
   <div class="label">📘 Definition 3.1.1 — Equivalent Absolute Values</div>
   <p><strong>Formal:</strong> Two absolute values <span class="math">|·|<sub>1</sub></span> and <span class="math">|·|<sub>2</sub></span> on a field <span class="math">k</span> are <em>equivalent</em> if they define the same topology on <span class="math">k</span> — i.e., every set that is open with respect to one is also open with respect to the other.</p>
@@ -447,6 +457,12 @@ ul.compact li{margin-bottom:4px}
 <h1>§3.2 Completions</h1>
 
 <p>We now build, for each prime <span class="math">p</span>, the field <span class="math">ℚ<sub>p</sub></span>. The idea mirrors how ℝ is built from ℚ: <em>fill in the missing limits of Cauchy sequences</em>. The twist is that "missing limits" are added by a clever algebraic trick — taking a quotient of the ring of all Cauchy sequences.</p>
+
+<div class="block block-plain">
+  <div class="label">💡 In Plain English</div>
+  <p>The rationals have "holes" — sequences that <em>should</em> converge but have no rational number to land on. The real numbers ℝ are built by plugging those holes, and we now do the exact same thing using the p-adic notion of distance instead, producing the field <strong>ℚₚ</strong>.</p>
+<p>The construction sounds abstract — "take all Cauchy sequences and glue together the ones that ought to have the same limit" — but the idea is homely: a new number simply <em>is</em> the sequence of better-and-better approximations to it, with two sequences calling themselves equal when they close in on each other. Carrying this out gives a complete field where every p-adic Cauchy sequence finally has a limit, the proper stage for all the analysis to come.</p>
+</div>
 
 <div class="block block-def">
   <div class="label">📘 Definition 3.2.1 — Cauchy, Complete, Dense</div>

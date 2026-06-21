@@ -14,6 +14,7 @@
   --proof:#f5f5f5;--proof-border:#9e9e9e;
   --example:#e0f2f1;--example-border:#00897b;
   --problem:#fff3e0;--problem-border:#ef6c00;
+  --plain:#f3e8ff;--plain-border:#8e44ad;
   --sidebar-w:280px;--topbar-h:56px;
   --card-radius:8px;--shadow:0 2px 8px rgba(0,0,0,.08);
   --font-main:'Segoe UI',system-ui,-apple-system,sans-serif;
@@ -28,6 +29,7 @@
   --proof:#1e1e2f;--proof-border:#777;
   --example:#1a302e;--example-border:#4db6ac;
   --problem:#2e2114;--problem-border:#ffa726;
+  --plain:#2a1f3d;--plain-border:#b388e0;
   --shadow:0 2px 8px rgba(0,0,0,.3);
 }
 html{scroll-behavior:smooth}
@@ -71,6 +73,8 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 .block-problem{background:var(--problem);border-color:var(--problem-border)}
 .block .label{font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .block-def .label{color:var(--def-border)}
+.block-plain{background:var(--plain);border-color:var(--plain-border)}
+.block-plain .label{color:var(--plain-border)}
 .block-thm .label{color:var(--thm-border)}
 .block-lem .label{color:var(--lem-border)}
 .block-proof .label{color:var(--proof-border)}
@@ -218,6 +222,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 <section class="section" id="s51">
   <h1>5.1 — Sequences and Series</h1>
   <p>ℚₚ is complete, so every Cauchy sequence converges. The ultrametric property drastically simplifies convergence tests.</p>
+
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>In ordinary calculus, checking whether an infinite sum (a series) adds up to a finite number is fiddly — the terms getting small is <em>not</em> enough (the famous 1 + 1/2 + 1/3 + … blows up even though its terms shrink to zero). The p-adic world has a delightful surprise: because of the "ultrametric" rule (distances behave in an extra-strict way), a series converges <strong>exactly when its terms shrink to zero</strong>. That's it. No subtle tests needed.</p>
+<p>"Cauchy sequence" just means the entries eventually huddle arbitrarily close together, and "complete" means any such huddling sequence actually has a limit to land on — there are no missing points. ℚₚ has that property, just like the real numbers do, which is what makes doing analysis (limits, sums, etc.) possible here at all.</p>
+  </div>
   
   <div class="block block-lem"><div class="label">Lemma 5.1.1 (Cauchy Criterion)</div>
     <p>A sequence (aₙ) in ℚₚ is Cauchy ⟺ <span class="math">lim |aₙ₊₁ - aₙ|ₚ = 0</span>.</p>
@@ -262,6 +271,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 <section class="section" id="s52">
   <h1>5.2 — Functions, Continuity, Derivatives</h1>
   <p>Functions on ℚₚ behave similarly to functions on ℝ in many ways, but with surprising twists due to the ultrametric topology.</p>
+
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>This section transplants the basic vocabulary of calculus — <strong>continuity</strong> (the graph has no sudden jumps) and <strong>derivatives</strong> (the instantaneous rate of change) — into the p-adic setting. The definitions look almost word-for-word the same as the ones you'd see in a first calculus course: a function is continuous if nearby inputs give nearby outputs, and differentiable if the usual difference-quotient has a limit.</p>
+<p>The "surprising twists" come from the strange p-adic notion of nearness. Because the ultrametric makes points cluster in nested groups rather than along a line, some intuition from real calculus quietly breaks. For instance, a function can have derivative zero everywhere without being constant. So we keep the familiar words but stay alert that a few cherished theorems no longer hold.</p>
+  </div>
   
   <div class="block block-def"><div class="label">Definition 5.2.1 (Continuity)</div>
     <p>f: U → ℚₚ is <strong>continuous at a</strong> if ∀ε>0 ∃δ>0: |x-a|ₚ<δ ⟹ |f(x)-f(a)|ₚ<ε.</p>
@@ -309,6 +323,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 <section class="section" id="s53">
   <h1>5.3 — Integrals</h1>
   <p>Integration in ℚₚ uses <strong>Haar measure</strong> on the compact groups Zₚ and its cosets, giving a natural notion of "uniform distribution."</p>
+
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>To integrate, you first need a way to measure "how big" a chunk of the space is — the p-adic replacement for length or volume. That measuring stick is called <strong>Haar measure</strong>. The key idea is fairness: every one of the p sub-groups at each level of the tree gets an equal share, so the natural choice is to say the ball Zₚ has total size 1, and each finer sub-ball is p times smaller.</p>
+<p>Once you can measure sets this way, integration is just "averaging a function over the space" with respect to those sizes — exactly the spirit of ordinary integration, but counting p-adic balls instead of real intervals. This gives a clean notion of a quantity being <em>uniformly distributed</em>, which is enormously useful in number theory.</p>
+  </div>
   
   <div class="block block-def"><div class="label">Haar Measure on Zₚ</div>
     <p>There exists a unique (up to scalar) translation-invariant measure μ on Zₚ with μ(Zₚ) = 1.</p>
@@ -352,6 +371,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 <section class="section" id="s54">
   <h1>5.4 — Power Series</h1>
   <p>Power series f(X) = Σaₙ Xⁿ in ℚₚ have a radius of convergence r, determined by the Cauchy-Hadamard formula.</p>
+
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>A <strong>power series</strong> is an "infinitely long polynomial" — you keep adding higher and higher powers of X with various coefficients. Whether the sum makes sense depends on how big X is: there's a cutoff size called the <strong>radius of convergence</strong>. Plug in an X smaller than that radius and the series settles to a finite value; go past it and the sum falls apart.</p>
+<p>The Cauchy–Hadamard formula is just a recipe that reads off this cutoff from how fast the coefficients grow. It's the direct p-adic analogue of the radius of convergence you meet for real or complex power series — but thanks to the simple p-adic convergence rule (terms → 0), figuring out what happens is often cleaner here.</p>
+  </div>
   
   <div class="block block-def"><div class="label">Definition (Radius of Convergence)</div>
     <p>For f(X) = Σaₙ Xⁿ, the <strong>radius of convergence</strong> is</p>
@@ -395,6 +419,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 <section class="section" id="s55">
   <h1>5.5 — Functions Defined by Power Series</h1>
   <p>Power series convergent on a ball define <strong>analytic functions</strong>, which can be differentiated term-by-term.</p>
+
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>A function that can be written as a convergent power series on some ball is called <strong>analytic</strong> — these are the "nicest" functions, built entirely out of powers of X. The headline fact is that you may differentiate them the lazy way: just differentiate each term separately (n·aₙXⁿ⁻¹) and add up, exactly as if it were an ordinary polynomial.</p>
+<p>That "term-by-term" permission is not obvious — you're swapping the order of an infinite sum and a limit, which can go wrong in general. It works here because p-adic convergence is so well behaved. The payoff is that analytic functions are easy and safe to manipulate, which is why they're the workhorses of p-adic analysis.</p>
+  </div>
   
   <div class="block block-thm"><div class="label">Theorem 5.5.1 (Term-by-Term Differentiation)</div>
     <p>If <span class="math">f(x) = Σaₙxⁿ</span> has radius r > 0, then f is differentiable on |x|ₚ < r, and</p>
@@ -440,6 +469,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 <section class="section" id="s56">
   <h1>5.6 — Strassman's Theorem</h1>
   <p>A remarkable result: nonconstant power series in ℚₚ have <strong>finitely many zeros</strong> (unlike in ℂ!).</p>
+
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p><strong>Strassman's Theorem</strong> is a p-adic "reality check" on power series. Over the complex numbers an infinite power series can have infinitely many roots (think of sin x crossing zero forever). Strassman says that can't happen p-adically: a non-trivial convergent power series has only a <em>finite</em> number of zeros — and it even tells you a bound on how many, read off from the coefficients.</p>
+<p>Why care? Because "finitely many solutions" is exactly the kind of statement number theorists crave. This single theorem is the engine behind many finiteness results — it's how you prove certain equations can only have a limited number of answers. It's the p-adic counterpart of the fact that a degree-n polynomial has at most n roots.</p>
+  </div>
   
   <div class="block block-thm"><div class="label">Theorem 5.6.1 (Strassman)</div>
     <p>Let <span class="math">f(x) = Σaₙxⁿ</span> converge on the closed ball <span class="math">|x|ₚ ≤ r</span>.</p>
@@ -484,6 +518,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 <section class="section" id="s57">
   <h1>5.7 — Exponential and Logarithm</h1>
   <p>The p-adic exponential and logarithm are defined by familiar power series, but have <strong>restricted domains</strong> (not global homomorphisms like in ℂ).</p>
+
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>We define p-adic versions of <strong>exp</strong> and <strong>log</strong> using the very same infinite-series formulas from calculus (exp x = 1 + x + x²/2! + …, and the matching series for log). They're meant to be inverse to each other and to convert multiplication into addition, just like ordinary logarithms.</p>
+<p>The catch is the <strong>domain</strong>. Those series only converge for p-adic inputs that are small enough — the factorials in the denominators of exp are themselves divisible by p, which sabotages convergence unless x is sufficiently tiny. So unlike the real or complex case, p-adic exp and log are only defined on a restricted neighborhood, and we have to track carefully where they're allowed to operate.</p>
+  </div>
   
   <div class="block block-def"><div class="label">p-adic Exponential</div>
     <p><span class="math">exp(x) = Σ xⁿ/n!</span></p>
@@ -533,6 +572,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 <section class="section" id="s58">
   <h1>5.8 — The Structure of Zₚ×</h1>
   <p>The unit group Zₚ× = {x ∈ Zₚ : |x|ₚ = 1} has a beautiful structure involving roots of unity.</p>
+
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>The <strong>units</strong> of Zₚ are the p-adic integers you're allowed to divide by — exactly the ones of size 1 (no factor of p). This section completely takes apart this group and shows it splits into two clean, independent pieces.</p>
+<p>One piece is a small finite set of <strong>roots of unity</strong> (the p-adic analogues of 1 and −1, handling the "first digit"), and the other is an infinite piece that looks just like the p-adic integers under addition (handling "everything after the first digit," reachable via the logarithm above). Knowing this exact structure means you understand multiplication in Zₚ completely — a surprisingly tidy answer.</p>
+  </div>
   
   <div class="block block-thm"><div class="label">Theorem 5.8.1</div>
     <p>For <strong>p odd</strong>:</p>
@@ -572,6 +616,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 <section class="section" id="s59">
   <h1>5.9 — The Binomial Series</h1>
   <p>The binomial series <span class="math">(1+x)ᵃ</span> for arbitrary a ∈ ℤₚ converges in ℚₚ under suitable conditions.</p>
+
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>You may remember the binomial expansion of (1+x)ⁿ for a whole-number power n. There's a classic generalization that lets the exponent be <em>any</em> number, turning it into an infinite series. The p-adic story goes one step further: the exponent <strong>a</strong> is allowed to be any p-adic integer, and the same series still converges (as long as x is small enough).</p>
+<p>This is genuinely strange — raising something to a "p-adic power" has no everyday meaning — yet the formula makes perfect sense and is well behaved. It's a powerful tool for building new functions and for interpolation (the next topic), where we want to fill in values smoothly between the ordinary integer exponents.</p>
+  </div>
   
   <div class="block block-def"><div class="label">Binomial Coefficient (p-adic)</div>
     <p>For a ∈ ℤₚ and n ∈ ℕ, define</p>
@@ -622,6 +671,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 <section class="section" id="s510">
   <h1>5.10 — Interpolation</h1>
   <p><strong>Mahler's Theorem:</strong> Every continuous function f: ℤₚ → ℚₚ can be written as a convergent series in binomial polynomials.</p>
+
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p><strong>Interpolation</strong> means: you know a function's values at the ordinary whole numbers, and you want to fill in the gaps to <em>all</em> p-adic integers in a smooth (continuous) way. The question is when that's even possible, and how to write the result down.</p>
+<p><strong>Mahler's Theorem</strong> gives a stunningly complete answer: <em>every</em> continuous function on ℤₚ is built out of simple binomial-coefficient building blocks "choose k," with coefficients that fade to zero. It's the p-adic analogue of writing any nice function as a power series — a universal recipe that turns the vague idea of "smoothly connecting the dots" into one concrete, always-available formula.</p>
+  </div>
   
   <div class="block block-thm"><div class="label">Theorem 5.10.1 (Mahler)</div>
     <p>For any continuous f: ℤₚ → ℚₚ, there exist unique aₙ ∈ ℚₚ with aₙ → 0 such that</p>
@@ -892,12 +946,12 @@ function calcMahler(){
 function genProblems51(){
   return {
     easy:[
-      {q:'Σaₙ converges in ℚₚ iff aₙ → ? (write 0)',ans:'0',sol:'<div class="step">aₙ → 0 (Corollary 5.1.2).</div>'},
+      {q:'Σaₙ converges in ℚₚ iff aₙ → what limit? (enter a number)',ans:'0',sol:'<div class="step">aₙ → 0 (Corollary 5.1.2).</div>'},
       {q:'In ℝ, does Σ1/n converge? (yes/no)',ans:'no',sol:'<div class="step">No, harmonic series diverges (but aₙ→0!).</div>'}
     ],
     medium:[
       {q:'Does Σpⁿ converge in ℚₚ? (yes/no)',ans:'yes',sol:'<div class="step">Yes, |pⁿ|ₚ=p⁻ⁿ→0.</div>'},
-      {q:'|Σaₙ|ₚ ≤ ? (write max)',ans:'max',sol:'<div class="step">≤ max|aₙ|ₚ (ultrametric for series).</div>'}
+      {q:'|Σaₙ|ₚ is bounded by which quantity built from the |aₙ|ₚ? (one word)',ans:'max',sol:'<div class="step">≤ max|aₙ|ₚ (ultrametric for series).</div>'}
     ],
     hard:[
       {q:'Is aₙ→0 sufficient for Σaₙ to converge in ℝ? (yes/no)',ans:'no',sol:'<div class="step">No (e.g. harmonic), but YES in ℚₚ!</div>'}
@@ -908,15 +962,15 @@ function genProblems51(){
 function genProblems54(){
   return {
     easy:[
-      {q:'Radius formula: 1/r = lim sup |aₙ|ₚ^(1/?) (write n)',ans:'n',sol:'<div class="step">1/r = lim sup |aₙ|ₚ^(1/n).</div>'},
+      {q:'Radius formula: 1/r = lim sup |aₙ|ₚ^(1/?) — fill in the exponent denominator (a single letter)',ans:'n',sol:'<div class="step">1/r = lim sup |aₙ|ₚ^(1/n).</div>'},
       {q:'Does 1+pX+p²X²+⋯ converge for |X|ₚ=1? (yes/no)',ans:'no',sol:'<div class="step">No, need |pX|ₚ<1 ⟹ |X|ₚ<1/p.</div>'}
     ],
     medium:[
-      {q:'Strassman: power series has how many zeros? (write finite)',ans:'finite',sol:'<div class="step">At most N (finitely many), not ∞ like in ℂ.</div>'},
-      {q:'In ℂ, sin(x) has infinitely many zeros. In ℚₚ? (write finite)',ans:'finite',sol:'<div class="step">Finitely many (Strassman).</div>'}
+      {q:'Strassman: a nonzero power series has how many zeros? (one word: finite or infinite)',ans:'finite',sol:'<div class="step">At most N (finitely many), not ∞ like in ℂ.</div>'},
+      {q:'In ℂ, sin(x) has infinitely many zeros. In ℚₚ, how many? (one word: finite or infinite)',ans:'finite',sol:'<div class="step">Finitely many (Strassman).</div>'}
     ],
     hard:[
-      {q:'If not all aₙ≡0 mod p, max zeros in |x|ₚ≤r is at most ? (write N)',ans:'n',sol:'<div class="step">N = max{n:|aₙ|ₚrⁿ maximal} (Strassman).</div>'}
+      {q:'If not all aₙ≡0 mod p, the maximum number of zeros in |x|ₚ≤r is at most which index? (a single letter)',ans:'n',sol:'<div class="step">N = max{n:|aₙ|ₚrⁿ maximal} (Strassman).</div>'}
     ]
   };
 }
@@ -924,15 +978,15 @@ function genProblems54(){
 function genProblems57(){
   return {
     easy:[
-      {q:'exp(0) = ? (write 1)',ans:'1',sol:'<div class="step">exp(0)=1 (by definition).</div>'},
-      {q:'log(1) = ? (write 0)',ans:'0',sol:'<div class="step">log(1)=0 (by definition).</div>'}
+      {q:'exp(0) = ? (enter a number)',ans:'1',sol:'<div class="step">exp(0)=1 (by definition).</div>'},
+      {q:'log(1) = ? (enter a number)',ans:'0',sol:'<div class="step">log(1)=0 (by definition).</div>'}
     ],
     medium:[
-      {q:'For p>2, exp converges for |x|ₚ < p^(-1/(p-?)). (write 1)',ans:'1',sol:'<div class="step">p^(-1/(p-1)).</div>'},
+      {q:'For p>2, exp converges for |x|ₚ < p^(-1/(p-?)) — fill in the blank (enter a number)',ans:'1',sol:'<div class="step">p^(-1/(p-1)).</div>'},
       {q:'Is exp a global homomorphism in ℚₚ? (yes/no)',ans:'no',sol:'<div class="step">No, only local (restricted domain).</div>'}
     ],
     hard:[
-      {q:'For p=2, log(1+x) converges for |x|₂ < 1/?. (write 2)',ans:'2',sol:'<div class="step">|x|₂<1/2 (stricter than odd p).</div>'}
+      {q:'For p=2, log(1+x) converges for |x|₂ < 1/? — fill in the blank (enter a number)',ans:'2',sol:'<div class="step">|x|₂<1/2 (stricter than odd p).</div>'}
     ]
   };
 }
@@ -944,11 +998,11 @@ function genProblems52(){
       {q:'Does (xⁿ)\' = nxⁿ⁻¹ in ℚₚ? (yes/no)',ans:'yes',sol:'<div class="step">Yes, same rules as in ℝ.</div>'}
     ],
     medium:[
-      {q:'Derivative uses lim_{h→?} [f(a+h)-f(a)]/h. (write 0)',ans:'0',sol:'<div class="step">h → 0.</div>'},
+      {q:'Derivative uses lim_{h→?} [f(a+h)-f(a)]/h — fill in the blank (enter a number)',ans:'0',sol:'<div class="step">h → 0.</div>'},
       {q:'If p|n, derivative of xⁿ may vanish? (yes/no)',ans:'yes',sol:'<div class="step">Yes, e.g. (xᵖ)\' = pxᵖ⁻¹ ≡ 0 mod p.</div>'}
     ],
     hard:[
-      {q:'Locally constant f is constant on cosets of p^? Zₚ. (write n)',ans:'n',sol:'<div class="step">pⁿZₚ for some n.</div>'}
+      {q:'Locally constant f is constant on cosets of p^? Zₚ — fill in the exponent (a single letter)',ans:'n',sol:'<div class="step">pⁿZₚ for some n.</div>'}
     ]
   };
 }
@@ -956,15 +1010,15 @@ function genProblems52(){
 function genProblems53(){
   return {
     easy:[
-      {q:'Haar measure μ(Zₚ) = ? (write 1)',ans:'1',sol:'<div class="step">μ(Zₚ) = 1 (normalized).</div>'},
-      {q:'μ(a + pⁿZₚ) = p^(-?) (write n)',ans:'n',sol:'<div class="step">p⁻ⁿ.</div>'}
+      {q:'Haar measure μ(Zₚ) = ? (enter a number)',ans:'1',sol:'<div class="step">μ(Zₚ) = 1 (normalized).</div>'},
+      {q:'μ(a + pⁿZₚ) = p^(-?) — fill in the exponent (a single letter)',ans:'n',sol:'<div class="step">p⁻ⁿ.</div>'}
     ],
     medium:[
       {q:'Is Haar measure translation-invariant? (yes/no)',ans:'yes',sol:'<div class="step">Yes, by definition.</div>'},
-      {q:'How many cosets of pⁿZₚ in Zₚ? (write p^n)',ans:'p^n',sol:'<div class="step">pⁿ cosets, each measure p⁻ⁿ.</div>'}
+      {q:'How many cosets of pⁿZₚ are there in Zₚ? (an expression in p and n)',ans:'p^n',sol:'<div class="step">pⁿ cosets, each measure p⁻ⁿ.</div>'}
     ],
     hard:[
-      {q:'For continuous f, ∫_{Zₚ} f can be computed via ? sums (write riemann)',ans:'riemann',sol:'<div class="step">Riemann sums over coset partitions.</div>'}
+      {q:'For continuous f, ∫_{Zₚ} f can be computed via which kind of sums? (one word, named after a mathematician)',ans:'riemann',sol:'<div class="step">Riemann sums over coset partitions.</div>'}
     ]
   };
 }
@@ -976,8 +1030,8 @@ function genProblems55(){
       {q:'Is power series representation unique? (yes/no)',ans:'yes',sol:'<div class="step">Yes (Theorem 5.5.3).</div>'}
     ],
     medium:[
-      {q:'d/dx (Σaₙxⁿ) = Σ ? aₙxⁿ⁻¹ (write n)',ans:'n',sol:'<div class="step">Σ naₙxⁿ⁻¹.</div>'},
-      {q:'Product of power series uses ? product (write cauchy)',ans:'cauchy',sol:'<div class="step">Cauchy product.</div>'}
+      {q:'d/dx (Σaₙxⁿ) = Σ ? aₙxⁿ⁻¹ — fill in the missing factor (a single letter)',ans:'n',sol:'<div class="step">Σ naₙxⁿ⁻¹.</div>'},
+      {q:'Product of power series uses which named product? (one word, named after a mathematician)',ans:'cauchy',sol:'<div class="step">Cauchy product.</div>'}
     ],
     hard:[
       {q:'Does d/dx preserve radius of convergence? (yes/no)',ans:'yes',sol:'<div class="step">Yes, same radius.</div>'}
@@ -989,14 +1043,14 @@ function genProblems56(){
   return {
     easy:[
       {q:'Strassman: power series has finitely many zeros? (yes/no)',ans:'yes',sol:'<div class="step">Yes, at most N (finite).</div>'},
-      {q:'In ℂ, sin has infinitely many zeros. In ℚₚ? (write finite)',ans:'finite',sol:'<div class="step">Finitely many (Strassman).</div>'}
+      {q:'In ℂ, sin has infinitely many zeros. In ℚₚ, how many? (one word: finite or infinite)',ans:'finite',sol:'<div class="step">Finitely many (Strassman).</div>'}
     ],
     medium:[
-      {q:'N = max{n : |aₙ|ₚrⁿ is ?} (write maximal)',ans:'maximal',sol:'<div class="step">Maximal.</div>'},
-      {q:'Strassman bound: at most ? zeros (write n)',ans:'n',sol:'<div class="step">At most N.</div>'}
+      {q:'N = max{n : |aₙ|ₚrⁿ is ?} — describe the value (one word)',ans:'maximal',sol:'<div class="step">Maximal.</div>'},
+      {q:'Strassman bound: at most how many zeros, in terms of the index? (a single letter)',ans:'n',sol:'<div class="step">At most N.</div>'}
     ],
     hard:[
-      {q:'Hypothesis: not all aₙ ≡ 0 mod ? (write p)',ans:'p',sol:'<div class="step">mod p.</div>'}
+      {q:'Hypothesis: not all aₙ ≡ 0 mod ? (a single letter)',ans:'p',sol:'<div class="step">mod p.</div>'}
     ]
   };
 }
@@ -1004,12 +1058,12 @@ function genProblems56(){
 function genProblems58(){
   return {
     easy:[
-      {q:'For p odd, Zₚ× contains μ_{p-?} roots of unity. (write 1)',ans:'1',sol:'<div class="step">μ_{p-1}.</div>'},
+      {q:'For p odd, Zₚ× contains μ_{p-?} roots of unity — fill in the blank (enter a number)',ans:'1',sol:'<div class="step">μ_{p-1}.</div>'},
       {q:'Is Z₂× cyclic? (yes/no)',ans:'no',sol:'<div class="step">No, Z₂× ≅ {±1} × (1+4Z₂).</div>'}
     ],
     medium:[
       {q:'1+pZₚ ≅ ? (as additive group; write Zp)',ans:'zp',sol:'<div class="step">≅ Zₚ (via log).</div>'},
-      {q:'For p odd, Zₚ× ≅ μ_{p-1} × ? (write 1+pZp)',ans:'1+pzp',sol:'<div class="step">× (1+pZₚ).</div>'}
+      {q:'For p odd, Zₚ× ≅ μ_{p-1} × ? — name the other factor (an expression in p)',ans:'1+pzp',sol:'<div class="step">× (1+pZₚ).</div>'}
     ],
     hard:[
       {q:'Z₅× is cyclic? (yes/no)',ans:'no',sol:'<div class="step">No! Z₅× ≅ ℤ/4ℤ × Z₅ (not cyclic, product).</div>'}
@@ -1020,15 +1074,15 @@ function genProblems58(){
 function genProblems59(){
   return {
     easy:[
-      {q:'(a choose 0) = ? (write 1)',ans:'1',sol:'<div class="step">Always 1.</div>'},
-      {q:'For a=-1, (1+x)⁻¹ = 1 - x + x² - ? (write x^3)',ans:'x^3',sol:'<div class="step">x³ (geometric series).</div>'}
+      {q:'(a choose 0) = ? (enter a number)',ans:'1',sol:'<div class="step">Always 1.</div>'},
+      {q:'For a=-1, (1+x)⁻¹ = 1 - x + x² - ? — give the next term (an expression in x)',ans:'x^3',sol:'<div class="step">x³ (geometric series).</div>'}
     ],
     medium:[
-      {q:'Binomial series converges for |x|ₚ < ? (write 1)',ans:'1',sol:'<div class="step">|x|ₚ < 1.</div>'},
-      {q:'(1+x)ᵃ(1+x)ᵇ = (1+x)^? (write a+b)',ans:'a+b',sol:'<div class="step">(a+b).</div>'}
+      {q:'Binomial series converges for |x|ₚ < ? (enter a number)',ans:'1',sol:'<div class="step">|x|ₚ < 1.</div>'},
+      {q:'(1+x)ᵃ(1+x)ᵇ = (1+x)^? — fill in the exponent (an expression in a and b)',ans:'a+b',sol:'<div class="step">(a+b).</div>'}
     ],
     hard:[
-      {q:'Binomial series extends finite theorem to a ∈ ? (write Zp)',ans:'zp',sol:'<div class="step">a ∈ ℤₚ.</div>'}
+      {q:'Binomial series extends the finite theorem to exponents a in which ring? (name the ring)',ans:'zp',sol:'<div class="step">a ∈ ℤₚ.</div>'}
     ]
   };
 }
@@ -1036,15 +1090,15 @@ function genProblems59(){
 function genProblems510(){
   return {
     easy:[
-      {q:'Mahler: continuous f can be written as Σaₙ(x choose ?)  (write n)',ans:'n',sol:'<div class="step">(x choose n).</div>'},
+      {q:'Mahler: continuous f can be written as Σaₙ(x choose ?) — fill in the blank (a single letter)',ans:'n',sol:'<div class="step">(x choose n).</div>'},
       {q:'Are the aₙ unique? (yes/no)',ans:'yes',sol:'<div class="step">Yes (Mahler theorem).</div>'}
     ],
     medium:[
-      {q:'xᵏ = Σ ? (k,n)(x choose n). (write stirling)',ans:'stirling',sol:'<div class="step">Stirling numbers S(k,n).</div>'},
-      {q:'Mahler applies to continuous f: Zₚ → ? (write Qp)',ans:'qp',sol:'<div class="step">ℚₚ.</div>'}
+      {q:'xᵏ = Σ ?(k,n)(x choose n) — name the numbers (one word, named after a mathematician)',ans:'stirling',sol:'<div class="step">Stirling numbers S(k,n).</div>'},
+      {q:'Mahler applies to continuous f: Zₚ → ? (name the field)',ans:'qp',sol:'<div class="step">ℚₚ.</div>'}
     ],
     hard:[
-      {q:'Binomial basis {(x choose n)} is ? wrt Haar measure (write orthogonal)',ans:'orthogonal',sol:'<div class="step">Orthogonal.</div>'}
+      {q:'Binomial basis {(x choose n)} has which property wrt Haar measure? (one word)',ans:'orthogonal',sol:'<div class="step">Orthogonal.</div>'}
     ]
   };
 }

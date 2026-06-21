@@ -14,6 +14,7 @@
   --proof:#f5f5f5;--proof-border:#9e9e9e;
   --example:#e0f2f1;--example-border:#00897b;
   --problem:#fff3e0;--problem-border:#ef6c00;
+  --plain:#f3e8ff;--plain-border:#8e44ad;
   --sidebar-w:280px;--topbar-h:56px;
   --card-radius:8px;--shadow:0 2px 8px rgba(0,0,0,.08);
   --font-main:'Segoe UI',system-ui,-apple-system,sans-serif;
@@ -28,6 +29,7 @@
   --proof:#1e1e2f;--proof-border:#777;
   --example:#1a302e;--example-border:#4db6ac;
   --problem:#2e2114;--problem-border:#ffa726;
+  --plain:#2a1f3d;--plain-border:#b388e0;
   --shadow:0 2px 8px rgba(0,0,0,.3);
 }
 html{scroll-behavior:smooth}
@@ -71,6 +73,8 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 .block-problem{background:var(--problem);border-color:var(--problem-border)}
 .block .label{font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .block-def .label{color:var(--def-border)}
+.block-plain{background:var(--plain);border-color:var(--plain-border)}
+.block-plain .label{color:var(--plain-border)}
 .block-thm .label{color:var(--thm-border)}
 .block-lem .label{color:var(--lem-border)}
 .block-proof .label{color:var(--proof-border)}
@@ -214,6 +218,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 <section class="section" id="s41">
   <h1>4.1 — What We Already Know</h1>
   <p>From the construction in Chapter 3, we know ℚₚ is a complete field with a non-archimedean absolute value. Let's summarize key properties before exploring further.</p>
+
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>In the p-adic world, a number's "size" only depends on <strong>how many times the prime p divides it</strong>. The more factors of p a number has, the <em>smaller</em> it is — so 1, p, p², p³, … get tinier and tinier. That's the opposite of how we usually think about size, and it's the one idea everything else in this chapter rests on.</p>
+    <p>This lemma just says the only sizes that ever show up are the whole-number powers of p (…, p⁻², p⁻¹, 1, p, p², …) plus zero. There are no "in-between" sizes, the way ℝ has every positive real as a possible distance. The size meter clicks from one power of p to the next, never landing between them.</p>
+  </div>
   
   <div class="block block-lem"><div class="label">Lemma 4.1.1</div>
     <p>For each x ∈ ℚₚ, x ≠ 0, there exists an integer n ∈ ℤ such that <span class="math">|x|ₚ = p⁻ⁿ</span>.</p>
@@ -250,6 +259,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 <section class="section" id="s42">
   <h1>4.2 — p-adic Integers Zₚ</h1>
   <p>The <strong>p-adic integers</strong> are the "unit ball" in ℚₚ. They form a compact valuation ring.</p>
+
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>The p-adic integers Zₚ are simply the p-adic numbers whose size is <strong>at most 1</strong> — meaning they have <em>no factor of p stuck in the denominator</em>. Think of them as the p-adic version of "whole numbers": ordinary integers like 7 or −3 are all in here, but so are many more exotic numbers that look like infinitely long expansions.</p>
+    <p>Calling Zₚ the "unit ball" is just geometry-speak for "everything within distance 1 of zero." The surprising part is that this ball is also closed under addition and multiplication — add or multiply two of them and you stay inside. That's why it's a <strong>ring</strong>, and it behaves like a clean, self-contained number system of its own.</p>
+  </div>
   
   <div class="block block-def"><div class="label">Definition 4.2.1</div>
     <p>The ring of p-adic integers is</p>
@@ -320,6 +334,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
   <h1>4.3 — The Elements of ℚₚ (p-adic Expansions)</h1>
   <p>We give two concrete descriptions of elements of ℚₚ — both met in Chapter 1: <strong>coherent sequences</strong> (theoretical) and <strong>p-adic expansions</strong> (the most concrete).</p>
 
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>Here's the most down-to-earth way to picture a p-adic number: it's like a decimal expansion, but written <strong>going the other way</strong>. Ordinary decimals can run on forever to the <em>right</em> (0.333…); p-adic expansions are allowed to run on forever to the <em>left</em> instead (…3333). Each "digit" is a number between 0 and p−1, attached to a power of p.</p>
+    <p>The "coherent sequence" idea is just a careful bookkeeping version of the same thing: instead of writing all the digits at once, you record the number's remainder mod p, then mod p², then mod p³, and so on. Each new snapshot has to agree with the previous one (that's what "coherent" means). Stacking up all these consistent snapshots pins down exactly one p-adic number — the two viewpoints describe the same object.</p>
+  </div>
+
   <div class="block block-def"><div class="label">Coherent Sequences & the Inverse Limit</div>
     <p>Writing φₙ : Zₚ → ℤ/pⁿℤ for the projections and Aₙ = ℤ/pⁿℤ, a <strong>coherent sequence</strong> is a tuple (αₙ) with αₙ ∈ Aₙ and ψₙ(αₙ) = αₙ₋₁ (reduction mod pⁿ⁻¹).</p>
     <p><strong>Proposition 4.3.1:</strong> The maps φₙ identify Zₚ, as a topological ring, with the closed subring of ∏ₙ Aₙ consisting of coherent sequences. In high-brow language, <span class="math">Zₚ = lim← ℤ/pⁿℤ</span> is the <strong>inverse limit</strong> of the finite rings ℤ/pⁿℤ — a purely algebraic construction with a universal property.</p>
@@ -380,6 +399,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
   <h1>4.4 — What Does ℚₚ Look Like?</h1>
   <p>We have a beautiful mental picture of ℝ as a line. Can we "see" ℚₚ (or at least Zₚ)? The challenge: ℚₚ is <strong>totally disconnected but not discrete</strong> — its points are not connected to each other, yet none of them is isolated. We can't draw that with intervals or with scattered dots.</p>
 
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>The best picture of Zₚ is a <strong>branching tree</strong> (or a set of nested Russian dolls). At the top, split all p-adic integers into p groups by their first digit. Split each of those into p sub-groups by the second digit, and keep going forever. Two numbers are <em>close</em> in the p-adic sense exactly when they stay in the same group for many levels — i.e. they share a long string of leading digits.</p>
+    <p>"Totally disconnected but not discrete" sounds paradoxical, but the tree makes it intuitive: every group eventually breaks into smaller separate groups (so nothing is truly glued together — <em>disconnected</em>), yet you can always zoom into a tighter group around any point (so no point sits off by itself — <em>not isolated</em>). It's a shape that simply can't be drawn on a normal number line.</p>
+  </div>
+
   <div class="block block-def"><div class="label">What "visualizing" means here</div>
     <p>The real line encodes topology <em>and</em> order <em>and</em> metric. For Zₚ we settle for a picture that preserves the <strong>topology</strong> (which sequences converge to which limits) but <em>not</em> the metric. So distances in the picture won't be proportional to p-adic distances — but convergent sequences will still look convergent.</p>
   </div>
@@ -432,6 +456,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 <section class="section" id="s45">
   <h1>4.5 — Hensel's Lemma</h1>
   <p>Hensel's Lemma is the p-adic analogue of Newton's method: <strong>roots modulo p lift uniquely to roots in Zₚ</strong> if the derivative is nonzero.</p>
+
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>Hensel's Lemma is a "good approximation becomes a perfect answer" machine. Suppose you want to solve an equation in Zₚ and you find a number that solves it <strong>approximately</strong> — correct mod p (i.e. just the first digit works). Hensel says: as long as a simple safety check passes, that rough guess can be polished, one digit at a time, into an <em>exact</em> p-adic solution — and there's only one way to do it.</p>
+    <p>The safety check is "the derivative isn't zero mod p," which is the same condition that makes Newton's method work in calculus. Geometrically it means the curve crosses the axis cleanly (not tangentially), so each correction step has a well-defined direction. This is the single most powerful tool in p-adic number theory: it turns hard exact equations into easy mod-p ones.</p>
+  </div>
   
   <div class="block block-thm"><div class="label">Theorem 4.5.1 (Hensel's Lemma)</div>
     <p>Let f(X) ∈ Zₚ[X] and suppose α ∈ Zₚ satisfies:</p>
@@ -489,6 +518,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
   <h1>4.6 — Using Hensel's Lemma</h1>
   <p>Two beautiful applications: determining exactly which <strong>roots of unity</strong> live in ℚₚ, and classifying the <strong>squares</strong> in ℚₚ.</p>
 
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>Now we put the Hensel machine to work on two natural questions. First, <strong>roots of unity</strong> — the p-adic numbers that, raised to some power, give exactly 1 (the analogues of 1 and −1, or the corners of a polygon in the complex plane). It turns out ℚₚ contains a surprisingly tidy collection of them, and Hensel tells us precisely which.</p>
+    <p>Second, <strong>squares</strong> — which p-adic numbers are perfect squares (something times itself)? In the real numbers the answer is "the non-negative ones." In ℚₚ the test is different but just as clean: check whether the number is a square mod p (a quick finite check), and Hensel lifts that to the real thing. Both questions become easy once you can "solve mod p and then polish."</p>
+  </div>
+
   <h2>Roots of Unity</h2>
   <p>An m-th root of unity ζ satisfies ζᵐ = 1; it is <em>primitive</em> if no smaller power equals 1. Any root of unity has |ζ|ₚ = 1, so ζ ∈ Zₚ×. Apply Hensel to F(X) = Xᵐ − 1, with F'(X) = mXᵐ⁻¹ (a unit mod p iff p ∤ m).</p>
 
@@ -542,6 +576,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
   <h1>4.7 — Hensel's Lemma for Polynomials</h1>
   <p>The first Hensel's Lemma lifts a root, i.e. a linear factor (X − α). The general version lifts <em>any</em> factorization mod p — provided the factors are coprime mod p.</p>
 
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>The basic Hensel's Lemma lifts a single root, which is the same as peeling off one simple factor like (X − α). This stronger version does the same trick for a <strong>whole factorization</strong>: if a polynomial breaks into two pieces when you look at it mod p, those pieces can be lifted to a genuine factorization with coefficients in Zₚ.</p>
+    <p>The one requirement is that the two mod-p pieces share <strong>no common factor</strong> ("coprime mod p"). That's the natural generalization of the "no double root" / nonzero-derivative condition from before — it guarantees the pieces don't secretly overlap, so there's a clean, unique way to separate and lift them.</p>
+  </div>
+
   <div class="block block-def"><div class="label">Definition 4.7.1 — Relatively prime mod p</div>
     <p>Polynomials g, h ∈ Zₚ[X] are <strong>relatively prime modulo p</strong> if their reductions ḡ, h̄ ∈ 𝔽ₚ[X] satisfy gcd(ḡ, h̄) = 1; equivalently, ∃ a, b ∈ Zₚ[X] with <span class="math">a·g + b·h ≡ 1 (mod p)</span>.</p>
     <p>This generalizes "f'(α) ≢ 0 mod p" (which says (X − α) does <em>not</em> divide the cofactor mod p — i.e. α is not a double root).</p>
@@ -590,6 +629,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 <section class="section" id="s48">
   <h1>4.8 — Local and Global</h1>
   <p>Deciding if a polynomial has roots in each ℚₚ (a <strong>local</strong> question) is easy via Hensel. The dream: patch local information together to answer the hard <strong>global</strong> question of roots in ℚ. This is the <strong>local-global (Hasse) principle</strong>.</p>
+
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>Think of solving an equation over the ordinary rationals ℚ as the hard "global" goal. For each prime p there's an easier "local" version of the question — does it have a solution in ℚₚ? — and Hensel makes those local questions easy to answer. The natural hope is that if you solve the puzzle <strong>locally everywhere</strong> (in every ℚₚ, plus the real numbers ℝ, nicknamed "the prime at infinity"), you can stitch those answers into a real global solution in ℚ.</p>
+    <p>One direction is free: a genuine rational solution automatically works everywhere locally, so <em>failing</em> even one local test instantly proves there's no global solution — a fast way to rule things out. The deep question is the reverse. For some equations (like quadratic forms) "solvable everywhere locally ⟹ solvable globally" really holds — that's the celebrated <strong>Hasse principle</strong> — but it's not a universal law, and the cases where it breaks are a major theme of modern number theory.</p>
+  </div>
 
   <div class="block block-def"><div class="label">"Local" vs "Global" — the convention p ≤ ∞</div>
     <p>Following Hensel's analogy, each ℚₚ carries "local" information near the prime p, with ℝ = ℚ_∞ treated as the prime "at infinity." A root in ℚ ("global") is automatically a root in every ℚₚ ("local everywhere"). So: <strong>no local root at some p ⟹ no global root.</strong></p>
@@ -968,10 +1012,10 @@ function genProblems42(){
     ],
     medium:[
       {q:'Is ℚₚ totally disconnected? (yes/no)',ans:'yes',sol:'<div class="step">Yes, all ultrametric spaces are totally disconnected.</div>'},
-      {q:'ℤ is dense in...? (write Zp)',ans:'zp',sol:'<div class="step">ℤ is dense in Zₚ (Corollary 4.2.3).</div>'}
+      {q:'ℤ is dense in which ring? (name the ring of p-adic integers)',ans:'zp',sol:'<div class="step">ℤ is dense in Zₚ (Corollary 4.2.3).</div>'}
     ],
     hard:[
-      {q:'Zₚ/pⁿZₚ ≅ ? (write Z/pnZ)',ans:'z/pnz',sol:'<div class="step">Zₚ/pⁿZₚ ≅ ℤ/pⁿℤ (Corollary 4.2.5).</div>'}
+      {q:'Zₚ/pⁿZₚ is isomorphic to which familiar finite ring? (an expression in p and n)',ans:'z/pnz',sol:'<div class="step">Zₚ/pⁿZₚ ≅ ℤ/pⁿℤ (Corollary 4.2.5).</div>'}
     ]
   };
 }
@@ -983,7 +1027,7 @@ function genProblems43(){
       {q:'Does 1/(1-p) = 1+p+p²+⋯ converge in ℚₚ? (yes/no)',ans:'yes',sol:'<div class="step">Yes, |p|ₚ < 1 ⇒ terms → 0.</div>'}
     ],
     medium:[
-      {q:'If x = Σ bₙpⁿ, what is vₚ(x)? (write -m)',ans:'-m',sol:'<div class="step">vₚ(x) = smallest n with bₙ ≠ 0 (i.e., -m if series starts at p^{-m}).</div>'},
+      {q:'If x = Σ bₙpⁿ with the series starting at p^(−m), what is vₚ(x)? (answer in terms of m)',ans:'-m',sol:'<div class="step">vₚ(x) = smallest n with bₙ ≠ 0 (i.e., -m if series starts at p^{-m}).</div>'},
       {q:'Can -1 be written as (p-1)Σpⁿ? (yes/no)',ans:'yes',sol:'<div class="step">Yes: (p-1)(1+p+p²+⋯) = (p-1)/(1-p) = -1.</div>'}
     ],
     hard:[
@@ -1026,7 +1070,7 @@ function genProblems44(){
 function genProblems46(){
   return {
     easy:[
-      {q:'How many (p−1)-st roots of unity does ℚₚ contain? (write p-1)',ans:'p-1',sol:'<div class="step">Exactly p−1, forming a cyclic group ℤ/(p−1)ℤ.</div>'},
+      {q:'How many (p−1)-st roots of unity does ℚₚ contain? (an expression in p)',ans:'p-1',sol:'<div class="step">Exactly p−1, forming a cyclic group ℤ/(p−1)ℤ.</div>'},
       {q:'Order of ℚₚ×/(ℚₚ×)² for odd p? (number)',ans:'4',sol:'<div class="step">4, with reps {1, p, c, cp}, c a non-residue.</div>'}
     ],
     medium:[

@@ -14,6 +14,7 @@
   --proof:#f5f5f5;--proof-border:#9e9e9e;
   --example:#e0f2f1;--example-border:#00897b;
   --problem:#fff3e0;--problem-border:#ef6c00;
+  --plain:#f3e8ff;--plain-border:#8e44ad;
   --sidebar-w:280px;--topbar-h:56px;
   --card-radius:8px;--shadow:0 2px 8px rgba(0,0,0,.08);
   --font-main:'Segoe UI',system-ui,-apple-system,sans-serif;
@@ -28,6 +29,7 @@
   --proof:#1e1e2f;--proof-border:#777;
   --example:#1a302e;--example-border:#4db6ac;
   --problem:#2e2114;--problem-border:#ffa726;
+  --plain:#2a1f3d;--plain-border:#b388e0;
   --shadow:0 2px 8px rgba(0,0,0,.3);
 }
 html{scroll-behavior:smooth}
@@ -71,6 +73,8 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 .block-problem{background:var(--problem);border-color:var(--problem-border)}
 .block .label{font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .block-def .label{color:var(--def-border)}
+.block-plain{background:var(--plain);border-color:var(--plain-border)}
+.block-plain .label{color:var(--plain-border)}
 .block-thm .label{color:var(--thm-border)}
 .block-lem .label{color:var(--lem-border)}
 .block-proof .label{color:var(--proof-border)}
@@ -213,6 +217,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
   <h1>7.1 — Almost Everything Extends</h1>
   <p>Most results from Chapter 5 never really used the fact that we worked over ℚₚ — they hold over any complete non-archimedean valued field. So we re-appropriate them wholesale for ℂₚ, with one striking new feature concerning the image of the logarithm.</p>
 
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>Think of <strong>ℂₚ</strong> as a bigger, roomier number system that still contains the familiar ℚₚ. The good news is that almost every tool you built earlier — adding up infinite series, taking derivatives, the exponential (exp) and logarithm (log) functions — keeps working here for free. The old proofs never actually cared that we were in ℚₚ, so they carry over unchanged.</p>
+    <p>The one genuinely new surprise concerns the logarithm. In ordinary real or complex math, "log" can only spit out certain values. Here, the p-adic logarithm is <strong>onto (surjective)</strong>: <em>every single number in ℂₚ is the logarithm of something.</em> Meanwhile exp is still picky — it only "adds up" when you feed it a small enough input (small in the p-adic sense, meaning a high valuation). So: exp is fussy about inputs, but log is remarkably generous about outputs.</p>
+  </div>
+
   <div class="block block-def"><div class="label">Things that extend to ℂₚ</div>
     <ul>
       <li>A series <span class="math">Σaₙ</span> converges ⟺ <span class="math">aₙ → 0</span> (general term test).</li>
@@ -263,6 +272,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 <section class="section" id="s72">
   <h1>7.2 — Deeper Results on Polynomials and Power Series</h1>
   <p>The main goal is the <strong>p-adic Weierstrass Preparation Theorem</strong>. The key tool is a family of absolute values — the <em>Gauss norms</em> <span class="math">‖·‖_c</span> — on polynomials and on the rings <span class="math">A_c</span> of convergent power series.</p>
+
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>How do you measure the "size" of an <em>entire polynomial or power series</em> in one number? The <strong>Gauss norm</strong> does it: pick a radius c, scale each coefficient aᵢ by cⁱ, and take the biggest of those scaled values. That single number behaves like a well-mannered ruler — most importantly, the size of a product equals the product of the sizes (it's <em>multiplicative</em>), just like ordinary absolute value.</p>
+    <p>The headline result, the <strong>Weierstrass Preparation Theorem</strong>, is a "divide and conquer" statement: any power series can be split into two clean pieces — an ordinary <em>polynomial</em> that carries all the interesting behavior (it holds all the roots inside the disc) times a leftover factor that is never zero (a "unit," essentially invisible). The practical payoff: you can count <em>exactly how many roots</em> a complicated function has inside a given disc, just by reading off the degree of that polynomial piece.</p>
+  </div>
 
   <div class="block block-def"><div class="label">Definition 7.2.1 (Gauss norm ‖·‖_c)</div>
     <p>For <span class="math">c &gt; 0</span> and <span class="math">f(X) = a₀ + a₁X + ⋯ + aₙXⁿ</span>, set</p>
@@ -323,6 +337,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
   <h1>7.3 — Entire Functions</h1>
   <p>An <strong>entire</strong> p-adic function is one whose power series converges on <em>all</em> of ℂₚ. The Weierstrass Preparation Theorem, applied on larger and larger balls, gives a clean product description — the p-adic analogue of the Hadamard/Weierstrass product for complex entire functions.</p>
 
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>An <strong>entire</strong> function is one so well-behaved that its infinite series adds up <em>no matter what number you plug in</em> — it never "blows up" anywhere. There's a simple smell-test for whether a series is entire: watch how fast its coefficients get small (p-adically). If they shrink <em>faster and faster</em> — so that vₚ(aₙ) grows quicker than any straight line as n increases — the function is entire. If the coefficients only shrink at a steady, linear pace, the function works only inside a disc of some finite radius and fails outside it.</p>
+    <p>And just like an ordinary polynomial can be written as a product of (X − root) factors, an entire p-adic function factors into a (possibly infinite) <strong>product over its roots</strong>. Knowing the roots tells you the whole function.</p>
+  </div>
+
   <div class="block block-lem"><div class="label">Lemma 7.3.1 (Entire criterion)</div>
     <p><span class="math">f(X) = ΣaₙXⁿ</span> is entire ⟺</p>
     <span class="math-block">limₙ→∞ vₚ(aₙ)/n = +∞.</span>
@@ -378,6 +397,11 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 <section class="section" id="s74">
   <h1>7.4 — Newton Polygons</h1>
   <p>The <strong>Newton polygon</strong> is a single picture that encodes the absolute values of all the roots of a polynomial (or power series). It is the lower boundary of the convex hull of the points <span class="math">(i, vₚ(aᵢ))</span>.</p>
+
+  <div class="block block-plain"><div class="label">💡 In Plain English</div>
+    <p>The <strong>Newton polygon</strong> is a clever picture that reveals the <em>sizes</em> of all the roots of a polynomial <strong>without ever solving it</strong>. Here's the recipe: for each term aᵢXⁱ, place a dot at horizontal position i and height vₚ(aᵢ) (the p-adic valuation of that coefficient — bigger height means a "more divisible by p" coefficient). Then imagine stretching a rubber band along the <em>bottom</em> of all those dots. The straight segments of that lower edge tell you everything.</p>
+    <p>Each sloped segment is a statement of the form "there are exactly <em>this many</em> roots of <em>this particular size</em>": the segment's <strong>slope</strong> gives the size of those roots, and its horizontal <strong>length</strong> counts how many roots have that size. So a hard algebra question — how big are the solutions? — turns into simply reading the corners of a graph. The interactive below draws this polygon for you.</p>
+  </div>
 
   <div class="block block-def"><div class="label">Definition 7.4 (Newton polygon)</div>
     <p>For <span class="math">f(X) = 1 + a₁X + ⋯ + aₙXⁿ</span> (normalize so <span class="math">f(0)=1</span>), plot <span class="math">(0,0)</span> and each <span class="math">(i, vₚ(aᵢ))</span> (ignore <span class="math">aᵢ = 0</span>, "infinitely high"). The Newton polygon is the <strong>lower convex hull</strong>: start from the downward y-axis and rotate counter-clockwise, breaking at each vertex. Its key data:</p>
@@ -623,10 +647,10 @@ function genProblems71(){return{
   ],
   medium:[
     {q:'For p=2, the exp-convergence bound 1/(p−1) equals what number?',ans:'1',sol:'<div class="step">1/(2−1)=1, so need v_2(x)>1.</div>'},
-    {q:'On the disc D, exp and log are mutually inverse ? (write isometries)',ans:'isometries',sol:'<div class="step">They are mutually inverse isometries between 1+D and D.</div>'}
+    {q:'On the disc D, exp and log are mutually inverse maps that also preserve distances. What is the one-word name for a distance-preserving map? (one word)',ans:'isometries',sol:'<div class="step">They are mutually inverse isometries between 1+D and D.</div>'}
   ],
   hard:[
-    {q:'log(1+x) converges over ℂ_p exactly when v_p(x) is strictly greater than what? (write 0)',ans:'0',sol:'<div class="step">v_p(x) > 0, i.e. x lies in the maximal ideal P.</div>'}
+    {q:'log(1+x) converges over ℂ_p exactly when v_p(x) is strictly greater than which integer? (enter a number)',ans:'0',sol:'<div class="step">v_p(x) > 0, i.e. x lies in the maximal ideal P.</div>'}
   ]
 };}
 function genProblems72(){return{
@@ -635,16 +659,16 @@ function genProblems72(){return{
     {q:'Is the Gauss norm multiplicative, ‖fg‖=‖f‖·‖g‖? (yes/no)',ans:'yes',sol:'<div class="step">Yes, it is multiplicative.</div>'}
   ],
   medium:[
-    {q:'For f=1+pX with p=3, c=1: ‖f‖_1 = max(1, 1/3) = ? (decimal or 1)',ans:'1',sol:'<div class="step">max(|1|,|p|)=max(1,1/3)=1.</div>'},
-    {q:'In Weierstrass preparation f=g·h, the factor h is a ? (write unit)',ans:'unit',sol:'<div class="step">h is a unit in the Tate algebra; g is a distinguished polynomial.</div>'}
+    {q:'For f = 1 + 3X with p=3 and c=1, the Gauss norm is max(|1|₃, |3|₃). Compute it. (enter the value)',ans:'1',sol:'<div class="step">max(|1|,|p|)=max(1,1/3)=1.</div>'},
+    {q:'In Weierstrass preparation f = g·h, the factor h never vanishes. What is the one-word algebraic term for such an invertible factor? (one word)',ans:'unit',sol:'<div class="step">h is a unit in the Tate algebra; g is a distinguished polynomial.</div>'}
   ],
   hard:[
-    {q:'If the Gauss norm max is attained last at index N, how many zeros does f have in B(0,c)? (write N)',ans:'n',sol:'<div class="step">Exactly N zeros (with multiplicity), = deg of the distinguished polynomial g.</div>'}
+    {q:'If the Gauss norm maximum is attained last at index N, how many zeros (with multiplicity) does f have in B(0,c)? (answer in terms of N)',ans:'n',sol:'<div class="step">Exactly N zeros (with multiplicity), = deg of the distinguished polynomial g.</div>'}
   ]
 };}
 function genProblems73(){return{
   easy:[
-    {q:'A power series is entire over ℂ_p iff v_p(a_n)/n → ? (write infinity)',ans:'infinity',sol:'<div class="step">v_p(a_n)/n → +∞.</div>'},
+    {q:'A power series is entire over ℂ_p exactly when the ratio v_p(a_n)/n grows without bound. What value does it tend to? (one word)',ans:'infinity',sol:'<div class="step">v_p(a_n)/n → +∞.</div>'},
     {q:'An entire function converges on all of ℂ_p. (yes/no)',ans:'yes',sol:'<div class="step">Yes — infinite radius of convergence.</div>'}
   ],
   medium:[
@@ -652,20 +676,20 @@ function genProblems73(){return{
     {q:'If v_p(a_n)=n^2, is f entire? (yes/no)',ans:'yes',sol:'<div class="step">n^2/n = n → ∞, so yes, entire.</div>'}
   ],
   hard:[
-    {q:'An entire function factors as a (possibly infinite) ? over its zeros (write product)',ans:'product',sol:'<div class="step">f(X)=a·∏(1−X/λ_i), an infinite product over the zeros.</div>'}
+    {q:'Like a polynomial split into (X−root) factors, an entire function factors as a (possibly infinite) ___ over its zeros. (one word)',ans:'product',sol:'<div class="step">f(X)=a·∏(1−X/λ_i), an infinite product over the zeros.</div>'}
   ]
 };}
 function genProblems74(){return{
   easy:[
-    {q:'The Newton polygon is the lower convex ? of the points (i, v_p(a_i)). (write hull)',ans:'hull',sol:'<div class="step">Lower convex hull.</div>'},
+    {q:'The Newton polygon is the lower convex ___ of the points (i, v_p(a_i)). Fill in the geometric term. (one word)',ans:'hull',sol:'<div class="step">Lower convex hull.</div>'},
     {q:'A coefficient a_i = 0 is plotted at height +∞ (skipped). (yes/no)',ans:'yes',sol:'<div class="step">Yes — zero coefficients give v=∞ and are omitted.</div>'}
   ],
   medium:[
-    {q:'A segment of slope m corresponds to roots of valuation ? (write -m)',ans:'-m',sol:'<div class="step">Roots have valuation −m, i.e. absolute value p^m.</div>'},
-    {q:'The horizontal length of a segment equals the number of ? of that valuation (write roots)',ans:'roots',sol:'<div class="step">The number of roots (with that absolute value).</div>'}
+    {q:'A Newton-polygon segment of slope m corresponds to roots whose valuation is the negative of the slope. Express that valuation in terms of m. (an expression in m)',ans:'-m',sol:'<div class="step">Roots have valuation −m, i.e. absolute value p^m.</div>'},
+    {q:'The horizontal length of a Newton-polygon segment equals the number of ___ having that valuation. (one word)',ans:'roots',sol:'<div class="step">The number of roots (with that absolute value).</div>'}
   ],
   hard:[
-    {q:'For p=5, f=1+5X+(1/5)X²: v_5(a_0),v_5(a_1),v_5(a_2) = 0,1,? Fill the last (write -1)',ans:'-1',sol:'<div class="step">v_5(1/5)=−1, giving point (2,−1).</div>'}
+    {q:'For p=5 and f = 1 + 5X + (1/5)X², the valuations v_5(a_0), v_5(a_1), v_5(a_2) begin 0, 1, … Compute the last one, v_5(1/5). (enter a number)',ans:'-1',sol:'<div class="step">v_5(1/5)=−1, giving point (2,−1).</div>'}
   ]
 };}
 

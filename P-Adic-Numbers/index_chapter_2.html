@@ -15,6 +15,7 @@
   --proof:#f5f5f5;--proof-border:#9e9e9e;
   --example:#e0f2f1;--example-border:#00897b;
   --problem:#fff3e0;--problem-border:#ef6c00;
+  --plain:#f3e8ff;--plain-border:#8e44ad;
   --sidebar-w:280px;--topbar-h:56px;
   --card-radius:8px;--shadow:0 2px 8px rgba(0,0,0,.08);
   --font-main:'Segoe UI',system-ui,-apple-system,sans-serif;
@@ -29,6 +30,7 @@
   --proof:#1e1e2f;--proof-border:#777;
   --example:#1a302e;--example-border:#4db6ac;
   --problem:#2e2114;--problem-border:#ffa726;
+  --plain:#2a1f3d;--plain-border:#b388e0;
   --shadow:0 2px 8px rgba(0,0,0,.3);
 }
 html{scroll-behavior:smooth}
@@ -80,6 +82,8 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text);line-he
 .block-problem{background:var(--problem);border-color:var(--problem-border)}
 .block .label{font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .block-def .label{color:var(--def-border)}
+.block-plain{background:var(--plain);border-color:var(--plain-border)}
+.block-plain .label{color:var(--plain-border)}
 .block-thm .label{color:var(--thm-border)}
 .block-lem .label{color:var(--lem-border)}
 .block-proof .label{color:var(--proof-border)}
@@ -297,6 +301,12 @@ ul.compact li{margin-bottom:4px}
 <!-- ======== SECTION 2.1 ======== -->
 <div class="section" id="sec-s21">
 <h1>§2.1 Absolute Values on a Field</h1>
+
+<div class="block block-plain">
+  <div class="label">💡 In Plain English</div>
+  <p>We all have an instinct for the "size" of a number — how far it is from zero. This section steps back and asks: what are the bare <em>rules</em> that any sensible notion of size must obey? The answer is short: a size is never negative (and only zero is zero-sized), the size of a product is the product of the sizes, and the size of a sum is no bigger than the sum of the sizes (the "triangle inequality" — no shortcuts by adding).</p>
+<p>Anything obeying those three rules earns the name <strong>absolute value</strong>. The surprise of the whole book is that the familiar one isn't the only option: on the rational numbers there are entirely different, equally valid "size" rules — the <strong>p-adic</strong> ones — where being divisible by p makes a number <em>small</em>. Setting up the rules abstractly is what lets these exotic measuring sticks join the club.</p>
+</div>
 
 <div class="block block-def">
   <div class="label">📘 Definition 2.1.1 — Absolute Value on a Field</div>
@@ -523,6 +533,12 @@ ul.compact li{margin-bottom:4px}
 <div class="section" id="sec-s22">
 <h1>§2.2 Basic Properties</h1>
 
+<div class="block block-plain">
+  <div class="label">💡 In Plain English</div>
+  <p>Once you have the three rules from the previous section, a bunch of "obvious" facts follow automatically — and it's worth checking they really do flow from the rules rather than from our real-number habits. For example, the size of 1 must be exactly 1, the size of −1 equals the size of 1, and flipping a number's sign never changes its size.</p>
+<p>A cute consequence: any number that's a root of unity (some power of it equals 1) must have size exactly 1, which forces a striking fact — on a <em>finite</em> field the only possible absolute value is the boring "trivial" one (everything nonzero has size 1). These little lemmas are the basic toolkit we'll lean on constantly later.</p>
+</div>
+
 <div class="block block-lem">
   <div class="label">📙 Lemma 2.2.1 — Basic Properties of Absolute Values</div>
   <p><strong>Formal:</strong> For any absolute value |·| on any field 𝕜: (i) |1| = 1, (ii) xⁿ = 1 ⟹ |x| = 1, (iii) |−1| = 1, (iv) |−x| = |x|, (v) finite fields only have the trivial absolute value.</p>
@@ -672,6 +688,12 @@ ul.compact li{margin-bottom:4px}
 <!-- ======== SECTION 2.3 ======== -->
 <div class="section" id="sec-s23">
 <h1>§2.3 Topology</h1>
+
+<div class="block block-plain">
+  <div class="label">💡 In Plain English</div>
+  <p>As soon as you can measure size, you can measure <strong>distance</strong>: the distance between two numbers is just the size of their difference. With distance comes the whole language of <em>topology</em> — which points are "near" each other, what it means for a sequence to converge, and when a function is continuous (small input changes cause small output changes).</p>
+<p>For non-archimedean (p-adic-style) absolute values this geometry gets delightfully weird. The triangle inequality is replaced by a stronger version, which leads to facts like "every triangle is isosceles" and "every point inside a ball is its center." Building this topological vocabulary now lets us later do genuine calculus and analysis in the p-adic world.</p>
+</div>
 
 <div class="block block-def">
   <div class="label">📘 Definition 2.3.1 & 2.3.2 — Metric and Continuity</div>
@@ -874,6 +896,12 @@ ul.compact li{margin-bottom:4px}
 <!-- ======== SECTION 2.4 ======== -->
 <div class="section" id="sec-s24">
 <h1>§2.4 Algebra</h1>
+
+<div class="block block-plain">
+  <div class="label">💡 In Plain English</div>
+  <p>This section looks at the algebraic shadow cast by a non-archimedean absolute value. The elements of size at most 1 form a tidy set called the <strong>valuation ring</strong> — you can add, subtract, and multiply within it and never escape. It's the abstract version of "the integers sitting inside the rationals."</p>
+<p>Even better, this ring has a single special <strong>maximal ideal</strong> (the elements of size strictly less than 1), which makes it a <em>local ring</em> — a ring with exactly one "center of badness." That clean structure, with one prime to worry about, is precisely what makes p-adic arithmetic so much more orderly than ordinary integer arithmetic, where infinitely many primes all compete at once.</p>
+</div>
 
 <div class="block block-thm">
   <div class="label">📗 Proposition 2.4.1 — The Valuation Ring Is a Local Ring</div>
